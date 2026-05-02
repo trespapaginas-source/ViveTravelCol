@@ -1,6 +1,8 @@
 "use client";
 
-import { cabins, Cabin } from "@/lib/data";
+import { cabins as cabinsData, Cabin } from "@/lib/data";
+import { fetchCabins } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
 import { ImageCarousel } from "@/components/shared/image-carousel";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -156,6 +158,12 @@ function CabinCard({
 
 export function CabinsList() {
   const { navigate } = useNavigation();
+  const { data: cabins = [], isLoading } = useQuery({
+    queryKey: ["cabins"],
+    queryFn: fetchCabins,
+  });
+
+  const publishedCabins = cabins.filter((c) => c.published !== false);
 
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
@@ -186,7 +194,7 @@ export function CabinsList() {
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {cabins.map((cabin, index) => (
+          {publishedCabins.map((cabin, index) => (
             <CabinCard
               key={cabin.id}
               cabin={cabin}

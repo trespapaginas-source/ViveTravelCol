@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/shared/section-header";
 import { useNavigation } from "@/lib/store";
-import { tourPlans } from "@/lib/data";
+import { type TourPlan } from "@/lib/data";
+import { fetchPlans } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 const categoryColors: Record<string, string> = {
   Naturaleza: "bg-palm text-white",
@@ -29,7 +31,11 @@ function formatPrice(price: number) {
 
 export function FeaturedPlans() {
   const { navigate } = useNavigation();
-  const featuredPlans = tourPlans.slice(0, 4);
+  const { data: allPlans = [] } = useQuery({
+    queryKey: ["plans"],
+    queryFn: fetchPlans,
+  });
+  const featuredPlans = allPlans.filter((p) => p.published !== false).slice(0, 4);
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">

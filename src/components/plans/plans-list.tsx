@@ -20,7 +20,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SectionHeader } from "@/components/shared/section-header";
 import { useNavigation } from "@/lib/store";
-import { tourPlans, type TourPlan } from "@/lib/data";
+import { type TourPlan } from "@/lib/data";
+import { fetchPlans } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 const categories = [
   { value: "Todos", label: "Todos", icon: Compass },
@@ -144,10 +146,15 @@ export function PlansList() {
   const [activeCategory, setActiveCategory] = useState("Todos");
   const navigate = useNavigation((s) => s.navigate);
 
+  const { data: tourPlans = [], isLoading } = useQuery({
+    queryKey: ["plans"],
+    queryFn: fetchPlans,
+  });
+
   const filteredPlans =
     activeCategory === "Todos"
-      ? tourPlans
-      : tourPlans.filter((p) => p.category === activeCategory);
+      ? tourPlans.filter((p) => p.published !== false)
+      : tourPlans.filter((p) => p.category === activeCategory && p.published !== false);
 
   const handleNavigate = (planId: string) => {
     navigate("plan-detail", planId);

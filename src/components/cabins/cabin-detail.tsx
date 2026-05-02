@@ -1,6 +1,8 @@
 "use client";
 
-import { cabins } from "@/lib/data";
+import { Cabin } from "@/lib/data";
+import { fetchCabin } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
 import { ImageCarousel } from "@/components/shared/image-carousel";
 import { Card, CardContent } from "@/components/ui/card";
@@ -140,7 +142,19 @@ function getRuleIcon(rule: string) {
 export function CabinDetail() {
   const { selectedItemId, navigate } = useNavigation();
 
-  const cabin = cabins.find((c) => c.id === selectedItemId);
+  const { data: cabin, isLoading } = useQuery({
+    queryKey: ["cabin", selectedItemId],
+    queryFn: () => fetchCabin(selectedItemId!),
+    enabled: !!selectedItemId,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-ocean border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   if (!cabin) {
     return (
@@ -467,7 +481,7 @@ export function CabinDetail() {
   );
 }
 
-function PriceCard({ cabin }: { cabin: (typeof cabins)[number] }) {
+function PriceCard({ cabin }: { cabin: Cabin }) {
   const { navigate } = useNavigation();
 
   return (

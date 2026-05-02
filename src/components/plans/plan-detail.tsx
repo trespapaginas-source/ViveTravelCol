@@ -22,7 +22,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ImageCarousel } from "@/components/shared/image-carousel";
 import { useNavigation } from "@/lib/store";
-import { tourPlans } from "@/lib/data";
+import { fetchPlan } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 const categoryColors: Record<string, string> = {
   Naturaleza: "bg-palm text-white",
@@ -82,7 +83,19 @@ function InfoItem({
 
 export function PlanDetail() {
   const { selectedItemId, navigate } = useNavigation();
-  const plan = tourPlans.find((p) => p.id === selectedItemId);
+  const { data: plan, isLoading } = useQuery({
+    queryKey: ["plan", selectedItemId],
+    queryFn: () => fetchPlan(selectedItemId!),
+    enabled: !!selectedItemId,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-ocean border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   if (!plan) {
     return (
