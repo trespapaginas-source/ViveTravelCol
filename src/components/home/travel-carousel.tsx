@@ -1,0 +1,130 @@
+"use client";
+
+import { useCallback } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight, Camera } from "lucide-react";
+import { SectionHeader } from "@/components/shared/section-header";
+import { pastTripImages } from "@/lib/data";
+
+export function TravelCarousel() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "start",
+    slidesToScroll: 1,
+    containScroll: "trimSnaps",
+  });
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  return (
+    <section className="py-16 sm:py-20 lg:py-24 bg-muted/30">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <SectionHeader
+            title="Viajes Realizados"
+            subtitle="Nuestros viajeros ya lo vivieron"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="relative"
+        >
+          {/* Carousel */}
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex gap-4 sm:gap-5">
+              {pastTripImages.map((trip, index) => (
+                <div
+                  key={trip.id}
+                  className="flex-[0_0_70%] sm:flex-[0_0_45%] lg:flex-[0_0_30%] min-w-0"
+                >
+                  <div className="group relative overflow-hidden rounded-2xl aspect-square cursor-pointer">
+                    <img
+                      src={trip.url}
+                      alt={trip.caption}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    {/* Caption on hover */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Camera className="w-4 h-4 text-ocean-light" />
+                        <span className="text-ocean-light text-xs font-medium">
+                          Vive Travel
+                        </span>
+                      </div>
+                      <p className="text-white text-sm font-medium leading-snug">
+                        {trip.caption}
+                      </p>
+                    </div>
+
+                    {/* Always-visible caption badge */}
+                    <div className="absolute bottom-3 left-3 right-3 group-hover:opacity-0 transition-opacity duration-300">
+                      <p className="text-white text-xs sm:text-sm font-medium bg-black/40 backdrop-blur-sm rounded-lg px-3 py-1.5 truncate">
+                        {trip.caption}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation buttons */}
+          <button
+            onClick={scrollPrev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 bg-white hover:bg-ocean text-ocean hover:text-white shadow-lg rounded-full p-2.5 sm:p-3 transition-all duration-300"
+            aria-label="Anterior"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={scrollNext}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 bg-white hover:bg-ocean text-ocean hover:text-white shadow-lg rounded-full p-2.5 sm:p-3 transition-all duration-300"
+            aria-label="Siguiente"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </motion.div>
+
+        {/* Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-10 sm:mt-12 flex flex-wrap justify-center gap-6 sm:gap-12"
+        >
+          {[
+            { value: "500+", label: "Viajeros felices" },
+            { value: "50+", label: "Viajes realizados" },
+            { value: "4.8", label: "Calificación promedio" },
+            { value: "6", label: "Destinos del Atlántico" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <p className="text-2xl sm:text-3xl font-bold text-ocean">
+                {stat.value}
+              </p>
+              <p className="text-muted-foreground text-xs sm:text-sm mt-1">
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}

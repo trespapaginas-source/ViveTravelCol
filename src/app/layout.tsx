@@ -1,0 +1,54 @@
+import type { Metadata } from "next";
+import { Geist } from "next/font/google";
+import "./globals.css";
+import { Toaster } from "sonner";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Vive Travel Atlántico | Agencia de Viajes y Cabañas en el Atlántico",
+  description:
+    "Descubre planes turísticos y alojamientos en cabañas dentro del departamento del Atlántico, Colombia. Vive experiencias únicas en el Caribe colombiano.",
+  keywords: [
+    "Vive Travel",
+    "Atlántico",
+    "Colombia",
+    "viajes",
+    "cabañas",
+    "planes turísticos",
+    "Caribe",
+    "Barranquilla",
+    "playa",
+    "turismo",
+  ],
+  authors: [{ name: "Vive Travel" }],
+  icons: {
+    icon: "/logo.svg",
+  },
+  openGraph: {
+    title: "Vive Travel Atlántico",
+    description:
+      "Planes turísticos y cabañas en el Atlántico, Colombia. Tu aventura caribeña comienza aquí.",
+    type: "website",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="es" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} antialiased bg-background text-foreground`}
+      >
+        {children}
+        <Toaster position="top-center" richColors />
+      </body>
+    </html>
+  );
+}
