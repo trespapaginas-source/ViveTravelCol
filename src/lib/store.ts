@@ -7,11 +7,7 @@ export type ViewType =
   | "cabins"
   | "cabin-detail"
   | "contact"
-  | "policies"
-  | "admin-plans"
-  | "admin-plan-form"
-  | "admin-cabins"
-  | "admin-cabin-form";
+  | "policies";
 
 interface NavigationState {
   currentView: ViewType;

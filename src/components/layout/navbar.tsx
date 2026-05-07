@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigation } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, Palmtree, Phone, Settings } from "lucide-react";
+import { Menu, Palmtree, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -107,20 +107,6 @@ export function Navbar() {
 
           {/* CTA + Mobile */}
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => handleNav("admin-plans")}
-              className={cn(
-                "hidden sm:flex transition-all duration-300",
-                showOpaque
-                  ? "text-foreground hover:text-ocean hover:bg-ocean/10"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
-              )}
-              title="Admin"
-            >
-              <Settings className="w-4 h-4" />
-            </Button>
             <Button
               onClick={() => handleNav("contact")}
               className={cn(
