@@ -135,7 +135,7 @@ export function Footer() {
             derechos reservados.
           </p>
           <p className="text-xs text-white/50">
-            Hecho con ❤️ en el Caribe Colombiano
+            Hecho en el Caribe Colombiano
           </p>
         </div>
       </div>

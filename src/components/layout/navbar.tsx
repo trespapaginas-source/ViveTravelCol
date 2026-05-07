@@ -20,6 +20,10 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const isHome = currentView === "home";
+  // When not on home page, always show opaque navbar (no hero image behind it)
+  const showOpaque = !isHome || scrolled;
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -35,7 +39,7 @@ export function Navbar() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled
+        showOpaque
           ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-ocean/10"
           : "bg-transparent"
       )}
@@ -50,7 +54,7 @@ export function Navbar() {
             <div
               className={cn(
                 "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300",
-                scrolled
+                showOpaque
                   ? "bg-ocean text-white"
                   : "bg-white/20 backdrop-blur-sm text-white"
               )}
@@ -61,7 +65,7 @@ export function Navbar() {
               <span
                 className={cn(
                   "text-lg font-bold leading-tight transition-colors duration-300",
-                  scrolled ? "text-ocean-dark" : "text-white"
+                  showOpaque ? "text-ocean-dark" : "text-white"
                 )}
               >
                 Vive Travel
@@ -69,7 +73,7 @@ export function Navbar() {
               <span
                 className={cn(
                   "text-[10px] tracking-widest uppercase leading-tight transition-colors duration-300",
-                  scrolled ? "text-ocean/70" : "text-white/70"
+                  showOpaque ? "text-ocean/70" : "text-white/70"
                 )}
               >
                 Atlántico
@@ -88,10 +92,10 @@ export function Navbar() {
                   currentView === item.key ||
                     (item.key === "plans" && currentView === "plan-detail") ||
                     (item.key === "cabins" && currentView === "cabin-detail")
-                    ? scrolled
+                    ? showOpaque
                       ? "bg-ocean text-white shadow-md"
                       : "bg-white/20 backdrop-blur-sm text-white"
-                    : scrolled
+                    : showOpaque
                     ? "text-foreground hover:bg-ocean/10 hover:text-ocean"
                     : "text-white/90 hover:bg-white/10 hover:text-white"
                 )}
@@ -109,7 +113,7 @@ export function Navbar() {
               onClick={() => handleNav("admin-plans")}
               className={cn(
                 "hidden sm:flex transition-all duration-300",
-                scrolled
+                showOpaque
                   ? "text-foreground hover:text-ocean hover:bg-ocean/10"
                   : "text-white/70 hover:text-white hover:bg-white/10"
               )}
@@ -121,7 +125,7 @@ export function Navbar() {
               onClick={() => handleNav("contact")}
               className={cn(
                 "hidden sm:flex items-center gap-2 rounded-full transition-all duration-300",
-                scrolled
+                showOpaque
                   ? "bg-sunset hover:bg-sunset/90 text-white"
                   : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border border-white/30"
               )}
@@ -138,7 +142,7 @@ export function Navbar() {
                   size="icon"
                   className={cn(
                     "md:hidden",
-                    scrolled ? "text-foreground" : "text-white"
+                    showOpaque ? "text-foreground" : "text-white"
                   )}
                 >
                   <Menu className="w-6 h-6" />

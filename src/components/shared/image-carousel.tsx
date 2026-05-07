@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, X, Expand } from "lucide-react";
+import { ChevronLeft, ChevronRight, Expand } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -28,8 +29,34 @@ export function ImageCarousel({
   className,
   showExpand = true,
 }: ImageCarouselProps) {
+  const [api, setApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  // Sync selectedIndex with the carousel's embla API
+  useEffect(() => {
+    if (!api) return;
+
+    const onSelect = () => {
+      setSelectedIndex(api.selectedScrollSnap());
+    };
+
+    api.on("select", onSelect);
+    onSelect(); // Initial sync
+
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
+
+  // Scroll carousel to a given index
+  const scrollToIndex = useCallback(
+    (index: number) => {
+      setSelectedIndex(index);
+      api?.scrollTo(index);
+    },
+    [api]
+  );
 
   const aspectClasses = {
     video: "aspect-video",
@@ -41,6 +68,7 @@ export function ImageCarousel({
     <>
       <div className={cn("relative group", className)}>
         <Carousel
+          setApi={setApi}
           opts={{ loop: true }}
           className="w-full"
         >
@@ -80,7 +108,7 @@ export function ImageCarousel({
             {images.map((img, i) => (
               <button
                 key={i}
-                onClick={() => setSelectedIndex(i)}
+                onClick={() => scrollToIndex(i)}
                 className={cn(
                   "w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden shrink-0 border-2 transition-all",
                   selectedIndex === i
@@ -122,7 +150,7 @@ export function ImageCarousel({
                 size="icon"
                 className="bg-white/20 text-white hover:bg-white/30 rounded-full"
                 onClick={() =>
-                  setSelectedIndex(
+                  scrollToIndex(
                     (selectedIndex - 1 + images.length) % images.length
                   )
                 }
@@ -137,7 +165,7 @@ export function ImageCarousel({
                 size="icon"
                 className="bg-white/20 text-white hover:bg-white/30 rounded-full"
                 onClick={() =>
-                  setSelectedIndex((selectedIndex + 1) % images.length)
+                  scrollToIndex((selectedIndex + 1) % images.length)
                 }
               >
                 <ChevronRight className="w-5 h-5" />

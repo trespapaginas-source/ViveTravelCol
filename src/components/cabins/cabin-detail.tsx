@@ -9,6 +9,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   ArrowLeft,
   Star,
@@ -50,8 +56,16 @@ import {
   Volume2,
   Shield,
   TreeDeciduous,
+  Minus,
+  Plus,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState, useCallback } from "react";
+import { type DateRange } from "react-day-picker";
+import { format, differenceInDays } from "date-fns";
+import { es } from "date-fns/locale/es";
+import { toast } from "sonner";
+import { isFavorite, toggleFavorite } from "@/lib/favorites";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -147,6 +161,37 @@ export function CabinDetail() {
     queryFn: () => fetchCabin(selectedItemId!),
     enabled: !!selectedItemId,
   });
+
+  const [isFav, setIsFav] = useState(() =>
+    typeof window !== "undefined" && selectedItemId
+      ? isFavorite(selectedItemId)
+      : false
+  );
+
+  const handleShare = useCallback(async () => {
+    const shareData = {
+      title: cabin?.name ?? "Cabaña Vive Travel",
+      text: `Mira esta cabaña: ${cabin?.name} en ${cabin?.location}`,
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // User cancelled or share failed — do nothing
+      }
+    } else {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("Enlace copiado al portapapeles");
+    }
+  }, [cabin]);
+
+  const handleToggleFavorite = useCallback(() => {
+    if (!selectedItemId) return;
+    const nowFav = toggleFavorite(selectedItemId);
+    setIsFav(nowFav);
+    toast.success(nowFav ? "Añadido a favoritos" : "Eliminado de favoritos");
+  }, [selectedItemId]);
 
   if (isLoading) {
     return (
@@ -250,11 +295,25 @@ export function CabinDetail() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Button variant="outline" size="icon" className="rounded-full">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full"
+                    onClick={handleShare}
+                    aria-label="Compartir"
+                  >
                     <Share2 className="w-4 h-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="rounded-full">
-                    <Heart className="w-4 h-4" />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full"
+                    onClick={handleToggleFavorite}
+                    aria-label={isFav ? "Eliminar de favoritos" : "Añadir a favoritos"}
+                  >
+                    <Heart
+                      className={`w-4 h-4 ${isFav ? "fill-sunset text-sunset" : ""}`}
+                    />
                   </Button>
                 </div>
               </div>
@@ -483,6 +542,26 @@ export function CabinDetail() {
 
 function PriceCard({ cabin }: { cabin: Cabin }) {
   const { navigate } = useNavigation();
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  const [guests, setGuests] = useState(1);
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [guestPopoverOpen, setGuestPopoverOpen] = useState(false);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const nightCount =
+    dateRange?.from && dateRange?.to
+      ? differenceInDays(dateRange.to, dateRange.from)
+      : 0;
+
+  const subtotal = nightCount * cabin.pricePerNight;
+  const serviceFee = Math.round(subtotal * 0.08);
+  const total = subtotal + serviceFee;
+
+  const formatDateShort = (date: Date) => {
+    return format(date, "d 'de' MMM", { locale: es });
+  };
 
   return (
     <motion.div
@@ -507,34 +586,115 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
 
           <Separator />
 
-          {/* Date Selector Placeholder */}
+          {/* Date Selector & Guest Selector */}
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-0 rounded-xl border border-border overflow-hidden">
-              <div className="p-3 border-r border-border">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Check-in
-                </label>
-                <p className="text-sm font-medium text-foreground mt-0.5">
-                  Seleccionar fecha
-                </p>
-              </div>
-              <div className="p-3">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Check-out
-                </label>
-                <p className="text-sm font-medium text-foreground mt-0.5">
-                  Seleccionar fecha
-                </p>
-              </div>
-            </div>
-            <div className="rounded-xl border border-border p-3">
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                Huéspedes
-              </label>
-              <p className="text-sm font-medium text-foreground mt-0.5">
-                1 huésped (máx. {cabin.capacity})
-              </p>
-            </div>
+            {/* Date Range Picker */}
+            <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  className="w-full grid grid-cols-2 gap-0 rounded-xl border border-border overflow-hidden text-left hover:border-ocean/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ocean/30"
+                  aria-label="Seleccionar fechas"
+                >
+                  <div className="p-3 border-r border-border">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Check-in
+                    </label>
+                    <p className="text-sm font-medium text-foreground mt-0.5">
+                      {dateRange?.from
+                        ? formatDateShort(dateRange.from)
+                        : "Seleccionar fecha"}
+                    </p>
+                  </div>
+                  <div className="p-3">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Check-out
+                    </label>
+                    <p className="text-sm font-medium text-foreground mt-0.5">
+                      {dateRange?.to
+                        ? formatDateShort(dateRange.to)
+                        : "Seleccionar fecha"}
+                    </p>
+                  </div>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-auto p-0"
+                align="start"
+                sideOffset={8}
+              >
+                <Calendar
+                  mode="range"
+                  selected={dateRange}
+                  onSelect={(range) => {
+                    setDateRange(range);
+                    // Auto-close when both dates are selected
+                    if (range?.to) {
+                      setDatePopoverOpen(false);
+                    }
+                  }}
+                  disabled={{ before: today }}
+                  numberOfMonths={2}
+                  locale={es}
+                  defaultMonth={today}
+                />
+              </PopoverContent>
+            </Popover>
+
+            {/* Guest Selector */}
+            <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ocean/30"
+                  aria-label="Seleccionar huéspedes"
+                >
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    Huéspedes
+                  </label>
+                  <p className="text-sm font-medium text-foreground mt-0.5">
+                    {guests} huésped{guests > 1 ? "es" : ""} (máx. {cabin.capacity})
+                  </p>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-64 p-4"
+                align="start"
+                sideOffset={8}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Huéspedes</p>
+                    <p className="text-xs text-muted-foreground">
+                      Máximo {cabin.capacity}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 rounded-full"
+                      onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                      disabled={guests <= 1}
+                      aria-label="Reducir huéspedes"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <span className="w-6 text-center text-sm font-semibold text-foreground">
+                      {guests}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 rounded-full"
+                      onClick={() => setGuests((g) => Math.min(cabin.capacity, g + 1))}
+                      disabled={guests >= cabin.capacity}
+                      aria-label="Aumentar huéspedes"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
 
           {/* Reserve Button */}
@@ -563,25 +723,49 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
             </a>
           </Button>
 
-          {/* Price Breakdown Placeholder */}
+          {/* Dynamic Price Breakdown */}
           <div className="space-y-2 pt-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
-                {formatPrice(cabin.pricePerNight)} x 1 noche
-              </span>
-              <span className="text-foreground">{formatPrice(cabin.pricePerNight)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
-                Tarifa de servicio
-              </span>
-              <span className="text-foreground">{formatPrice(Math.round(cabin.pricePerNight * 0.08))}</span>
-            </div>
-            <Separator />
-            <div className="flex justify-between text-sm font-bold">
-              <span>Total estimado</span>
-              <span>{formatPrice(Math.round(cabin.pricePerNight * 1.08))}</span>
-            </div>
+            {nightCount > 0 ? (
+              <>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
+                    {formatPrice(cabin.pricePerNight)} x {nightCount} noche{nightCount > 1 ? "s" : ""}
+                  </span>
+                  <span className="text-foreground">{formatPrice(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
+                    Tarifa de servicio
+                  </span>
+                  <span className="text-foreground">{formatPrice(serviceFee)}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between text-sm font-bold">
+                  <span>Total estimado</span>
+                  <span>{formatPrice(total)}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
+                    {formatPrice(cabin.pricePerNight)} x -- noches
+                  </span>
+                  <span className="text-muted-foreground">--</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
+                    Tarifa de servicio
+                  </span>
+                  <span className="text-muted-foreground">--</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between text-sm font-bold">
+                  <span>Total estimado</span>
+                  <span className="text-muted-foreground">--</span>
+                </div>
+              </>
+            )}
           </div>
 
           <p className="text-[11px] text-center text-muted-foreground">

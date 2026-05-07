@@ -121,3 +121,126 @@ Stage Summary:
 - Clean professional admin layout (gray background)
 - Navbar/Footer hidden in admin views
 - QueryClientProvider set up for TanStack Query across the app
+
+---
+Task ID: 3
+Agent: Bug Fix Agent
+Task: Fix Image Carousel selectedIndex sync and thumbnail navigation bugs
+
+Work Log:
+- Read image-carousel.tsx: identified that selectedIndex state was managed independently from embla carousel's internal state
+- Read carousel.tsx (shadcn/ui): confirmed it exposes setApi prop and CarouselApi type for embla API access
+- Root cause: thumbnails only called setSelectedIndex(i) without scrolling the carousel; carousel prev/next didn't update selectedIndex
+- Fixed by:
+  1. Added CarouselApi state and setApi prop on Carousel component to get embla API reference
+  2. Added useEffect that listens for embla "select" event and syncs selectedIndex via api.selectedScrollSnap()
+  3. Created scrollToIndex callback that both updates selectedIndex AND calls api.scrollTo(index)
+  4. Thumbnail onClick now uses scrollToIndex(i) instead of setSelectedIndex(i)
+  5. Lightbox prev/next buttons now use scrollToIndex() to keep carousel in sync when lightbox closes
+  6. Added useCallback import for scrollToIndex memoization
+- Lint check passes with no errors
+
+Stage Summary:
+- Image Carousel thumbnails now correctly navigate to the clicked slide
+- selectedIndex stays in sync when using carousel prev/next buttons
+- Counter display reflects actual carousel position
+- Lightbox navigation also syncs back to the main carousel
+
+---
+Task ID: 1
+Agent: Navbar Fix Agent
+Task: Fix navbar transparency on non-home pages
+
+Work Log:
+- Read navbar.tsx, page.tsx, and store.ts to understand current behavior
+- Problem: Navbar was always transparent initially (only gaining white bg on scroll), which looked broken on non-home pages (Plans, Cabins, Contact, Policies) where there's no hero background image
+- Added `isHome` variable derived from `currentView === "home"`
+- Added `showOpaque` logic: `!isHome || scrolled` — always opaque on non-home pages, scroll-dependent on home page
+- Replaced all 9 instances of `scrolled` in className conditionals with `showOpaque`:
+  - Header background (bg-transparent vs bg-white/95)
+  - Logo icon background (bg-ocean vs bg-white/20)
+  - Logo text color (text-ocean-dark vs text-white)
+  - Logo subtitle color (text-ocean/70 vs text-white/70)
+  - Desktop nav active item style
+  - Desktop nav inactive item style
+  - Admin settings button style
+  - CTA "Reservar" button style
+  - Mobile menu hamburger button style
+- Verified page.tsx already has correct `pt-16 sm:pt-20` padding for non-home, non-admin pages matching the fixed navbar height (h-16 sm:h-20)
+- Ran `bun run lint` — no errors
+
+Stage Summary:
+- Navbar now always shows opaque white background on non-home pages
+- Home page retains the transparent→scrolled behavior for hero image overlay
+- All text/icon colors adapt correctly based on showOpaque state
+- No padding changes needed in page.tsx
+
+---
+Task ID: 2
+Agent: Cabin Detail & Footer Fix Agent
+Task: Fix footer heart emoji and add functionality to cabin detail non-working buttons
+
+Work Log:
+- Fixed footer.tsx: Replaced "Hecho con ❤️ en el Caribe Colombiano" with "Hecho en el Caribe Colombiano" (removed heart emoji for clean professional text)
+- Created /src/lib/favorites.ts: localStorage-based favorites utility with getFavorites(), isFavorite(), toggleFavorite() functions
+- Added Share button functionality in CabinDetail:
+  - Uses Web Share API (navigator.share) when available
+  - Falls back to clipboard copy + toast notification when Web Share API not available
+- Added Favorite/Heart button functionality in CabinDetail:
+  - Toggles cabin ID in localStorage via favorites utility
+  - Heart icon fills with sunset color when favorited (fill-sunset text-sunset classes)
+  - Toast notification on add/remove
+  - Lazy state initialization from localStorage to avoid useEffect setState lint error
+- Replaced static date selector with functional date picker:
+  - Uses Popover + Calendar component from shadcn/ui
+  - react-day-picker v9 with mode="range" for check-in/check-out selection
+  - Spanish locale via date-fns/locale/es
+  - Displays 2 months side-by-side (numberOfMonths={2})
+  - Disables past dates
+  - Auto-closes popover when both dates selected
+  - Shows selected dates formatted in Spanish (e.g., "15 de jun")
+- Replaced static guest selector with functional counter:
+  - Uses Popover with increment/decrement buttons (Minus/Plus icons)
+  - Respects cabin capacity as maximum
+  - Minimum 1 guest
+  - Shows "X huésped/es (máx. {capacity})" in trigger
+- Made price breakdown dynamic:
+  - Calculates nights from selected date range using differenceInDays
+  - Shows subtotal (price × nights), service fee (8%), and total
+  - Shows placeholder dashes when no dates selected
+- Removed unused CalendarIcon import
+- All lint checks pass, dev server compiles successfully
+
+Stage Summary:
+- Footer: Clean professional text without emoji
+- Share: Web Share API with clipboard fallback
+- Favorites: localStorage-based with visual feedback (filled heart)
+- Date picker: Full range selection with Spanish locale, past date disabling
+- Guest counter: Increment/decrement with capacity limits
+- Price breakdown: Dynamic calculation based on selected dates
+---
+Task ID: Session Continuation
+Agent: Main Orchestrator
+Task: Continue pending tasks from previous session - fix header design, remove generic icons, full functionality audit
+
+Work Log:
+- Read all project files to understand current state after session break
+- Identified 3 pending tasks from previous conversation
+- Task 1 (Navbar): Fixed navbar to always show opaque background on non-home pages. Added `isHome` and `showOpaque` logic. On home page, navbar stays transparent over hero image; on other pages, it's always white/opaque.
+- Task 2 (Footer): Removed heart emoji from footer "Hecho con ❤️ en el Caribe Colombiano" → "Hecho en el Caribe Colombiano"
+- Task 2 (Cabin Detail Functionality): Added full interactivity:
+  - Share button: Web Share API with clipboard fallback + toast
+  - Favorite button: localStorage-based favorites with filled heart visual
+  - Date picker: Functional calendar range selector with Spanish locale, 2-month view, past dates disabled
+  - Guest selector: Increment/decrement with capacity limits
+  - Price breakdown: Dynamic calculation based on selected dates
+- Task 3 (Image Carousel): Fixed selectedIndex sync with embla carousel API. Thumbnails now navigate correctly, counter stays in sync.
+- Created /src/lib/favorites.ts for localStorage favorites management
+- All lint checks pass, dev server compiles and serves correctly
+
+Stage Summary:
+- Navbar: opaque on non-home pages, transparent on home with hero image
+- Footer: professional text without emoji
+- Cabin Detail: All interactive elements now functional (share, favorites, date picker, guest counter, dynamic pricing)
+- Image Carousel: Thumbnails and counter fully synchronized with carousel position
+- Favorites system: localStorage-based with toggle, visual feedback, and toast notifications
