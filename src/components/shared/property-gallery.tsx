@@ -12,11 +12,9 @@ interface PropertyGalleryProps {
   className?: string;
 }
 
-// ─── Desktop Gallery: Airbnb-style grid ────────────────────────────────────────
-// Layout: 1 large left + 3 small right (2 top, 2 bottom)
-// If only 3 images: 1 large left + 2 right (1 top, 1 bottom)
-// If only 2 images: 1 large left + 1 right
-// If 1 image: full width
+// ─── Desktop Gallery: Booking.com style ────────────────────────────────────────
+// 2 columns: Left ~60% (1 large image full height) + Right ~40% (2 stacked images)
+// "+N fotos" overlay on the bottom-right image
 
 function DesktopGallery({
   images,
@@ -26,7 +24,8 @@ function DesktopGallery({
   onImageClick: (index: number) => void;
 }) {
   const count = images.length;
-  const extraCount = count > 5 ? count - 5 : 0;
+  // Calculate how many extra photos exist beyond the 3 visible ones
+  const extraCount = count > 3 ? count - 3 : 0;
 
   if (count === 1) {
     return (
@@ -42,84 +41,63 @@ function DesktopGallery({
 
   if (count === 2) {
     return (
-      <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden h-[420px]">
-        {[0, 1].map((i) => (
-          <div
-            key={i}
-            className="relative cursor-pointer group overflow-hidden"
-            onClick={() => onImageClick(i)}
-          >
-            <GalleryImage src={images[i]} alt={`Imagen ${i + 1}`} priority={i < 2} />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (count <= 4) {
-    // 1 large left, rest stacked right
-    const rightCount = count - 1;
-    return (
-      <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden h-[420px]">
-        {/* Main image */}
+      <div className="flex gap-2 rounded-2xl overflow-hidden h-[460px]">
+        {/* Left large image */}
         <div
-          className="relative cursor-pointer group overflow-hidden row-span-2"
+          className="relative flex-[3] cursor-pointer group overflow-hidden"
           onClick={() => onImageClick(0)}
         >
           <GalleryImage src={images[0]} alt="Imagen 1" priority />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
         </div>
-        {/* Right images */}
-        {images.slice(1, 4).map((img, i) => (
-          <div
-            key={i + 1}
-            className="relative cursor-pointer group overflow-hidden"
-            onClick={() => onImageClick(i + 1)}
-          >
-            <GalleryImage src={img} alt={`Imagen ${i + 2}`} priority={i < 1} />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-            {/* "+N fotos" overlay on last visible image */}
-            {i === Math.min(rightCount, 3) - 1 && extraCount > 0 && (
-              <MorePhotosOverlay count={extraCount} />
-            )}
-          </div>
-        ))}
+        {/* Right image */}
+        <div
+          className="relative flex-[2] cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(1)}
+        >
+          <GalleryImage src={images[1]} alt="Imagen 2" priority />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
       </div>
     );
   }
 
-  // 5+ images: Airbnb layout — 1 large left, 4 right (2x2 grid)
+  // 3+ images: Booking.com layout — 1 large left, 2 stacked right
   return (
-    <div className="grid grid-cols-4 grid-rows-2 gap-2 rounded-2xl overflow-hidden h-[420px]">
-      {/* Main large image — spans 2 rows, 2 cols */}
+    <div className="flex gap-2 rounded-2xl overflow-hidden h-[460px]">
+      {/* Left: Main large image */}
       <div
-        className="relative cursor-pointer group overflow-hidden col-span-2 row-span-2"
+        className="relative flex-[3] cursor-pointer group overflow-hidden"
         onClick={() => onImageClick(0)}
       >
         <GalleryImage src={images[0]} alt="Imagen 1" priority />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
       </div>
-      {/* 4 right-side images */}
-      {images.slice(1, 5).map((img, i) => (
+
+      {/* Right: 2 stacked images */}
+      <div className="flex-[2] flex flex-col gap-2">
         <div
-          key={i + 1}
-          className="relative cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(i + 1)}
+          className="relative flex-1 cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(1)}
         >
-          <GalleryImage src={img} alt={`Imagen ${i + 2}`} priority={i < 2} />
+          <GalleryImage src={images[1]} alt="Imagen 2" priority />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-          {/* "+N fotos" overlay on last image */}
-          {i === 3 && extraCount > 0 && (
-            <MorePhotosOverlay count={extraCount} />
-          )}
         </div>
-      ))}
+        <div
+          className="relative flex-1 cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(2)}
+        >
+          <GalleryImage src={images[2]} alt="Imagen 3" priority={false} />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+          {/* "+N fotos" overlay */}
+          {extraCount > 0 && <MorePhotosOverlay count={extraCount} />}
+        </div>
+      </div>
     </div>
   );
 }
 
-// ─── Mobile Gallery: 2x2 grid ──────────────────────────────────────────────────
+// ─── Mobile Gallery: 2x2 grid, 4:3 aspect ─────────────────────────────────────
 
 function MobileGallery({
   images,
@@ -132,11 +110,11 @@ function MobileGallery({
   const extraCount = images.length > 4 ? images.length - 4 : 0;
 
   return (
-    <div className="grid grid-cols-2 grid-rows-2 gap-1.5 rounded-xl overflow-hidden aspect-square">
+    <div className="grid grid-cols-2 grid-rows-2 gap-1.5 rounded-xl overflow-hidden">
       {displayImages.map((img, i) => (
         <div
           key={i}
-          className="relative cursor-pointer group overflow-hidden"
+          className="relative cursor-pointer group overflow-hidden aspect-[4/3]"
           onClick={() => onImageClick(i)}
         >
           <GalleryImage src={img} alt={`Imagen ${i + 1}`} priority={i < 2} />
@@ -152,7 +130,7 @@ function MobileGallery({
         Array.from({ length: 4 - displayImages.length }).map((_, i) => (
           <div
             key={`empty-${i}`}
-            className="bg-muted/30"
+            className="bg-muted/30 aspect-[4/3]"
           />
         ))}
     </div>
