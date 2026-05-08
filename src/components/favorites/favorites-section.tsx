@@ -2,7 +2,7 @@
 
 import { useNavigation } from "@/lib/store";
 import { getFavorites } from "@/lib/favorites";
-import { fetchCabin } from "@/lib/api";
+import { fetchCabin, fetchPlan } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { ImageCarousel } from "@/components/shared/image-carousel";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,11 +16,13 @@ import {
   Bath,
   ArrowRight,
   Compass,
+  Clock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
 import { toggleFavorite } from "@/lib/favorites";
 import { toast } from "sonner";
+import { type Cabin, type TourPlan } from "@/lib/data";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -31,29 +33,42 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
-function FavoriteCard({
-  cabinId,
-  onSelect,
+// Try to fetch as cabin first, then as plan
+function FavoriteItem({
+  itemId,
   onRemove,
 }: {
-  cabinId: string;
-  onSelect: () => void;
+  itemId: string;
   onRemove: () => void;
 }) {
-  const { data: cabin, isLoading } = useQuery({
-    queryKey: ["cabin", cabinId],
-    queryFn: () => fetchCabin(cabinId),
-    enabled: !!cabinId,
+  const { navigate } = useNavigation();
+
+  // Try cabin first
+  const cabinQuery = useQuery({
+    queryKey: ["cabin", itemId],
+    queryFn: () => fetchCabin(itemId),
+    enabled: !!itemId,
   });
+
+  // Try plan if cabin didn't load
+  const planQuery = useQuery({
+    queryKey: ["plan", itemId],
+    queryFn: () => fetchPlan(itemId),
+    enabled: !!itemId && !cabinQuery.data,
+  });
+
+  const cabin = cabinQuery.data;
+  const plan = planQuery.data;
+  const isLoading = cabinQuery.isLoading || (!cabin && planQuery.isLoading);
 
   const handleRemove = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      toggleFavorite(cabinId);
+      toggleFavorite(itemId);
       onRemove();
       toast.success("Eliminado de tu colección");
     },
-    [cabinId, onRemove]
+    [itemId, onRemove]
   );
 
   if (isLoading) {
@@ -68,8 +83,38 @@ function FavoriteCard({
     );
   }
 
-  if (!cabin) return null;
+  if (cabin) {
+    return (
+      <FavoriteCabinCard
+        cabin={cabin}
+        onRemove={handleRemove}
+        onSelect={() => navigate("cabin-detail", cabin.id)}
+      />
+    );
+  }
 
+  if (plan) {
+    return (
+      <FavoritePlanCard
+        plan={plan}
+        onRemove={handleRemove}
+        onSelect={() => navigate("plan-detail", plan.id)}
+      />
+    );
+  }
+
+  return null;
+}
+
+function FavoriteCabinCard({
+  cabin,
+  onSelect,
+  onRemove,
+}: {
+  cabin: Cabin;
+  onSelect: () => void;
+  onRemove: (e: React.MouseEvent) => void;
+}) {
   return (
     <motion.div
       layout
@@ -90,12 +135,18 @@ function FavoriteCard({
             className="[&_.border-0]:border-0"
           />
           <button
-            onClick={handleRemove}
+            onClick={onRemove}
             className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
             aria-label="Eliminar de favoritos"
           >
             <Heart className="w-3.5 h-3.5 fill-indigo text-indigo" />
           </button>
+          {/* Type badge */}
+          <div className="absolute top-3 left-3 z-10">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-ocean/80 text-white backdrop-blur-sm">
+              Cabaña
+            </span>
+          </div>
         </div>
 
         <CardContent className="p-3.5 sm:p-4 space-y-2">
@@ -149,6 +200,98 @@ function FavoriteCard({
   );
 }
 
+function FavoritePlanCard({
+  plan,
+  onSelect,
+  onRemove,
+}: {
+  plan: TourPlan;
+  onSelect: () => void;
+  onRemove: (e: React.MouseEvent) => void;
+}) {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card
+        className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-300 py-0 gap-0"
+        onClick={onSelect}
+      >
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <img
+            src={plan.images[0]}
+            alt={plan.name}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <button
+            onClick={onRemove}
+            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
+            aria-label="Eliminar de favoritos"
+          >
+            <Heart className="w-3.5 h-3.5 fill-indigo text-indigo" />
+          </button>
+          {/* Type badge */}
+          <div className="absolute top-3 left-3 z-10">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-ocean/80 text-white backdrop-blur-sm">
+              Plan
+            </span>
+          </div>
+          {/* Price overlay */}
+          <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1 shadow-sm">
+            <span className="text-foreground font-semibold text-sm">
+              {formatPrice(plan.price)}
+            </span>
+          </div>
+        </div>
+
+        <CardContent className="p-3.5 sm:p-4 space-y-2">
+          <div>
+            <h3 className="font-semibold text-[15px] text-foreground group-hover:text-ocean transition-colors line-clamp-1 leading-snug">
+              {plan.name}
+            </h3>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+              <MapPin className="w-3 h-3 shrink-0 text-muted-foreground/60" />
+              <span className="line-clamp-1">{plan.location}</span>
+            </div>
+          </div>
+
+          <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
+            {plan.shortDescription}
+          </p>
+
+          <div className="flex items-center gap-0 text-xs text-muted-foreground/70 pt-1">
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span>{plan.duration}</span>
+            </div>
+            <span className="mx-1.5 text-muted-foreground/30">·</span>
+            <div className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              <span>Máx. {plan.maxGuests}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end pt-1.5 border-t border-border/30">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-ocean hover:text-ocean-dark hover:bg-ocean/5 gap-1 text-xs font-medium px-2 h-7"
+            >
+              Ver más
+              <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
 export function FavoritesSection() {
   const { navigate } = useNavigation();
   const [favIds, setFavIds] = useState<string[]>(() =>
@@ -169,7 +312,7 @@ export function FavoritesSection() {
         >
           <SectionHeader
             title="Tu Colección"
-            subtitle="Tus cabañas favoritas guardadas para comparar y encontrar tu escapada ideal."
+            subtitle="Tus planes y cabañas favoritos guardados para comparar y encontrar tu escapada ideal."
           />
         </motion.div>
 
@@ -187,24 +330,32 @@ export function FavoritesSection() {
               Tu colección está vacía
             </h3>
             <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-              Explora nuestras cabañas y guarda las que más te gusten tocando el ícono de corazón.
+              Explora nuestros planes y cabañas y guarda los que más te gusten tocando el ícono de corazón.
             </p>
-            <Button
-              onClick={() => navigate("cabins")}
-              className="bg-ocean hover:bg-ocean-dark text-white rounded-full px-8 gap-2"
-            >
-              Explorar cabañas
-              <ArrowRight className="w-4 h-4" />
-            </Button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button
+                onClick={() => navigate("plans")}
+                className="bg-ocean hover:bg-ocean-dark text-white rounded-full px-8 gap-2"
+              >
+                Explorar planes
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={() => navigate("cabins")}
+                variant="outline"
+                className="border-ocean text-ocean hover:bg-ocean hover:text-white rounded-full px-8 gap-2"
+              >
+                Explorar cabañas
+              </Button>
+            </div>
           </motion.div>
         ) : (
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             <AnimatePresence mode="popLayout">
               {favIds.map((id) => (
-                <FavoriteCard
+                <FavoriteItem
                   key={id}
-                  cabinId={id}
-                  onSelect={() => navigate("cabin-detail", id)}
+                  itemId={id}
                   onRemove={handleRemove}
                 />
               ))}

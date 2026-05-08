@@ -213,7 +213,7 @@ export function VideoShowcase() {
               {/* Video container */}
               <div className="relative rounded-2xl overflow-hidden bg-black aspect-video shadow-2xl">
                 <iframe
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1"
+                  src="https://www.youtube.com/embed/?autoplay=1&rel=0&modestbranding=1"
                   title="Vive Travel - Descubre el Atlántico"
                   className="absolute inset-0 w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

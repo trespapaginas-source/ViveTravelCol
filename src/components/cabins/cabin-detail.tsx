@@ -206,7 +206,7 @@ export function CabinDetail() {
   return (
     <div className="pb-16">
       {/* Back Button */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 pt-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 pt-20 sm:pt-24">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}

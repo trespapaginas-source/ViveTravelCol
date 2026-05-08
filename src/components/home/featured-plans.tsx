@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { useNavigation } from "@/lib/store";
 import { fetchPlans } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const categoryColors: Record<string, string> = {
   Naturaleza: "bg-ocean/80 text-white",
@@ -30,10 +31,36 @@ function formatPrice(price: number) {
 
 export function FeaturedPlans() {
   const { navigate } = useNavigation();
-  const { data: allPlans = [] } = useQuery({
+  const { data: allPlans = [], isLoading } = useQuery({
     queryKey: ["plans"],
     queryFn: fetchPlans,
   });
+
+  if (isLoading) {
+    return (
+      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeader
+            title="Planes Destacados"
+            subtitle="Descubre nuestras experiencias más populares en el Atlántico"
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 mt-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="overflow-hidden py-0 gap-0">
+                <Skeleton className="aspect-[4/3]" />
+                <CardContent className="p-4 space-y-3">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-1/2" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   const featuredPlans = allPlans.filter((p) => p.published !== false).slice(0, 4);
 
   return (

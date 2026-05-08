@@ -89,12 +89,6 @@ export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
     durationCounts[dur] = (durationCounts[dur] || 0) + 1;
   });
 
-  // Difficulty counts
-  const difficultyCounts: Record<string, number> = {};
-  plans.forEach((p) => {
-    difficultyCounts[p.difficulty] = (difficultyCounts[p.difficulty] || 0) + 1;
-  });
-
   // Price range
   const prices = plans.map((p) => p.price);
   const minPrice = Math.min(...prices);
@@ -134,14 +128,7 @@ export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
         .sort(([, a], [, b]) => b - a)
         .map(([label, count]) => ({ label, value: label, count })),
     },
-    {
-      id: "difficulty",
-      title: "Dificultad",
-      type: "checkbox",
-      options: Object.entries(difficultyCounts)
-        .sort(([, a], [, b]) => b - a)
-        .map(([label, count]) => ({ label, value: label, count })),
-    },
+
   ];
 }
 
@@ -259,10 +246,6 @@ export function filterPlans(plans: TourPlan[], filters: FilterState): TourPlan[]
     // Duration
     const durations = filters.checkboxes["duration"] || [];
     if (durations.length > 0 && !durations.includes(plan.duration)) return false;
-
-    // Difficulty
-    const difficulties = filters.checkboxes["difficulty"] || [];
-    if (difficulties.length > 0 && !difficulties.includes(plan.difficulty)) return false;
 
     return true;
   });

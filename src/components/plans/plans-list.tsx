@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Clock, Users, Compass } from "lucide-react";
+import { MapPin, Clock, Users, Compass, Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -17,6 +17,10 @@ import { useNavigation } from "@/lib/store";
 import { type TourPlan } from "@/lib/data";
 import { fetchPlans } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { isFavorite, toggleFavorite } from "@/lib/favorites";
+import { useState, useCallback } from "react";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const categoryColors: Record<string, string> = {
   Naturaleza: "bg-ocean/80 text-white",
@@ -29,10 +33,31 @@ const categoryColors: Record<string, string> = {
 
 
 function formatPrice(price: number): string {
-  return new Intl.NumberFormat("es-CO").format(price);
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price);
 }
 
 function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: string) => void }) {
+  const [isFav, setIsFav] = useState(() =>
+    typeof window !== "undefined" ? isFavorite(plan.id) : false
+  );
+
+  const handleFavorite = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const nowFav = toggleFavorite(plan.id);
+      setIsFav(nowFav);
+      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+      });
+    },
+    [plan.id]
+  );
+
   return (
     <motion.div
       layout
@@ -61,12 +86,24 @@ function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: strin
             {plan.category}
           </Badge>
 
+          {/* Favorite Button */}
+          <button
+            onClick={handleFavorite}
+            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
+            aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
+          >
+            <Heart
+              className={`w-3.5 h-3.5 transition-colors duration-200 ${
+                isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
+              }`}
+            />
+          </button>
+
           {/* Price overlay */}
           <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1 shadow-sm">
             <span className="text-foreground font-semibold text-sm">
-              ${formatPrice(plan.price)}
+              {formatPrice(plan.price)}
             </span>
-            <span className="text-muted-foreground text-[10px]"> COP</span>
           </div>
         </div>
 
@@ -131,6 +168,31 @@ export function PlansList() {
   const handleNavigate = (planId: string) => {
     navigate("plan-detail", planId);
   };
+
+  if (isLoading) {
+    return (
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeader
+            title="Nuestros Planes"
+            subtitle="Descubre experiencias únicas en el Atlántico colombiano."
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 mt-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="overflow-hidden py-0 gap-0">
+                <Skeleton className="aspect-[4/3]" />
+                <CardContent className="p-4 space-y-3">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-1/2" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">

@@ -29,6 +29,7 @@ import { motion } from "framer-motion";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -178,6 +179,31 @@ export function CabinsList() {
     () => filterCabins(publishedCabins, filters),
     [publishedCabins, filters]
   );
+
+  if (isLoading) {
+    return (
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeader
+            title="Nuestras Cabañas"
+            subtitle="Descubre el alojamiento perfecto para tu escapada al Caribe colombiano."
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mt-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="overflow-hidden py-0 gap-0">
+                <Skeleton className="aspect-video" />
+                <CardContent className="p-4 space-y-3">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-1/2" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">

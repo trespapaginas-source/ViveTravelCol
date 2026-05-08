@@ -13,6 +13,8 @@ import {
   Check,
   X,
   Sparkles,
+  Heart,
+  Share2,
   type LucideIcon,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -24,6 +26,10 @@ import { PropertyGallery } from "@/components/shared/property-gallery";
 import { useNavigation } from "@/lib/store";
 import { fetchPlan } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { isFavorite, toggleFavorite } from "@/lib/favorites";
+import { ShareDialog } from "@/components/shared/share-dialog";
+import { useState, useCallback } from "react";
+import { toast } from "sonner";
 
 const categoryColors: Record<string, string> = {
   Naturaleza: "bg-ocean/80 text-white",
@@ -65,6 +71,23 @@ export function PlanDetail() {
     enabled: !!selectedItemId,
   });
 
+  const [isFav, setIsFav] = useState(() =>
+    typeof window !== "undefined" && selectedItemId
+      ? isFavorite(selectedItemId)
+      : false
+  );
+
+  const [shareOpen, setShareOpen] = useState(false);
+
+  const handleToggleFavorite = useCallback(() => {
+    if (!selectedItemId) return;
+    const nowFav = toggleFavorite(selectedItemId);
+    setIsFav(nowFav);
+    toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+      description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+    });
+  }, [selectedItemId]);
+
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -98,7 +121,7 @@ export function PlanDetail() {
   };
 
   return (
-    <div className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+    <div className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24">
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <motion.div {...fadeInUp} transition={{ duration: 0.3 }}>
@@ -138,9 +161,37 @@ export function PlanDetail() {
                 </Badge>
               </div>
 
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <MapPin className="w-3.5 h-3.5 text-muted-foreground/50" />
-                <span>{plan.location}</span>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <MapPin className="w-3.5 h-3.5 text-muted-foreground/50" />
+                  <span>{plan.location}</span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full h-9 w-9 border-border/50 hover:border-border"
+                    onClick={() => setShareOpen(true)}
+                    aria-label="Compartir"
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={`rounded-full h-9 w-9 border-border/50 hover:border-border transition-colors ${
+                      isFav ? "border-indigo/30 bg-indigo/5" : ""
+                    }`}
+                    onClick={handleToggleFavorite}
+                    aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
+                  >
+                    <Heart
+                      className={`w-4 h-4 transition-colors ${
+                        isFav ? "fill-indigo text-indigo" : ""
+                      }`}
+                    />
+                  </Button>
+                </div>
               </div>
             </motion.div>
 
@@ -263,7 +314,7 @@ export function PlanDetail() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="w-full lg:w-[380px] shrink-0"
           >
-            <div className="lg:sticky lg:top-6">
+            <div className="lg:sticky lg:top-24">
               <Card className="border-border/50 shadow-xl py-0 gap-0">
                 <CardContent className="p-6 space-y-5">
                   {/* Price */}
@@ -349,6 +400,14 @@ export function PlanDetail() {
           </motion.aside>
         </div>
       </div>
+
+      {/* Share Dialog */}
+      <ShareDialog
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        title={plan.name}
+        text={`Mira este plan: ${plan.name} en ${plan.location}`}
+      />
     </div>
   );
 }
