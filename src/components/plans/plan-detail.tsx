@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ImageCarousel } from "@/components/shared/image-carousel";
+import { PropertyGallery } from "@/components/shared/property-gallery";
 import { useNavigation } from "@/lib/store";
 import { fetchPlan } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
@@ -117,12 +117,11 @@ export function PlanDetail() {
           </Button>
         </motion.div>
 
-        {/* Image Carousel */}
+        {/* Image Gallery */}
         <motion.div {...fadeInUp} transition={{ duration: 0.4, delay: 0.1 }}>
-          <ImageCarousel
+          <PropertyGallery
             images={plan.images}
-            showThumbnails
-            aspectRatio="video"
+            title={plan.name}
             className="mb-8"
           />
         </motion.div>

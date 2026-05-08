@@ -4,7 +4,7 @@ import { Cabin } from "@/lib/data";
 import { fetchCabin } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
-import { ImageCarousel } from "@/components/shared/image-carousel";
+import { PropertyGallery } from "@/components/shared/property-gallery";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -223,18 +223,16 @@ export function CabinDetail() {
         </motion.div>
       </div>
 
-      {/* Image Carousel */}
+      {/* Image Gallery */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
       >
-        <ImageCarousel
+        <PropertyGallery
           images={cabin.images}
-          aspectRatio="wide"
-          showThumbnails
-          showExpand
+          title={cabin.name}
         />
       </motion.div>
 

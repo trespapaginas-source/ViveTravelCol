@@ -589,3 +589,30 @@ Stage Summary:
 - Cabins filters: Ubicación, Precio por noche (range), Capacidad, Habitaciones, Baños, Servicios
 - Desktop: sticky sidebar (w-64/w-72) with collapsible sections
 - Mobile: Sheet drawer from left with filter button + result count badge
+
+---
+Task ID: 2
+Agent: main
+Task: Create premium Airbnb-style image gallery for plan and cabin detail pages
+
+Work Log:
+- Read existing image-carousel.tsx, cabin-detail.tsx, and plan-detail.tsx
+- Created PropertyGallery component at src/components/shared/property-gallery.tsx
+- Desktop layout: Airbnb-style grid with 1 large left + right side images (adapts for 1-5+ images)
+- Mobile layout: 2x2 grid with exactly 4 visible images
+- "+N fotos" overlay on last visible image when there are more photos
+- Full-screen lightbox with Framer Motion transitions, keyboard navigation (Escape, arrows)
+- Lightbox features: thumbnail strip, counter, title, smooth image transitions
+- Lazy loading with priority for first images
+- Integrated PropertyGallery into cabin-detail.tsx (replaced ImageCarousel)
+- Integrated PropertyGallery into plan-detail.tsx (replaced ImageCarousel)
+- Fixed React 19 lint issues: removed setState in useEffect, ref access during render
+- Lint passes clean, dev server compiles successfully
+
+Stage Summary:
+- New file: src/components/shared/property-gallery.tsx
+- Modified: src/components/cabins/cabin-detail.tsx (ImageCarousel → PropertyGallery)
+- Modified: src/components/plans/plan-detail.tsx (ImageCarousel → PropertyGallery)
+- Desktop: 5+ images → 1 large + 4 right; 4 → 1 large + 3 right; 2-3 → adaptive grid
+- Mobile: Always 2x2 grid, "+N fotos" on 4th image
+- Lightbox: Full-screen, animated transitions, keyboard nav, thumbnail strip
