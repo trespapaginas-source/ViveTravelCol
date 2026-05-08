@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   FileText,
 } from "lucide-react";
+import { PremiumIcon, IconBadge, SectionIcon } from "@/components/shared/premium-icon";
 import {
   Accordion,
   AccordionContent,
@@ -421,9 +422,7 @@ function PolicyAccordion({
         >
           <AccordionTrigger className="hover:no-underline hover:text-ocean transition-colors py-4">
             <span className="flex items-center gap-3 text-left">
-              <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-ocean/10 shrink-0">
-                <item.icon className="w-4.5 h-4.5 text-ocean" />
-              </span>
+              <PremiumIcon icon={item.icon} variant="gradient" theme="ocean" size="sm" />
               <span className="font-semibold">{item.title}</span>
             </span>
           </AccordionTrigger>
@@ -448,10 +447,7 @@ export function PoliciesSection() {
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero-like Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-ocean/10 text-ocean text-sm font-medium mb-4">
-            <ScrollText className="w-4 h-4" />
-            Políticas
-          </div>
+          <IconBadge icon={ScrollText} label="Políticas" theme="ocean" variant="filled" className="mb-4" />
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Políticas de{" "}
             <span className="text-ocean">Reserva y Cancelación</span>
@@ -466,9 +462,7 @@ export function PoliciesSection() {
         {/* Booking Policies */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-6">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-ocean/10">
-              <ShieldCheck className="w-5 h-5 text-ocean" />
-            </div>
+            <SectionIcon icon={ShieldCheck} theme="ocean" />
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-foreground">
                 Políticas de Reserva
@@ -489,9 +483,7 @@ export function PoliciesSection() {
         {/* Cancellation Policies */}
         <div>
           <div className="flex items-center gap-3 mb-6">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-sunset/10">
-              <FileText className="w-5 h-5 text-sunset" />
-            </div>
+            <SectionIcon icon={FileText} theme="sunset" />
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-foreground">
                 Políticas de Cancelación

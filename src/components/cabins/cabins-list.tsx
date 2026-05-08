@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PremiumIcon, RatingStars } from "@/components/shared/premium-icon";
 import {
   Users,
   BedDouble,
@@ -27,35 +28,6 @@ function formatPrice(price: number): string {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
-}
-
-function renderStars(rating: number) {
-  const stars = [];
-  const fullStars = Math.floor(rating);
-  const hasHalf = rating % 1 >= 0.5;
-
-  for (let i = 0; i < fullStars; i++) {
-    stars.push(
-      <Star key={`full-${i}`} className="w-3.5 h-3.5 fill-sunset text-sunset" />
-    );
-  }
-  if (hasHalf) {
-    stars.push(
-      <div key="half" className="relative">
-        <Star className="w-3.5 h-3.5 text-muted-foreground/30" />
-        <div className="absolute inset-0 overflow-hidden w-[50%]">
-          <Star className="w-3.5 h-3.5 fill-sunset text-sunset" />
-        </div>
-      </div>
-    );
-  }
-  const remaining = 5 - fullStars - (hasHalf ? 1 : 0);
-  for (let i = 0; i < remaining; i++) {
-    stars.push(
-      <Star key={`empty-${i}`} className="w-3.5 h-3.5 text-muted-foreground/30" />
-    );
-  }
-  return stars;
 }
 
 function CabinCard({
@@ -106,8 +78,8 @@ function CabinCard({
             <h3 className="font-bold text-lg text-foreground group-hover:text-ocean transition-colors line-clamp-1">
               {cabin.name}
             </h3>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5">
-              <MapPin className="w-3.5 h-3.5 text-sunset shrink-0" />
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
+              <PremiumIcon icon={MapPin} variant="default" theme="sunset" size="xs" />
               <span className="line-clamp-1">{cabin.location}</span>
             </div>
           </div>
@@ -119,16 +91,16 @@ function CabinCard({
 
           {/* Stats Row */}
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Users className="w-3.5 h-3.5 text-ocean" />
+            <div className="flex items-center gap-1.5">
+              <PremiumIcon icon={Users} variant="default" theme="ocean" size="xs" />
               <span>{cabin.capacity} huéspedes</span>
             </div>
-            <div className="flex items-center gap-1">
-              <BedDouble className="w-3.5 h-3.5 text-ocean" />
+            <div className="flex items-center gap-1.5">
+              <PremiumIcon icon={BedDouble} variant="default" theme="ocean" size="xs" />
               <span>{cabin.bedrooms} hab.</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Bath className="w-3.5 h-3.5 text-ocean" />
+            <div className="flex items-center gap-1.5">
+              <PremiumIcon icon={Bath} variant="default" theme="ocean" size="xs" />
               <span>{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
             </div>
           </div>
@@ -136,7 +108,7 @@ function CabinCard({
           {/* Bottom Row: Rating and CTA */}
           <div className="flex items-center justify-between pt-2 border-t border-border/50">
             <div className="flex items-center gap-1.5">
-              <div className="flex">{renderStars(cabin.rating)}</div>
+              <RatingStars rating={cabin.rating} size="sm" />
               <span className="text-xs text-muted-foreground">
                 ({cabin.reviewCount})
               </span>
@@ -188,7 +160,7 @@ export function CabinsList() {
           className="flex items-center justify-center gap-2 mb-10"
         >
           <div className="h-px w-12 bg-ocean/30" />
-          <Waves className="w-5 h-5 text-ocean" />
+          <PremiumIcon icon={Waves} variant="default" theme="ocean" size="sm" />
           <div className="h-px w-12 bg-ocean/30" />
         </motion.div>
 

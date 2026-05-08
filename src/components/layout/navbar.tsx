@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu, Palmtree, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PremiumIcon } from "@/components/shared/premium-icon";
 
 const navItems = [
   { key: "home" as const, label: "Inicio" },
@@ -51,16 +52,7 @@ export function Navbar() {
             onClick={() => handleNav("home")}
             className="flex items-center gap-2 group"
           >
-            <div
-              className={cn(
-                "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300",
-                showOpaque
-                  ? "bg-ocean text-white"
-                  : "bg-white/20 backdrop-blur-sm text-white"
-              )}
-            >
-              <Palmtree className="w-6 h-6" />
-            </div>
+            <PremiumIcon icon={Palmtree} variant="solid" theme="ocean" size="md" />
             <div className="flex flex-col">
               <span
                 className={cn(
@@ -139,9 +131,7 @@ export function Navbar() {
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-ocean text-white flex items-center justify-center">
-                        <Palmtree className="w-5 h-5" />
-                      </div>
+                      <PremiumIcon icon={Palmtree} variant="solid" theme="ocean" size="sm" />
                       <span className="font-bold text-ocean-dark">Vive Travel</span>
                     </div>
                   </div>

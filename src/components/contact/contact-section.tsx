@@ -17,6 +17,8 @@ import {
   Loader2,
   Waves,
 } from "lucide-react";
+import { PremiumIcon, IconBadge, SocialIcon } from "@/components/shared/premium-icon";
+import type { IconTheme } from "@/components/shared/premium-icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,7 +39,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 const contactSchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
@@ -69,53 +70,28 @@ const contactInfo = [
     label: "WhatsApp",
     value: "+57 300 123 4567",
     href: "https://wa.me/573001234567",
-    color: "text-palm",
-    bgColor: "bg-palm/10",
+    theme: "palm" as IconTheme,
   },
   {
     icon: Mail,
     label: "Email",
     value: "info@vivetravel.co",
     href: "mailto:info@vivetravel.co",
-    color: "text-ocean",
-    bgColor: "bg-ocean/10",
+    theme: "ocean" as IconTheme,
   },
   {
     icon: MapPin,
     label: "Ubicación",
     value: "Barranquilla, Atlántico, Colombia",
     href: null,
-    color: "text-sunset",
-    bgColor: "bg-sunset/10",
+    theme: "sunset" as IconTheme,
   },
   {
     icon: Clock,
     label: "Horario",
     value: "Lun - Sáb: 8:00 AM - 6:00 PM\nDom: 9:00 AM - 1:00 PM",
     href: null,
-    color: "text-coral",
-    bgColor: "bg-coral/10",
-  },
-];
-
-const socialLinks = [
-  {
-    icon: Instagram,
-    label: "Instagram",
-    href: "#",
-    hoverColor: "hover:bg-sunset",
-  },
-  {
-    icon: Facebook,
-    label: "Facebook",
-    href: "#",
-    hoverColor: "hover:bg-ocean",
-  },
-  {
-    icon: MessageCircle,
-    label: "WhatsApp",
-    href: "https://wa.me/573001234567",
-    hoverColor: "hover:bg-palm",
+    theme: "coral" as IconTheme,
   },
 ];
 
@@ -161,10 +137,7 @@ export function ContactSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-ocean/10 text-ocean text-sm font-medium mb-4">
-            <MessageCircle className="w-4 h-4" />
-            Contáctanos
-          </div>
+          <IconBadge icon={MessageCircle} label="Contáctanos" theme="ocean" variant="filled" className="mb-4" />
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             ¿Listo para tu{" "}
             <span className="text-ocean">próxima aventura</span>?
@@ -181,7 +154,7 @@ export function ContactSection() {
           <Card className="lg:col-span-3 border-ocean/10 shadow-lg shadow-ocean/5">
             <CardContent className="p-6 sm:p-8">
               <h3 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
-                <Send className="w-5 h-5 text-ocean" />
+                <PremiumIcon icon={Send} variant="gradient" theme="ocean" size="sm" />
                 Envíanos un mensaje
               </h3>
 
@@ -389,11 +362,12 @@ export function ContactSection() {
                         rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
                         className="flex items-start gap-4"
                       >
-                        <div
-                          className={`${item.bgColor} p-3 rounded-xl group-hover:scale-110 transition-transform duration-300`}
-                        >
-                          <item.icon className={`w-5 h-5 ${item.color}`} />
-                        </div>
+                        <PremiumIcon
+                          icon={item.icon}
+                          variant="gradient"
+                          theme={item.theme}
+                          className="group-hover:scale-110 transition-transform duration-300"
+                        />
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-muted-foreground">
                             {item.label}
@@ -405,11 +379,12 @@ export function ContactSection() {
                       </a>
                     ) : (
                       <div className="flex items-start gap-4">
-                        <div
-                          className={`${item.bgColor} p-3 rounded-xl group-hover:scale-110 transition-transform duration-300`}
-                        >
-                          <item.icon className={`w-5 h-5 ${item.color}`} />
-                        </div>
+                        <PremiumIcon
+                          icon={item.icon}
+                          variant="gradient"
+                          theme={item.theme}
+                          className="group-hover:scale-110 transition-transform duration-300"
+                        />
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-muted-foreground">
                             {item.label}
@@ -432,18 +407,9 @@ export function ContactSection() {
                   Síguenos en redes sociales
                 </p>
                 <div className="flex gap-3">
-                  {socialLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      target={link.href.startsWith("http") ? "_blank" : undefined}
-                      rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                      aria-label={link.label}
-                      className={`w-11 h-11 rounded-full bg-muted flex items-center justify-center transition-all duration-300 ${link.hoverColor} hover:text-white`}
-                    >
-                      <link.icon className="w-5 h-5" />
-                    </a>
-                  ))}
+                  <SocialIcon icon={Instagram} href="#" label="Instagram" hoverTheme="sunset" />
+                  <SocialIcon icon={Facebook} href="#" label="Facebook" hoverTheme="default" />
+                  <SocialIcon icon={MessageCircle} href="https://wa.me/573001234567" label="WhatsApp" hoverTheme="palm" />
                 </div>
               </CardContent>
             </Card>
@@ -451,9 +417,7 @@ export function ContactSection() {
             {/* WhatsApp CTA */}
             <Card className="bg-gradient-to-br from-palm/10 to-ocean/10 border-palm/20">
               <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 rounded-full bg-palm/20 flex items-center justify-center mx-auto mb-3">
-                  <MessageCircle className="w-7 h-7 text-palm" />
-                </div>
+                <PremiumIcon icon={MessageCircle} variant="glow" theme="palm" size="lg" className="mx-auto mb-3" />
                 <h4 className="font-semibold text-foreground mb-2">
                   ¿Prefieres chatear?
                 </h4>

@@ -10,6 +10,8 @@ import {
   Waves,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PremiumIcon, IconBadge } from "@/components/shared/premium-icon";
+import type { IconTheme } from "@/components/shared/premium-icon";
 import { useNavigation } from "@/lib/store";
 
 const benefits = [
@@ -18,21 +20,21 @@ const benefits = [
     title: "Flexibilidad total",
     description:
       "Elige tus destinos, actividades y ritmo de viaje. Tú decides cómo vivir el Atlántico.",
-    color: "bg-sunset/10 text-sunset",
+    theme: "sunset" as IconTheme,
   },
   {
     icon: Map,
     title: "Expertos locales",
     description:
       "Nuestros guías conocen cada rincón del departamento y te llevan a lugares únicos.",
-    color: "bg-palm/10 text-palm",
+    theme: "palm" as IconTheme,
   },
   {
     icon: DollarSign,
     title: "Mejores precios",
     description:
       "Sin intermediarios. Armamos tu viaje a medida con tarifas directas y transparentes.",
-    color: "bg-ocean/10 text-ocean",
+    theme: "ocean" as IconTheme,
   },
 ];
 
@@ -52,11 +54,13 @@ export function CustomTrips() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 sm:mb-16"
         >
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Waves className="w-5 h-5 sm:w-6 sm:h-6 text-sunset" />
-            <span className="text-sunset text-sm font-semibold tracking-wider uppercase">
-              Tu aventura, tu estilo
-            </span>
+          <div className="flex items-center justify-center mb-4">
+            <IconBadge
+              icon={Waves}
+              theme="sunset"
+              variant="filled"
+              label="Tu aventura, tu estilo"
+            />
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6 leading-tight">
             Viajes{" "}
@@ -83,10 +87,14 @@ export function CustomTrips() {
               className="group"
             >
               <div className="bg-card border border-border/50 rounded-2xl p-6 sm:p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
-                <div
-                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${benefit.color} flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <benefit.icon className="w-6 h-6 sm:w-7 sm:h-7" />
+                <div className="mb-4 sm:mb-5">
+                  <PremiumIcon
+                    icon={benefit.icon}
+                    variant="gradient"
+                    theme={benefit.theme}
+                    size="lg"
+                    animate
+                  />
                 </div>
                 <h3 className="text-foreground font-semibold text-lg sm:text-xl mb-2">
                   {benefit.title}

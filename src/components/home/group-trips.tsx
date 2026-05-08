@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Users, Percent, Calendar, Heart, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PremiumIcon, IconBadge } from "@/components/shared/premium-icon";
 import { useNavigation } from "@/lib/store";
 
 const benefits = [
@@ -53,11 +54,13 @@ export function GroupTrips() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="flex items-center gap-2 mb-4">
-              <Users className="w-6 h-6 text-ocean-light" />
-              <span className="text-ocean-light text-sm font-semibold tracking-wider uppercase">
-                Viajes Grupales
-              </span>
+            <div className="mb-4">
+              <IconBadge
+                icon={Users}
+                theme="ocean-light"
+                variant="glass"
+                label="Viajes Grupales"
+              />
             </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight">
@@ -125,8 +128,14 @@ export function GroupTrips() {
                 transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
                 className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-5 sm:p-6 hover:bg-white/15 transition-all duration-300 group"
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-ocean-light/20 flex items-center justify-center mb-3 group-hover:bg-ocean-light/30 transition-colors">
-                  <benefit.icon className="w-5 h-5 sm:w-6 sm:h-6 text-ocean-light" />
+                <div className="mb-3">
+                  <PremiumIcon
+                    icon={benefit.icon}
+                    variant="glass"
+                    theme="ocean-light"
+                    size="md"
+                    animate
+                  />
                 </div>
                 <h3 className="text-white font-semibold text-sm sm:text-base mb-1.5">
                   {benefit.title}

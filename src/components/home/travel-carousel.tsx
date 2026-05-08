@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
+import { PremiumIcon } from "@/components/shared/premium-icon";
 import { pastTripImages } from "@/lib/data";
 
 export function TravelCarousel() {
@@ -43,7 +44,7 @@ export function TravelCarousel() {
           {/* Carousel */}
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex gap-4 sm:gap-5">
-              {pastTripImages.map((trip, index) => (
+              {pastTripImages.map((trip) => (
                 <div
                   key={trip.id}
                   className="flex-[0_0_70%] sm:flex-[0_0_45%] lg:flex-[0_0_30%] min-w-0"
@@ -61,7 +62,7 @@ export function TravelCarousel() {
                     {/* Caption on hover */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                       <div className="flex items-center gap-2 mb-1">
-                        <Camera className="w-4 h-4 text-ocean-light" />
+                        <PremiumIcon icon={Camera} variant="glass" theme="white" size="xs" />
                         <span className="text-ocean-light text-xs font-medium">
                           Vive Travel
                         </span>

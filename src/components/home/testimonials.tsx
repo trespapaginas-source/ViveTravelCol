@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
+import { PremiumIcon, RatingStars } from "@/components/shared/premium-icon";
 import { testimonials } from "@/lib/data";
 
 export function Testimonials() {
@@ -48,7 +49,15 @@ export function Testimonials() {
         >
           <div className="bg-card rounded-3xl shadow-lg border border-border/50 p-8 sm:p-12 relative overflow-hidden">
             {/* Decorative quote */}
-            <Quote className="absolute top-6 left-6 w-16 h-16 text-ocean/5" />
+            <div className="absolute top-6 left-6">
+              <PremiumIcon
+                icon={Quote}
+                variant="minimal"
+                theme="ocean"
+                size="xl"
+                iconClassName="text-ocean/5"
+              />
+            </div>
 
             {/* Avatar + Info */}
             <div className="flex items-center gap-4 mb-6">
@@ -64,17 +73,8 @@ export function Testimonials() {
             </div>
 
             {/* Stars */}
-            <div className="flex gap-1 mb-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-5 h-5 ${
-                    i < t.rating
-                      ? "fill-sunset text-sunset"
-                      : "text-muted-foreground/30"
-                  }`}
-                />
-              ))}
+            <div className="mb-4">
+              <RatingStars rating={t.rating} size="md" />
             </div>
 
             {/* Quote */}

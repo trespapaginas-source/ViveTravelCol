@@ -4,6 +4,7 @@ import { useNavigation } from "@/lib/store";
 import { Palmtree, Mail, Phone, MapPin, Instagram, Facebook, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { PremiumIcon, SocialIcon } from "@/components/shared/premium-icon";
 
 export function Footer() {
   const { navigate } = useNavigation();
@@ -16,9 +17,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                <Palmtree className="w-6 h-6 text-ocean-light" />
-              </div>
+              <PremiumIcon icon={Palmtree} variant="gradient" theme="ocean" size="md" />
               <div>
                 <span className="text-lg font-bold">Vive Travel</span>
                 <span className="block text-[10px] tracking-widest uppercase text-ocean-light">
@@ -32,27 +31,9 @@ export function Footer() {
               colombiano.
             </p>
             <div className="flex gap-3">
-              <a
-                href="#"
-                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-sunset transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a
-                href="#"
-                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-sunset transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a
-                href="https://wa.me/573001234567"
-                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-palm transition-colors"
-                aria-label="WhatsApp"
-              >
-                <MessageCircle className="w-4 h-4" />
-              </a>
+              <SocialIcon icon={Instagram} href="#" label="Instagram" hoverTheme="sunset" />
+              <SocialIcon icon={Facebook} href="#" label="Facebook" hoverTheme="default" />
+              <SocialIcon icon={MessageCircle} href="https://wa.me/573001234567" label="WhatsApp" hoverTheme="palm" />
             </div>
           </div>
 
@@ -88,15 +69,15 @@ export function Footer() {
             </h3>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-white/70">
-                <Phone className="w-4 h-4 text-sunset-light shrink-0" />
+                <PremiumIcon icon={Phone} variant="gradient" theme="sunset" size="xs" />
                 +57 300 123 4567
               </li>
               <li className="flex items-center gap-2 text-sm text-white/70">
-                <Mail className="w-4 h-4 text-sunset-light shrink-0" />
+                <PremiumIcon icon={Mail} variant="gradient" theme="ocean" size="xs" />
                 info@vivetravel.co
               </li>
               <li className="flex items-start gap-2 text-sm text-white/70">
-                <MapPin className="w-4 h-4 text-sunset-light shrink-0 mt-0.5" />
+                <PremiumIcon icon={MapPin} variant="gradient" theme="coral" size="xs" />
                 Barranquilla, Atlántico, Colombia
               </li>
             </ul>

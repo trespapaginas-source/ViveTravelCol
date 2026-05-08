@@ -244,3 +244,226 @@ Stage Summary:
 - Cabin Detail: All interactive elements now functional (share, favorites, date picker, guest counter, dynamic pricing)
 - Image Carousel: Thumbnails and counter fully synchronized with carousel position
 - Favorites system: localStorage-based with toggle, visual feedback, and toast notifications
+
+---
+Task ID: 4
+Agent: Premium Icon Styling Agent
+Task: Apply premium icon styling to 4 home section components using the premium icon system
+
+Work Log:
+- Read premium-icon.tsx system: PremiumIcon, IconBadge, RatingStars, and other exported components
+- Read all 4 target files to understand current icon usage
+- Updated travel-carousel.tsx:
+  - Replaced raw Camera icon in hover caption with `<PremiumIcon icon={Camera} variant="glass" theme="white" size="xs" />`
+  - Kept ChevronLeft/ChevronRight nav buttons as-is (simple functional nav)
+- Updated group-trips.tsx:
+  - Replaced section label (raw Users icon + span) with `<IconBadge icon={Users} theme="ocean-light" variant="glass" label="Viajes Grupales" />`
+  - Replaced benefit card icon containers (raw benefit.icon + bg-ocean-light/20 box) with `<PremiumIcon icon={benefit.icon} variant="glass" theme="ocean-light" size="md" animate />`
+  - Kept ArrowRight in CTA buttons as-is
+- Updated custom-trips.tsx:
+  - Replaced section badge (raw Waves icon + span) with `<IconBadge icon={Waves} theme="sunset" variant="filled" label="Tu aventura, tu estilo" />`
+  - Replaced benefit card icon containers (raw benefit.icon + dynamic benefit.color) with `<PremiumIcon icon={benefit.icon} variant="gradient" theme={benefit.theme} size="lg" animate />`
+  - Updated benefits data structure: replaced `color` property with `theme` property (Compass→sunset, Map→palm, DollarSign→ocean)
+  - Added `import type { IconTheme }` for type safety
+  - Kept MessageCircle and ArrowRight in CTA buttons as-is
+- Updated testimonials.tsx:
+  - Replaced manual Array.from star rendering with `<RatingStars rating={t.rating} size="md" />`
+  - Replaced raw Quote icon watermark with `<PremiumIcon icon={Quote} variant="minimal" theme="ocean" size="xl" iconClassName="text-ocean/5" />`
+  - Removed Star import from lucide-react (no longer needed)
+  - Kept ChevronLeft/ChevronRight nav buttons as-is
+- Ran `bun run lint` — no errors
+
+Stage Summary:
+- All 4 home section components now use the premium icon system
+- PremiumIcon: glass/white for camera caption, glass/ocean-light for group benefits, gradient/dynamic for custom benefits, minimal/ocean for quote watermark
+- IconBadge: glass/ocean-light for group trips section label, filled/sunset for custom trips section label
+- RatingStars: md size for testimonial star ratings with glow effect
+- All existing functionality, layout, and structure preserved
+- Unused Star import removed from testimonials
+
+---
+Task ID: 7
+Agent: Premium Icon Styling Agent
+Task: Apply premium icon styling to contact-section.tsx and policies-section.tsx using the premium icon system
+
+Work Log:
+- Read premium-icon.tsx system: PremiumIcon, IconBadge, SocialIcon, SectionIcon, and other exported components
+- Read both target files to understand current icon usage
+- Updated contact-section.tsx:
+  - Replaced section header badge (inline-flex span with raw MessageCircle) with `<IconBadge icon={MessageCircle} label="Contáctanos" theme="ocean" variant="filled" className="mb-4" />`
+  - Replaced contact info card icon containers (raw item.icon + bgColor p-3 rounded-xl) with `<PremiumIcon icon={item.icon} variant="gradient" theme={item.theme} className="group-hover:scale-110 transition-transform duration-300" />`
+  - Updated contactInfo data: replaced `color`/`bgColor` properties with `theme` property (MessageCircle→palm, Mail→ocean, MapPin→sunset, Clock→coral)
+  - Added `import type { IconTheme }` for type safety
+  - Replaced social links (raw anchor tags with dynamic hoverColor) with SocialIcon components: Instagram→sunset, Facebook→default, WhatsApp→palm
+  - Removed socialLinks array (no longer needed, replaced by direct SocialIcon renders)
+  - Replaced WhatsApp CTA hero icon (raw MessageCircle in bg-palm/20 circle) with `<PremiumIcon icon={MessageCircle} variant="glow" theme="palm" size="lg" className="mx-auto mb-3" />`
+  - Replaced form section header icon (raw Send) with `<PremiumIcon icon={Send} variant="gradient" theme="ocean" size="sm" />`
+  - Kept radio option icons (MessageCircle, Mail, Phone) as-is (small inline icons)
+  - Kept Send/Loader2 in submit button as-is (button icons)
+  - Kept Waves decorative as-is (background decoration)
+- Updated policies-section.tsx:
+  - Replaced section header badge (inline-flex span with raw ScrollText) with `<IconBadge icon={ScrollText} label="Políticas" theme="ocean" variant="filled" className="mb-4" />`
+  - Replaced ShieldCheck section header icon (raw icon in bg-ocean/10 div) with `<SectionIcon icon={ShieldCheck} theme="ocean" />`
+  - Replaced FileText section header icon (raw icon in bg-sunset/10 div) with `<SectionIcon icon={FileText} theme="sunset" />`
+  - Replaced accordion item icons (raw item.icon in bg-ocean/10 span) with `<PremiumIcon icon={item.icon} variant="gradient" theme="ocean" size="sm" />`
+  - Added import: PremiumIcon, IconBadge, SectionIcon from "@/components/shared/premium-icon"
+  - Kept AlertTriangle in content as-is (inline content icon)
+- Ran `bun run lint` — no errors
+- Dev server compiles successfully
+
+Stage Summary:
+- Both contact-section.tsx and policies-section.tsx now use the premium icon system
+- Contact section: IconBadge for header, PremiumIcon gradient for info cards with dynamic themes, SocialIcon for social links, PremiumIcon glow for WhatsApp CTA, PremiumIcon gradient for form header
+- Policies section: IconBadge for header, SectionIcon for section headers (ocean+sunset themes), PremiumIcon gradient for accordion item icons
+- All existing functionality, layout, and structure preserved
+- No unused imports remain
+
+---
+Task ID: 6
+Agent: Premium Icon Styling Agent
+Task: Apply premium icon styling to cabins-list.tsx and cabin-detail.tsx using the premium icon system
+
+Work Log:
+- Read premium-icon.tsx system: PremiumIcon, RatingStars, IconStat, SectionIcon, and other exported components
+- Read both target files to understand current icon usage
+- Updated cabins-list.tsx:
+  - Removed custom `renderStars` function entirely
+  - Replaced `renderStars(cabin.rating)` with `<RatingStars rating={cabin.rating} size="sm" />`
+  - Kept Star icon in rating badge as-is (small inline badge, RatingStars would be too much)
+  - Wrapped stats row icons (Users, BedDouble, Bath) in `<PremiumIcon variant="default" theme="ocean" size="xs" />`
+  - Adjusted gap from gap-1 to gap-1.5 between PremiumIcon and text for visual balance
+  - Wrapped MapPin in `<PremiumIcon variant="default" theme="sunset" size="xs" />`
+  - Wrapped Waves decorative divider in `<PremiumIcon variant="default" theme="ocean" size="sm" />`
+  - Kept ArrowRight in CTA button as-is
+  - Added import: PremiumIcon, RatingStars from "@/components/shared/premium-icon"
+- Updated cabin-detail.tsx:
+  - Removed custom `renderStars` function entirely
+  - Removed unused `Star` import from lucide-react (only used in renderStars)
+  - Replaced `renderStars(cabin.rating, "w-4 h-4")` with `<RatingStars rating={cabin.rating} size="md" showValue />`
+  - Replaced key stats row (raw Users/BedDouble/Bath + text divs) with `<IconStat>` components:
+    - `<IconStat icon={Users} value={`${cabin.capacity} huéspedes`} theme="ocean" />`
+    - `<IconStat icon={BedDouble} value={`${cabin.bedrooms} habitación${...}`} theme="ocean" />`
+    - `<IconStat icon={Bath} value={`${cabin.bathrooms} baño${...}`} theme="ocean" />`
+    - Kept dividers between stats
+  - Wrapped MapPin in `<PremiumIcon variant="default" theme="sunset" size="xs" />`
+  - Replaced section headers with SectionIcon:
+    - Sparkles (highlights) → `<SectionIcon icon={Sparkles} theme="sunset" />`
+    - Home (amenities) → `<SectionIcon icon={Home} theme="ocean" />`
+    - CalendarDays (check-in/out) → `<SectionIcon icon={CalendarDays} theme="ocean" />`
+    - ShieldCheck (rules) → `<SectionIcon icon={ShieldCheck} theme="ocean" />`
+    - ShieldCheck (cancellation) → `<SectionIcon icon={ShieldCheck} theme="palm" />`
+  - Replaced highlight icon containers (raw Sparkles + bg-ocean/10 circle) with `<PremiumIcon icon={Sparkles} variant="gradient" theme="ocean" size="xs" />`
+  - Wrapped dynamic amenity icons in `<PremiumIcon icon={Icon} variant="default" theme="ocean" size="xs" />`
+  - Wrapped dynamic rule icons in `<PremiumIcon icon={Icon} variant="minimal" theme="ocean" size="xs" iconClassName="text-muted-foreground" className="mt-0.5" />`
+  - Wrapped Check-in Clock in `<PremiumIcon icon={Clock} variant="gradient" theme="palm" size="xs" />`
+  - Wrapped Check-out Clock in `<PremiumIcon icon={Clock} variant="gradient" theme="sunset" size="xs" />`
+  - Kept Share2, Heart, MessageCircle, ArrowLeft as-is (button/action icons)
+  - Kept inline ShieldCheck in cancellation policy box as-is
+  - Added imports: PremiumIcon, RatingStars, IconStat, SectionIcon from "@/components/shared/premium-icon"
+- Ran `bun run lint` — no errors
+- Dev server compiles successfully
+
+Stage Summary:
+- Both cabins-list.tsx and cabin-detail.tsx now use the premium icon system
+- Cabins list: RatingStars for star display, PremiumIcon default/ocean for stats, PremiumIcon default/sunset for MapPin, PremiumIcon default/ocean for Waves
+- Cabin detail: RatingStars with showValue for rating display, IconStat for key stats row, SectionIcon for all 5 section headers (sunset/ocean/palm themes), PremiumIcon gradient for highlights, PremiumIcon default for amenities, PremiumIcon minimal for rules, PremiumIcon gradient for Clock icons (palm/sunset themes)
+- Custom renderStars functions removed from both files
+- Star import removed from cabin-detail.tsx (unused after renderStars removal)
+- All existing functionality, layout, and structure preserved
+
+---
+Task ID: 3
+Agent: Premium Icon Styling Agent (Layout Components)
+Task: Apply premium icon styling to navbar.tsx, footer.tsx, hero-section.tsx, and featured-plans.tsx using the premium icon system
+
+Work Log:
+- Read premium-icon.tsx system: PremiumIcon, SocialIcon, RatingStars, and other exported components
+- Read all 4 target files to understand current icon usage
+- Updated navbar.tsx:
+  - Replaced desktop logo Palmtree (raw icon in conditional div) with `<PremiumIcon icon={Palmtree} variant="solid" theme="ocean" size="md" />`
+  - Replaced mobile sheet logo Palmtree (raw icon in bg-ocean div) with `<PremiumIcon icon={Palmtree} variant="solid" theme="ocean" size="sm" />`
+  - Kept Phone in CTA button as-is (small inline button icon)
+  - Kept Menu hamburger icon as-is (functional navigation control)
+  - Added import: PremiumIcon from "@/components/shared/premium-icon"
+- Updated footer.tsx:
+  - Replaced brand Palmtree (raw icon in bg-white/10 div) with `<PremiumIcon icon={Palmtree} variant="gradient" theme="ocean" size="md" />`
+  - Replaced Instagram social link (raw anchor with hover:bg-sunset) with `<SocialIcon icon={Instagram} href="#" label="Instagram" hoverTheme="sunset" />`
+  - Replaced Facebook social link (raw anchor with hover:bg-sunset) with `<SocialIcon icon={Facebook} href="#" label="Facebook" hoverTheme="default" />`
+  - Replaced WhatsApp social link (raw anchor with hover:bg-palm) with `<SocialIcon icon={MessageCircle} href="https://wa.me/573001234567" label="WhatsApp" hoverTheme="palm" />`
+  - Wrapped Phone contact icon in `<PremiumIcon icon={Phone} variant="gradient" theme="sunset" size="xs" />`
+  - Wrapped Mail contact icon in `<PremiumIcon icon={Mail} variant="gradient" theme="ocean" size="xs" />`
+  - Wrapped MapPin contact icon in `<PremiumIcon icon={MapPin} variant="gradient" theme="coral" size="xs" />`
+  - Kept MessageCircle in WhatsApp CTA button as-is (inline button icon)
+  - Added imports: PremiumIcon, SocialIcon from "@/components/shared/premium-icon"
+- Updated hero-section.tsx:
+  - Replaced brand badge Palmtree (raw icon with text-ocean-light) with `<PremiumIcon icon={Palmtree} variant="glass" theme="white" size="sm" />`
+  - Replaced brand badge MapPin (raw icon with text-ocean-light) with `<PremiumIcon icon={MapPin} variant="glass" theme="white" size="sm" />`
+  - Kept ChevronLeft/ChevronRight carousel nav arrows as-is (simple functional navigation)
+  - Kept MapPin in CTA button as-is (inline button icon)
+  - Added import: PremiumIcon from "@/components/shared/premium-icon"
+- Updated featured-plans.tsx:
+  - Replaced rating display (raw Star + span in bg-black/40 pill) with `<RatingStars rating={plan.rating} size="sm" showValue={true} />` inside dark overlay with `[&_span]:text-white` CSS override for value text visibility
+  - Wrapped duration Clock icon in `<PremiumIcon icon={Clock} variant="glass" theme="white" size="xs" />`
+  - Wrapped location MapPin icon in `<PremiumIcon icon={MapPin} variant="default" theme="coral" size="xs" />`
+  - Removed unused Star import from lucide-react (fully replaced by RatingStars)
+  - Kept ArrowRight in CTA buttons as-is (inline arrow icons)
+  - Added imports: PremiumIcon, RatingStars from "@/components/shared/premium-icon"
+- Ran `bun run lint` — no errors
+- Dev server compiles successfully
+
+Stage Summary:
+- All 4 layout/home components now use the premium icon system
+- Navbar: PremiumIcon solid/ocean for logo (desktop md, mobile sm)
+- Footer: PremiumIcon gradient/ocean for brand logo, SocialIcon for all 3 social links (sunset/default/palm hover themes), PremiumIcon gradient for contact info (sunset/ocean/coral themes)
+- Hero: PremiumIcon glass/white for brand badge Palmtree and MapPin
+- Featured Plans: RatingStars with showValue for plan ratings, PremiumIcon glass/white for duration Clock, PremiumIcon default/coral for location MapPin
+- Star import removed from featured-plans.tsx (replaced by RatingStars)
+- All existing functionality, layout, and structure preserved
+
+---
+Task ID: 5
+Agent: Premium Icon Styling Agent (Plans Components)
+Task: Apply premium icon styling to plans-list.tsx and plan-detail.tsx using the premium icon system
+
+Work Log:
+- Read premium-icon.tsx system: PremiumIcon, RatingStars, IconStat, IconCheck, and other exported components
+- Read both target files to understand current icon usage
+- Updated plans-list.tsx:
+  - Replaced raw Star + span rating display with `<RatingStars rating={plan.rating} size="sm" showValue={false} />` + separate review count span
+  - Replaced 3 raw meta info items (Clock/MapPin/Users with gap-1 inline) with `<IconStat>` components:
+    - Clock: `<IconStat icon={Clock} value={plan.duration} theme="ocean" className="flex-shrink-0" />`
+    - MapPin: `<IconStat icon={MapPin} value={plan.location} theme="coral" className="flex-shrink-0" />`
+    - Users: `<IconStat icon={Users} value={`Máx. ${plan.maxGuests}`} theme="palm" className="flex-shrink-0" />`
+  - Replaced empty state Compass (raw icon className="w-12 h-12") with `<PremiumIcon icon={Compass} variant="minimal" theme="ocean" size="xl" iconClassName="text-muted-foreground/50" className="mx-auto mb-4" />`
+  - Kept category filter tab icons as-is (small inline icons in TabsTrigger, changing would break layout)
+  - Kept Star in categories array (used for Experiencia tab icon)
+  - Added imports: RatingStars, IconStat, PremiumIcon from "@/components/shared/premium-icon"
+- Updated plan-detail.tsx:
+  - Removed custom `StarRating` function entirely, replaced with `<RatingStars rating={plan.rating} size="sm" showValue />`
+  - Updated `InfoItem` component: replaced raw icon in bg-muted div with `<PremiumIcon icon={Icon} variant="gradient" theme={theme} size="sm" />`
+  - Added `colorToTheme` helper: maps color prop to IconTheme (text-ocean→ocean, text-palm→palm, text-sunset→sunset, text-coral→coral)
+  - Changed InfoItem icon type from `React.ElementType` to `LucideIcon` for PremiumIcon compatibility
+  - Replaced "Qué incluye" list items: raw Check in bg-palm/15 circle → `<IconCheck variant="include" className="mt-0.5" />`
+  - Replaced "Qué no incluye" list items: raw X in bg-coral/15 circle → `<IconCheck variant="exclude" className="mt-0.5" />`
+  - Replaced "Puntos destacados" list items: raw Sparkles in bg-sunset/15 circle → `<IconCheck variant="highlight" className="mt-0.5" />`
+  - Replaced price card row icons with PremiumIcon:
+    - Clock: `<PremiumIcon icon={Clock} variant="default" theme="ocean" size="xs" />`
+    - Users: `<PremiumIcon icon={Users} variant="default" theme="palm" size="xs" />`
+    - Star: `<PremiumIcon icon={Star} variant="default" theme="sunset" size="xs" />`
+  - Wrapped MapPin next to location in `<PremiumIcon icon={MapPin} variant="default" theme="coral" size="xs" />`
+  - Replaced Mountain 404 state (raw icon className="w-16 h-16") with `<PremiumIcon icon={Mountain} variant="minimal" theme="ocean" size="xl" iconClassName="text-muted-foreground/40" />`
+  - Kept ArrowLeft in back buttons as-is (navigation icon)
+  - Kept MessageCircle in WhatsApp button as-is (inline button icon)
+  - Kept Phone in trust badge as-is (tiny inline icon)
+  - Removed Check, X, Sparkles from lucide-react imports (fully replaced by IconCheck)
+  - Added `type LucideIcon` import from lucide-react
+  - Added imports: RatingStars, PremiumIcon, IconCheck from "@/components/shared/premium-icon"
+- Ran `bun run lint` — no errors
+
+Stage Summary:
+- Both plans-list.tsx and plan-detail.tsx now use the premium icon system
+- Plans list: RatingStars for star ratings, IconStat for meta info (ocean/coral/palm themes), PremiumIcon minimal for empty state Compass
+- Plan detail: RatingStars with showValue for rating display, PremiumIcon gradient for InfoItem icons (theme mapped from color prop), IconCheck for includes/excludes/highlights lists, PremiumIcon default/xs for price card row icons (ocean/palm/sunset themes), PremiumIcon default/coral/xs for MapPin, PremiumIcon minimal for Mountain 404 state
+- Custom StarRating function removed from plan-detail.tsx
+- Check, X, Sparkles imports removed from lucide-react (replaced by IconCheck)
+- All existing functionality, layout, and structure preserved

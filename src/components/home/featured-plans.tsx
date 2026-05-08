@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, Clock, MapPin, ArrowRight } from "lucide-react";
+import { Clock, MapPin, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { useNavigation } from "@/lib/store";
 import { type TourPlan } from "@/lib/data";
 import { fetchPlans } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { PremiumIcon, RatingStars } from "@/components/shared/premium-icon";
 
 const categoryColors: Record<string, string> = {
   Naturaleza: "bg-palm text-white",
@@ -84,16 +85,13 @@ export function FeaturedPlans() {
                   </Badge>
 
                   {/* Rating */}
-                  <div className="absolute top-3 right-3 flex items-center gap-1 bg-black/40 backdrop-blur-sm rounded-full px-2 py-1">
-                    <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                    <span className="text-white text-xs font-medium">
-                      {plan.rating}
-                    </span>
+                  <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm rounded-full px-2 py-1 [&_span]:text-white">
+                    <RatingStars rating={plan.rating} size="sm" showValue={true} />
                   </div>
 
                   {/* Duration */}
                   <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-white/80" />
+                    <PremiumIcon icon={Clock} variant="glass" theme="white" size="xs" />
                     <span className="text-white/90 text-xs">{plan.duration}</span>
                   </div>
                 </div>
@@ -104,7 +102,7 @@ export function FeaturedPlans() {
                   </h3>
 
                   <div className="flex items-center gap-1.5 mb-2">
-                    <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                    <PremiumIcon icon={MapPin} variant="default" theme="coral" size="xs" />
                     <span className="text-muted-foreground text-xs line-clamp-1">
                       {plan.location}
                     </span>

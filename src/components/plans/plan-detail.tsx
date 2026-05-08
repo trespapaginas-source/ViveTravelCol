@@ -7,13 +7,11 @@ import {
   Clock,
   Users,
   Mountain,
-  Check,
-  X,
-  Sparkles,
   Calendar,
   Navigation,
   MessageCircle,
   Phone,
+  type LucideIcon,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -21,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ImageCarousel } from "@/components/shared/image-carousel";
+import { RatingStars, PremiumIcon, IconCheck } from "@/components/shared/premium-icon";
 import { useNavigation } from "@/lib/store";
 import { fetchPlan } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
@@ -40,21 +39,14 @@ const difficultyColors: Record<string, string> = {
   Avanzado: "bg-coral/15 text-coral border-coral/30",
 };
 
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star
-          key={i}
-          className={`w-4 h-4 ${
-            i <= Math.round(rating)
-              ? "fill-sunset text-sunset"
-              : "fill-muted text-muted"
-          }`}
-        />
-      ))}
-    </div>
-  );
+function colorToTheme(color: string): "ocean" | "palm" | "sunset" | "coral" {
+  switch (color) {
+    case "text-ocean": return "ocean";
+    case "text-palm": return "palm";
+    case "text-sunset": return "sunset";
+    case "text-coral": return "coral";
+    default: return "ocean";
+  }
 }
 
 function InfoItem({
@@ -63,16 +55,15 @@ function InfoItem({
   value,
   color = "text-ocean",
 }: {
-  icon: React.ElementType;
+  icon: LucideIcon;
   label: string;
   value: string;
   color?: string;
 }) {
+  const theme = colorToTheme(color);
   return (
     <div className="flex items-start gap-3">
-      <div className={`mt-0.5 p-2 rounded-lg bg-muted ${color}`}>
-        <Icon className="w-5 h-5" />
-      </div>
+      <PremiumIcon icon={Icon} variant="gradient" theme={theme} size="sm" />
       <div>
         <p className="text-xs text-muted-foreground">{label}</p>
         <p className="text-sm font-medium text-foreground">{value}</p>
@@ -100,7 +91,13 @@ export function PlanDetail() {
   if (!plan) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
-        <Mountain className="w-16 h-16 text-muted-foreground/40" />
+        <PremiumIcon
+          icon={Mountain}
+          variant="minimal"
+          theme="ocean"
+          size="xl"
+          iconClassName="text-muted-foreground/40"
+        />
         <p className="text-muted-foreground text-lg">
           Plan no encontrado
         </p>
@@ -165,16 +162,13 @@ export function PlanDetail() {
 
               <div className="flex flex-wrap items-center gap-4 text-sm">
                 <div className="flex items-center gap-1.5">
-                  <StarRating rating={plan.rating} />
-                  <span className="font-semibold text-foreground">
-                    {plan.rating}
-                  </span>
+                  <RatingStars rating={plan.rating} size="sm" showValue />
                   <span className="text-muted-foreground">
                     ({plan.reviewCount} reseñas)
                   </span>
                 </div>
                 <div className="flex items-center gap-1 text-muted-foreground">
-                  <MapPin className="w-4 h-4 text-coral" />
+                  <PremiumIcon icon={MapPin} variant="default" theme="coral" size="xs" />
                   <span>{plan.location}</span>
                 </div>
               </div>
@@ -239,9 +233,7 @@ export function PlanDetail() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {plan.includes.map((item, i) => (
                   <div key={i} className="flex items-start gap-2.5">
-                    <div className="mt-0.5 p-1 rounded-full bg-palm/15 shrink-0">
-                      <Check className="w-3.5 h-3.5 text-palm" />
-                    </div>
+                    <IconCheck variant="include" className="mt-0.5" />
                     <span className="text-sm text-muted-foreground">{item}</span>
                   </div>
                 ))}
@@ -258,9 +250,7 @@ export function PlanDetail() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {plan.excludes.map((item, i) => (
                   <div key={i} className="flex items-start gap-2.5">
-                    <div className="mt-0.5 p-1 rounded-full bg-coral/15 shrink-0">
-                      <X className="w-3.5 h-3.5 text-coral" />
-                    </div>
+                    <IconCheck variant="exclude" className="mt-0.5" />
                     <span className="text-sm text-muted-foreground">{item}</span>
                   </div>
                 ))}
@@ -277,9 +267,7 @@ export function PlanDetail() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {plan.highlights.map((item, i) => (
                   <div key={i} className="flex items-start gap-2.5">
-                    <div className="mt-0.5 p-1 rounded-full bg-sunset/15 shrink-0">
-                      <Sparkles className="w-3.5 h-3.5 text-sunset" />
-                    </div>
+                    <IconCheck variant="highlight" className="mt-0.5" />
                     <span className="text-sm text-foreground font-medium">
                       {item}
                     </span>
@@ -351,7 +339,7 @@ export function PlanDetail() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-2 text-muted-foreground">
-                        <Clock className="w-4 h-4 text-ocean" />
+                        <PremiumIcon icon={Clock} variant="default" theme="ocean" size="xs" />
                         Duración
                       </span>
                       <span className="font-medium text-foreground">
@@ -360,7 +348,7 @@ export function PlanDetail() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-2 text-muted-foreground">
-                        <Users className="w-4 h-4 text-palm" />
+                        <PremiumIcon icon={Users} variant="default" theme="palm" size="xs" />
                         Grupo máximo
                       </span>
                       <span className="font-medium text-foreground">
@@ -369,7 +357,7 @@ export function PlanDetail() {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-2 text-muted-foreground">
-                        <Star className="w-4 h-4 text-sunset fill-sunset" />
+                        <PremiumIcon icon={Star} variant="default" theme="sunset" size="xs" />
                         Calificación
                       </span>
                       <span className="font-medium text-foreground">

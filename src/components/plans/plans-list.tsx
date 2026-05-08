@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SectionHeader } from "@/components/shared/section-header";
+import { RatingStars, IconStat, PremiumIcon } from "@/components/shared/premium-icon";
 import { useNavigation } from "@/lib/store";
 import { type TourPlan } from "@/lib/data";
 import { fetchPlans } from "@/lib/api";
@@ -106,10 +107,7 @@ function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: strin
               {plan.name}
             </h3>
             <div className="flex items-center gap-1.5 mt-1.5">
-              <Star className="w-4 h-4 fill-sunset text-sunset" />
-              <span className="text-sm font-semibold text-foreground">
-                {plan.rating}
-              </span>
+              <RatingStars rating={plan.rating} size="sm" showValue={false} />
               <span className="text-xs text-muted-foreground">
                 ({plan.reviewCount} reseñas)
               </span>
@@ -122,19 +120,10 @@ function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: strin
           </p>
 
           {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground pt-1">
-            <div className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-ocean" />
-              <span>{plan.duration}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5 text-coral" />
-              <span className="line-clamp-1">{plan.location}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Users className="w-3.5 h-3.5 text-palm" />
-              <span>Máx. {plan.maxGuests}</span>
-            </div>
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <IconStat icon={Clock} value={plan.duration} theme="ocean" className="flex-shrink-0" />
+            <IconStat icon={MapPin} value={plan.location} theme="coral" className="flex-shrink-0" />
+            <IconStat icon={Users} value={`Máx. ${plan.maxGuests}`} theme="palm" className="flex-shrink-0" />
           </div>
         </CardContent>
       </Card>
@@ -216,7 +205,14 @@ export function PlansList() {
             animate={{ opacity: 1 }}
             className="text-center py-16"
           >
-            <Compass className="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" />
+            <PremiumIcon
+              icon={Compass}
+              variant="minimal"
+              theme="ocean"
+              size="xl"
+              iconClassName="text-muted-foreground/50"
+              className="mx-auto mb-4"
+            />
             <p className="text-muted-foreground text-lg">
               No hay planes disponibles en esta categoría
             </p>

@@ -16,8 +16,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
+  PremiumIcon,
+  RatingStars,
+  IconStat,
+  SectionIcon,
+} from "@/components/shared/premium-icon";
+import {
   ArrowLeft,
-  Star,
   MapPin,
   Users,
   BedDouble,
@@ -74,35 +79,6 @@ function formatPrice(price: number): string {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
-}
-
-function renderStars(rating: number, size = "w-4 h-4") {
-  const stars = [];
-  const fullStars = Math.floor(rating);
-  const hasHalf = rating % 1 >= 0.5;
-
-  for (let i = 0; i < fullStars; i++) {
-    stars.push(
-      <Star key={`full-${i}`} className={`${size} fill-sunset text-sunset`} />
-    );
-  }
-  if (hasHalf) {
-    stars.push(
-      <div key="half" className="relative inline-block">
-        <Star className={`${size} text-muted-foreground/30`} />
-        <div className="absolute inset-0 overflow-hidden w-[50%]">
-          <Star className={`${size} fill-sunset text-sunset`} />
-        </div>
-      </div>
-    );
-  }
-  const remaining = 5 - fullStars - (hasHalf ? 1 : 0);
-  for (let i = 0; i < remaining; i++) {
-    stars.push(
-      <Star key={`empty-${i}`} className={`${size} text-muted-foreground/30`} />
-    );
-  }
-  return stars;
 }
 
 // Map amenity keywords to icons
@@ -274,11 +250,8 @@ export function CabinDetail() {
                   </h1>
                   <div className="flex items-center gap-3 mt-2 flex-wrap">
                     <div className="flex items-center gap-1">
-                      {renderStars(cabin.rating, "w-4 h-4")}
-                      <span className="text-sm font-semibold text-foreground ml-1">
-                        {cabin.rating}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
+                      <RatingStars rating={cabin.rating} size="md" showValue />
+                      <span className="text-sm text-muted-foreground ml-0.5">
                         ({cabin.reviewCount} evaluaciones)
                       </span>
                     </div>
@@ -290,7 +263,7 @@ export function CabinDetail() {
                     </Badge>
                   </div>
                   <div className="flex items-center gap-1.5 text-muted-foreground mt-2">
-                    <MapPin className="w-4 h-4 text-sunset shrink-0" />
+                    <PremiumIcon icon={MapPin} variant="default" theme="sunset" size="xs" />
                     <span className="text-sm">{cabin.location}</span>
                   </div>
                 </div>
@@ -328,32 +301,11 @@ export function CabinDetail() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="flex items-center gap-6 flex-wrap"
             >
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-ocean" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {cabin.capacity} huéspedes
-                  </p>
-                </div>
-              </div>
+              <IconStat icon={Users} value={`${cabin.capacity} huéspedes`} theme="ocean" />
               <div className="w-px h-8 bg-border" />
-              <div className="flex items-center gap-2">
-                <BedDouble className="w-5 h-5 text-ocean" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {cabin.bedrooms} habitación{cabin.bedrooms > 1 ? "es" : ""}
-                  </p>
-                </div>
-              </div>
+              <IconStat icon={BedDouble} value={`${cabin.bedrooms} habitación${cabin.bedrooms > 1 ? "es" : ""}`} theme="ocean" />
               <div className="w-px h-8 bg-border" />
-              <div className="flex items-center gap-2">
-                <Bath className="w-5 h-5 text-ocean" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}
-                  </p>
-                </div>
-              </div>
+              <IconStat icon={Bath} value={`${cabin.bathrooms} baño${cabin.bathrooms > 1 ? "s" : ""}`} theme="ocean" />
             </motion.div>
 
             <Separator className="my-6" />
@@ -381,7 +333,7 @@ export function CabinDetail() {
               transition={{ duration: 0.5, delay: 0.35 }}
             >
               <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-sunset" />
+                <SectionIcon icon={Sparkles} theme="sunset" />
                 Puntos destacados
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -390,9 +342,7 @@ export function CabinDetail() {
                     key={i}
                     className="flex items-center gap-3 p-3 rounded-xl bg-ocean/5 border border-ocean/10"
                   >
-                    <div className="w-8 h-8 rounded-full bg-ocean/10 flex items-center justify-center shrink-0">
-                      <Sparkles className="w-4 h-4 text-ocean" />
-                    </div>
+                    <PremiumIcon icon={Sparkles} variant="gradient" theme="ocean" size="xs" />
                     <span className="text-sm font-medium text-foreground">
                       {highlight}
                     </span>
@@ -410,7 +360,7 @@ export function CabinDetail() {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Home className="w-5 h-5 text-ocean" />
+                <SectionIcon icon={Home} theme="ocean" />
                 Comodidades
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -421,7 +371,7 @@ export function CabinDetail() {
                       key={i}
                       className="flex items-center gap-3 py-2"
                     >
-                      <Icon className="w-4 h-4 text-ocean shrink-0" />
+                      <PremiumIcon icon={Icon} variant="default" theme="ocean" size="xs" />
                       <span className="text-sm text-foreground">{amenity}</span>
                     </div>
                   );
@@ -438,13 +388,13 @@ export function CabinDetail() {
               transition={{ duration: 0.5, delay: 0.45 }}
             >
               <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <CalendarDays className="w-5 h-5 text-ocean" />
+                <SectionIcon icon={CalendarDays} theme="ocean" />
                 Horarios de llegada y salida
               </h2>
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl bg-palm/5 border border-palm/10">
                   <div className="flex items-center gap-2 mb-1">
-                    <Clock className="w-4 h-4 text-palm" />
+                    <PremiumIcon icon={Clock} variant="gradient" theme="palm" size="xs" />
                     <span className="text-xs font-medium text-palm uppercase tracking-wider">
                       Check-in
                     </span>
@@ -455,7 +405,7 @@ export function CabinDetail() {
                 </div>
                 <div className="p-4 rounded-xl bg-sunset/5 border border-sunset/10">
                   <div className="flex items-center gap-2 mb-1">
-                    <Clock className="w-4 h-4 text-sunset" />
+                    <PremiumIcon icon={Clock} variant="gradient" theme="sunset" size="xs" />
                     <span className="text-xs font-medium text-sunset uppercase tracking-wider">
                       Check-out
                     </span>
@@ -476,7 +426,7 @@ export function CabinDetail() {
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-ocean" />
+                <SectionIcon icon={ShieldCheck} theme="ocean" />
                 Reglas de la cabaña
               </h2>
               <div className="space-y-3">
@@ -487,7 +437,7 @@ export function CabinDetail() {
                       key={i}
                       className="flex items-start gap-3 p-3 rounded-lg bg-muted/50"
                     >
-                      <Icon className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                      <PremiumIcon icon={Icon} variant="minimal" theme="ocean" size="xs" iconClassName="text-muted-foreground" className="mt-0.5" />
                       <span className="text-sm text-foreground">{rule}</span>
                     </div>
                   );
@@ -504,7 +454,7 @@ export function CabinDetail() {
               transition={{ duration: 0.5, delay: 0.55 }}
             >
               <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-palm" />
+                <SectionIcon icon={ShieldCheck} theme="palm" />
                 Política de cancelación
               </h2>
               <div className="p-4 rounded-xl bg-palm/5 border border-palm/10">
