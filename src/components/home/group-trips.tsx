@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Users, Percent, Calendar, Heart, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/lib/store";
@@ -39,12 +38,7 @@ export function GroupTrips() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <div className="mb-4">
               <span className="inline-flex items-center gap-1.5 text-white/50 text-xs font-medium tracking-wider uppercase">
                 <Users className="w-3.5 h-3.5" />
@@ -68,7 +62,7 @@ export function GroupTrips() {
               <Button
                 size="lg"
                 onClick={() => navigate("contact")}
-                className="bg-white text-foreground hover:bg-white/90 px-6 sm:px-8 py-5 sm:py-6 text-base rounded-xl shadow-lg transition-all duration-300 hover:scale-105"
+                className="bg-white text-foreground hover:bg-white/90 px-6 sm:px-8 py-5 sm:py-6 text-base rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
               >
                 Solicitar cotización
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -77,7 +71,7 @@ export function GroupTrips() {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate("plans")}
-                className="border-white/20 text-white/80 hover:bg-white/10 backdrop-blur-sm px-6 py-5 sm:py-6 text-base rounded-xl transition-all duration-300 bg-transparent"
+                className="border-white/20 text-white/80 hover:bg-white/10 backdrop-blur-sm px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent"
               >
                 Ver planes disponibles
               </Button>
@@ -98,24 +92,14 @@ export function GroupTrips() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Right: Benefit cards */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-          >
-            {benefits.map((benefit, index) => (
-              <motion.div
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {benefits.map((benefit) => (
+              <div
                 key={benefit.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                className="bg-white/[0.06] border border-white/10 rounded-2xl p-5 sm:p-6 hover:bg-white/[0.08] transition-all duration-300"
+                className="bg-white/[0.06] border border-white/10 rounded-2xl p-5 sm:p-6 hover:bg-white/[0.08] transition-colors duration-200"
               >
                 <div className="mb-3">
                   <benefit.icon className="w-5 h-5 text-white/40" />
@@ -126,9 +110,9 @@ export function GroupTrips() {
                 <p className="text-white/40 text-xs sm:text-sm leading-relaxed">
                   {benefit.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

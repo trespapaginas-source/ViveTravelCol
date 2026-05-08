@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigation, type ViewType } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -28,26 +28,32 @@ export function Navbar() {
   const { currentView, navigate } = useNavigation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const tickingRef = useRef(false);
 
   const isHome = currentView === "home";
   const showOpaque = !isHome || scrolled;
 
+  // Throttled scroll handler using rAF — avoids excessive re-renders
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      if (!tickingRef.current) {
+        requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
+          tickingRef.current = false;
+        });
+        tickingRef.current = true;
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu first, then navigate after a small delay
-  // This ensures the Sheet close animation starts before the view changes,
-  // preventing visual glitches where the old view is visible behind the closing Sheet
+  // Navigate immediately — no delay. Close mobile menu after navigate.
   const handleNav = useCallback(
     (view: Parameters<typeof navigate>[0]) => {
+      navigate(view);
+      // Close mobile menu after navigation starts
       setMobileOpen(false);
-      // Small delay to let the Sheet close animation start
-      setTimeout(() => {
-        navigate(view);
-      }, 150);
     },
     [navigate]
   );
@@ -55,7 +61,7 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
         showOpaque
           ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-border/50"
           : "bg-transparent"
@@ -71,6 +77,8 @@ export function Navbar() {
             <img
               src="/logo.png"
               alt="Vive Travel"
+              width={120}
+              height={48}
               className={cn(
                 "h-10 sm:h-12 w-auto transition-all duration-300",
                 !showOpaque && "brightness-0 invert"
@@ -85,7 +93,7 @@ export function Navbar() {
                 key={item.key}
                 onClick={() => handleNav(item.key)}
                 className={cn(
-                  "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-all duration-300",
+                  "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors duration-200",
                   isItemActive(item.key, currentView)
                     ? showOpaque
                       ? "bg-ocean text-white"
@@ -108,7 +116,7 @@ export function Navbar() {
               size="icon"
               onClick={() => handleNav("favorites")}
               className={cn(
-                "rounded-full h-10 w-10 sm:h-9 sm:w-9 transition-all duration-300",
+                "rounded-full h-10 w-10 sm:h-9 sm:w-9 transition-colors duration-200",
                 currentView === "favorites"
                   ? showOpaque
                     ? "bg-ocean/10 text-ocean"
@@ -129,7 +137,7 @@ export function Navbar() {
             <Button
               onClick={() => handleNav("contact")}
               className={cn(
-                "hidden sm:flex items-center gap-2 rounded-full transition-all duration-300",
+                "hidden sm:flex items-center gap-2 rounded-full transition-colors duration-200",
                 showOpaque
                   ? "bg-ocean hover:bg-ocean-dark text-white"
                   : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border border-white/20"
@@ -160,6 +168,8 @@ export function Navbar() {
                     <img
                       src="/logo.png"
                       alt="Vive Travel"
+                      width={90}
+                      height={36}
                       className="h-9 w-auto"
                     />
                   </div>
@@ -169,7 +179,7 @@ export function Navbar() {
                         key={item.key}
                         onClick={() => handleNav(item.key)}
                         className={cn(
-                          "px-4 py-3 rounded-xl text-left text-sm font-medium transition-all",
+                          "px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150",
                           isItemActive(item.key, currentView)
                             ? "bg-ocean/10 text-ocean font-semibold"
                             : "text-muted-foreground hover:bg-muted hover:text-ocean"
@@ -181,7 +191,7 @@ export function Navbar() {
                     <button
                       onClick={() => handleNav("favorites")}
                       className={cn(
-                        "flex items-center gap-2.5 px-4 py-3 rounded-xl text-left text-sm font-medium transition-all",
+                        "flex items-center gap-2.5 px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150",
                         currentView === "favorites"
                           ? "bg-ocean/10 text-ocean font-semibold"
                           : "text-muted-foreground hover:bg-muted hover:text-ocean"

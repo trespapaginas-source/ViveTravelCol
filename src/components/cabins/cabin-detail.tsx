@@ -57,7 +57,6 @@ import {
   Minus,
   Plus,
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { useState, useCallback } from "react";
 import { type DateRange } from "react-day-picker";
 import { format, differenceInDays } from "date-fns";
@@ -207,34 +206,23 @@ export function CabinDetail() {
     <div className="pb-28 lg:pb-16">
       {/* Back Button */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 pt-20 sm:pt-24">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
+        <Button
+          variant="ghost"
+          onClick={() => navigate("cabins")}
+          className="gap-2 text-muted-foreground hover:text-ocean -ml-2"
         >
-          <Button
-            variant="ghost"
-            onClick={() => navigate("cabins")}
-            className="gap-2 text-muted-foreground hover:text-ocean -ml-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Volver a cabañas
-          </Button>
-        </motion.div>
+          <ArrowLeft className="w-4 h-4" />
+          Volver a cabañas
+        </Button>
       </div>
 
       {/* Image Gallery */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-      >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <PropertyGallery
           images={cabin.images}
           title={cabin.name}
         />
-      </motion.div>
+      </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
@@ -242,11 +230,7 @@ export function CabinDetail() {
           {/* Left Column - Details */}
           <div className="flex-1 min-w-0">
             {/* Title, Location, Actions */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
+            <div>
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -284,17 +268,12 @@ export function CabinDetail() {
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Key Stats Row */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex items-center gap-5 flex-wrap"
-            >
+            <div className="flex items-center gap-5 flex-wrap">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center">
                   <Users className="w-3.5 h-3.5 text-muted-foreground" />
@@ -315,32 +294,24 @@ export function CabinDetail() {
                 </div>
                 <span className="text-sm text-foreground">{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Full Description */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-2.5">
                 Acerca de esta cabaña
               </h2>
               <p className="text-muted-foreground leading-relaxed text-sm">
                 {cabin.fullDescription}
               </p>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Highlights */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.35 }}
-            >
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-ocean/60" />
                 Puntos destacados
@@ -351,7 +322,7 @@ export function CabinDetail() {
                   return (
                     <div
                       key={i}
-                      className="flex items-center gap-2.5 py-2 px-3 rounded-lg hover:bg-muted/40 transition-colors"
+                      className="flex items-center gap-2.5 py-2 px-3 rounded-lg hover:bg-muted/40 transition-colors duration-150"
                     >
                       <HIcon className="w-4 h-4 text-ocean/50 shrink-0" />
                       <span className="text-sm text-foreground">
@@ -361,16 +332,12 @@ export function CabinDetail() {
                   );
                 })}
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Amenities */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
                 <Home className="w-4 h-4 text-ocean/60" />
                 Comodidades
@@ -389,16 +356,12 @@ export function CabinDetail() {
                   );
                 })}
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Rules */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.45 }}
-            >
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-ocean/60" />
                 Reglas de la cabaña
@@ -417,16 +380,12 @@ export function CabinDetail() {
                   );
                 })}
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Cancellation Policy */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-leaf/60" />
                 Política de cancelación
@@ -444,7 +403,7 @@ export function CabinDetail() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Mobile Price Card - shows at bottom on mobile */}
             <div className="lg:hidden mt-8">
@@ -532,214 +491,208 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.3 }}
-    >
-      <Card className="border-border/50 shadow-xl py-0 gap-0">
-        <CardContent className="p-6 space-y-5">
-          {/* Price */}
-          <div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">
-                {formatPrice(cabin.pricePerNight)}
-              </span>
-              <span className="text-sm text-muted-foreground">/ noche</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Rango: {cabin.priceRange}
-            </p>
+    <Card className="border-border/50 shadow-xl py-0 gap-0">
+      <CardContent className="p-6 space-y-5">
+        {/* Price */}
+        <div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-bold text-foreground">
+              {formatPrice(cabin.pricePerNight)}
+            </span>
+            <span className="text-sm text-muted-foreground">/ noche</span>
           </div>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Rango: {cabin.priceRange}
+          </p>
+        </div>
 
-          <Separator />
+        <Separator />
 
-          {/* Date Selector & Guest Selector */}
-          <div className="space-y-3">
-            {/* Date Range Picker */}
-            <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-              <PopoverTrigger asChild>
-                <button
-                  className="w-full grid grid-cols-2 gap-0 rounded-xl border border-border overflow-hidden text-left hover:border-ocean/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ocean/30"
-                  aria-label="Seleccionar fechas"
-                >
-                  <div className="p-3 border-r border-border">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                      Check-in
-                    </label>
-                    <p className="text-sm font-medium text-foreground mt-0.5">
-                      {dateRange?.from
-                        ? formatDateShort(dateRange.from)
-                        : "Seleccionar fecha"}
-                    </p>
-                  </div>
-                  <div className="p-3">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                      Check-out
-                    </label>
-                    <p className="text-sm font-medium text-foreground mt-0.5">
-                      {dateRange?.to
-                        ? formatDateShort(dateRange.to)
-                        : "Seleccionar fecha"}
-                    </p>
-                  </div>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto p-0"
-                align="start"
-                sideOffset={8}
+        {/* Date Selector & Guest Selector */}
+        <div className="space-y-3">
+          {/* Date Range Picker */}
+          <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+            <PopoverTrigger asChild>
+              <button
+                className="w-full grid grid-cols-2 gap-0 rounded-xl border border-border overflow-hidden text-left hover:border-ocean/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ocean/30"
+                aria-label="Seleccionar fechas"
               >
-                <Calendar
-                  mode="range"
-                  selected={dateRange}
-                  onSelect={(range) => {
-                    setDateRange(range);
-                    if (range?.to) {
-                      setDatePopoverOpen(false);
-                    }
-                  }}
-                  disabled={{ before: today }}
-                  numberOfMonths={1}
-                  locale={es}
-                  defaultMonth={today}
-                />
-              </PopoverContent>
-            </Popover>
-
-            {/* Guest Selector */}
-            <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
-              <PopoverTrigger asChild>
-                <button
-                  className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ocean/30"
-                  aria-label="Seleccionar huéspedes"
-                >
+                <div className="p-3 border-r border-border">
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Huéspedes
+                    Check-in
                   </label>
                   <p className="text-sm font-medium text-foreground mt-0.5">
-                    {guests} huésped{guests > 1 ? "es" : ""} (máx. {cabin.capacity})
+                    {dateRange?.from
+                      ? formatDateShort(dateRange.from)
+                      : "Seleccionar fecha"}
                   </p>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-64 p-4"
-                align="start"
-                sideOffset={8}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Huéspedes</p>
-                    <p className="text-xs text-muted-foreground">
-                      Máximo {cabin.capacity}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 rounded-full"
-                      onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                      disabled={guests <= 1}
-                      aria-label="Reducir huéspedes"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </Button>
-                    <span className="w-6 text-center text-sm font-semibold text-foreground">
-                      {guests}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 rounded-full"
-                      onClick={() => setGuests((g) => Math.min(cabin.capacity, g + 1))}
-                      disabled={guests >= cabin.capacity}
-                      aria-label="Aumentar huéspedes"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </Button>
-                  </div>
                 </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {/* Reserve Button */}
-          <Button
-            className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-xl h-12 text-base font-semibold"
-            onClick={() => navigate("contact")}
-          >
-            Reservar ahora
-          </Button>
-
-          {/* WhatsApp Button */}
-          <Button
-            asChild
-            variant="outline"
-            className="w-full rounded-xl h-11 border-leaf/30 text-leaf hover:bg-leaf/5 gap-2"
-          >
-            <a
-              href={`https://wa.me/573001234567?text=${encodeURIComponent(
-                `Hola, me interesa la ${cabin.name} en ${cabin.location}. ¿Podrían darme más información?`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
+                <div className="p-3">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    Check-out
+                  </label>
+                  <p className="text-sm font-medium text-foreground mt-0.5">
+                    {dateRange?.to
+                      ? formatDateShort(dateRange.to)
+                      : "Seleccionar fecha"}
+                  </p>
+                </div>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-auto p-0"
+              align="start"
+              sideOffset={8}
             >
-              <MessageCircle className="w-4 h-4" />
-              Preguntar por WhatsApp
-            </a>
-          </Button>
+              <Calendar
+                mode="range"
+                selected={dateRange}
+                onSelect={(range) => {
+                  setDateRange(range);
+                  if (range?.to) {
+                    setDatePopoverOpen(false);
+                  }
+                }}
+                disabled={{ before: today }}
+                numberOfMonths={1}
+                locale={es}
+                defaultMonth={today}
+              />
+            </PopoverContent>
+          </Popover>
 
-          {/* Dynamic Price Breakdown */}
-          <div className="space-y-2 pt-2">
-            {nightCount > 0 ? (
-              <>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
-                    {formatPrice(cabin.pricePerNight)} x {nightCount} noche{nightCount > 1 ? "s" : ""}
+          {/* Guest Selector */}
+          <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
+            <PopoverTrigger asChild>
+              <button
+                className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 transition-colors focus:outline-none focus:ring-2 focus:ring-ocean/30"
+                aria-label="Seleccionar huéspedes"
+              >
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Huéspedes
+                </label>
+                <p className="text-sm font-medium text-foreground mt-0.5">
+                  {guests} huésped{guests > 1 ? "es" : ""} (máx. {cabin.capacity})
+                </p>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-64 p-4"
+              align="start"
+              sideOffset={8}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-foreground">Huéspedes</p>
+                  <p className="text-xs text-muted-foreground">
+                    Máximo {cabin.capacity}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-full"
+                    onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                    disabled={guests <= 1}
+                    aria-label="Reducir huéspedes"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                  <span className="w-6 text-center text-sm font-semibold text-foreground">
+                    {guests}
                   </span>
-                  <span className="text-foreground">{formatPrice(subtotal)}</span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-full"
+                    onClick={() => setGuests((g) => Math.min(cabin.capacity, g + 1))}
+                    disabled={guests >= cabin.capacity}
+                    aria-label="Aumentar huéspedes"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
-                    Tarifa de servicio
-                  </span>
-                  <span className="text-foreground">{formatPrice(serviceFee)}</span>
-                </div>
-                <Separator />
-                <div className="flex justify-between text-sm font-bold">
-                  <span>Total estimado</span>
-                  <span>{formatPrice(total)}</span>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
-                    {formatPrice(cabin.pricePerNight)} x -- noches
-                  </span>
-                  <span className="text-muted-foreground">--</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
-                    Tarifa de servicio
-                  </span>
-                  <span className="text-muted-foreground">--</span>
-                </div>
-                <Separator />
-                <div className="flex justify-between text-sm font-bold">
-                  <span>Total estimado</span>
-                  <span className="text-muted-foreground">--</span>
-                </div>
-              </>
-            )}
-          </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
 
-          <p className="text-[11px] text-center text-muted-foreground">
-            No se hará ningún cargo por el momento
-          </p>
-        </CardContent>
-      </Card>
-    </motion.div>
+        {/* Reserve Button */}
+        <Button
+          className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-xl h-12 text-base font-semibold"
+          onClick={() => navigate("contact")}
+        >
+          Reservar ahora
+        </Button>
+
+        {/* WhatsApp Button */}
+        <Button
+          asChild
+          variant="outline"
+          className="w-full rounded-xl h-11 border-leaf/30 text-leaf hover:bg-leaf/5 gap-2"
+        >
+          <a
+            href={`https://wa.me/573001234567?text=${encodeURIComponent(
+              `Hola, me interesa la ${cabin.name} en ${cabin.location}. ¿Podrían darme más información?`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MessageCircle className="w-4 h-4" />
+            Preguntar por WhatsApp
+          </a>
+        </Button>
+
+        {/* Dynamic Price Breakdown */}
+        <div className="space-y-2 pt-2">
+          {nightCount > 0 ? (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
+                  {formatPrice(cabin.pricePerNight)} x {nightCount} noche{nightCount > 1 ? "s" : ""}
+                </span>
+                <span className="text-foreground">{formatPrice(subtotal)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
+                  Tarifa de servicio
+                </span>
+                <span className="text-foreground">{formatPrice(serviceFee)}</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between text-sm font-bold">
+                <span>Total estimado</span>
+                <span>{formatPrice(total)}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
+                  {formatPrice(cabin.pricePerNight)} x -- noches
+                </span>
+                <span className="text-muted-foreground">--</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground underline decoration-dotted underline-offset-2">
+                  Tarifa de servicio
+                </span>
+                <span className="text-muted-foreground">--</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between text-sm font-bold">
+                <span>Total estimado</span>
+                <span className="text-muted-foreground">--</span>
+              </div>
+            </>
+          )}
+        </div>
+
+        <p className="text-[11px] text-center text-muted-foreground">
+          No se hará ningún cargo por el momento
+        </p>
+      </CardContent>
+    </Card>
   );
 }

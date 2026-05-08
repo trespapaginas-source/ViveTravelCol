@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, MapPin, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/lib/store";
@@ -45,6 +44,8 @@ export function HeroSection() {
               <img
                 src={image.url}
                 alt={image.caption}
+                loading={index === 0 ? "eager" : "lazy"}
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -58,39 +59,29 @@ export function HeroSection() {
       {/* Navigation arrows */}
       <button
         onClick={scrollPrev}
-        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2 sm:p-3 transition-all duration-300"
+        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2 sm:p-3 transition-colors duration-200"
         aria-label="Imagen anterior"
       >
         <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
       <button
         onClick={scrollNext}
-        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2 sm:p-3 transition-all duration-300"
+        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2 sm:p-3 transition-colors duration-200"
         aria-label="Siguiente imagen"
       >
         <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
 
-      {/* Content */}
+      {/* Content — CSS animation instead of framer-motion */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 sm:px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-4xl mx-auto"
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex items-center justify-center gap-2 mb-4 sm:mb-6"
-          >
+        <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="flex items-center justify-center gap-2 mb-4 sm:mb-6 animate-in fade-in duration-500" style={{ animationDelay: "200ms", animationFillMode: "both" }}>
             <Palmtree className="w-4 h-4 text-white/70" />
             <span className="text-white/70 text-sm sm:text-base font-medium tracking-wider uppercase">
               Vive Travel
             </span>
             <MapPin className="w-4 h-4 text-white/70" />
-          </motion.div>
+          </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             Descubre el{" "}
@@ -104,16 +95,11 @@ export function HeroSection() {
             Playas, naturaleza, aventura y cultura caribeña te esperan.
           </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
-          >
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "500ms", animationFillMode: "both" }}>
             <Button
               size="lg"
               onClick={() => navigate("plans")}
-              className="bg-ocean hover:bg-ocean-dark text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl shadow-lg shadow-ocean/30 transition-all duration-300 hover:scale-105"
+              className="bg-ocean hover:bg-ocean-dark text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl shadow-lg shadow-ocean/30 transition-all duration-200 hover:scale-105"
             >
               <MapPin className="w-5 h-5 mr-2" />
               Ver Planes
@@ -122,13 +108,13 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               onClick={() => navigate("cabins")}
-              className="border-white/40 text-white hover:bg-white/15 backdrop-blur-sm px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl transition-all duration-300 hover:scale-105 bg-transparent gap-2"
+              className="border-white/40 text-white hover:bg-white/15 backdrop-blur-sm px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl transition-all duration-200 hover:scale-105 bg-transparent gap-2"
             >
               <Palmtree className="w-5 h-5" />
               Ver Cabañas
             </Button>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
 
       {/* Dot indicators */}

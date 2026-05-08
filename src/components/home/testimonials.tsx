@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
 import { testimonials } from "@/lib/data";
@@ -27,25 +26,12 @@ export function Testimonials() {
   return (
     <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <SectionHeader
-            title="Lo que dicen nuestros viajeros"
-            subtitle="Historias reales de quienes ya vivieron la experiencia Vive Travel"
-          />
-        </motion.div>
+        <SectionHeader
+          title="Lo que dicen nuestros viajeros"
+          subtitle="Historias reales de quienes ya vivieron la experiencia Vive Travel"
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="relative"
-        >
+        <div className="relative">
           <div className="bg-card rounded-3xl shadow-sm border border-border/50 p-8 sm:p-12 relative overflow-hidden">
             {/* Decorative quote */}
             <div className="absolute top-6 left-6">
@@ -107,7 +93,7 @@ export function Testimonials() {
               <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </button>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

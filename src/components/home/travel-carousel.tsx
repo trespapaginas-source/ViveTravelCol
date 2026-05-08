@@ -2,7 +2,6 @@
 
 import { useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
 import { pastTripImages } from "@/lib/data";
@@ -21,25 +20,12 @@ export function TravelCarousel() {
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <SectionHeader
-            title="Viajes Realizados"
-            subtitle="Nuestros viajeros ya lo vivieron"
-          />
-        </motion.div>
+        <SectionHeader
+          title="Viajes Realizados"
+          subtitle="Nuestros viajeros ya lo vivieron"
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="relative"
-        >
+        <div className="relative">
           {/* Carousel */}
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex gap-4 sm:gap-5">
@@ -52,6 +38,8 @@ export function TravelCarousel() {
                     <img
                       src={trip.url}
                       alt={trip.caption}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
 
@@ -83,28 +71,22 @@ export function TravelCarousel() {
           {/* Navigation buttons */}
           <button
             onClick={scrollPrev}
-            className="absolute left-2 sm:left-0 top-1/2 -translate-y-1/2 sm:-translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-3 transition-all duration-300"
+            className="absolute left-2 sm:left-0 top-1/2 -translate-y-1/2 sm:-translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-3 transition-colors duration-200"
             aria-label="Anterior"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <button
             onClick={scrollNext}
-            className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-3 transition-all duration-300"
+            className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-3 transition-colors duration-200"
             aria-label="Siguiente"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
-        </motion.div>
+        </div>
 
         {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-10 sm:mt-12 flex flex-wrap justify-center gap-6 sm:gap-12"
-        >
+        <div className="mt-10 sm:mt-12 flex flex-wrap justify-center gap-6 sm:gap-12">
           {[
             { value: "500+", label: "Viajeros felices" },
             { value: "50+", label: "Viajes realizados" },
@@ -119,7 +101,7 @@ export function TravelCarousel() {
               </p>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

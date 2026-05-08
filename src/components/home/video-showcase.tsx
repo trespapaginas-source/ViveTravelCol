@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Play, X, MapPin, Palmtree, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/lib/store";
@@ -16,7 +15,7 @@ export function VideoShowcase() {
 
   const handleClose = useCallback(() => {
     setVideoOpen(false);
-  }, [setVideoOpen]);
+  }, []);
 
   return (
     <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden">
@@ -30,24 +29,12 @@ export function VideoShowcase() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="text-center lg:text-left"
-          >
+          <div className="text-center lg:text-left">
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-ocean/10 text-ocean text-xs font-semibold tracking-wide uppercase mb-6"
-            >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-ocean/10 text-ocean text-xs font-semibold tracking-wide uppercase mb-6">
               <Palmtree className="w-3.5 h-3.5" />
               Descubre el Atlántico
-            </motion.div>
+            </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-5">
               Vive la experiencia{" "}
@@ -84,7 +71,7 @@ export function VideoShowcase() {
               <Button
                 size="lg"
                 onClick={() => navigate("plans")}
-                className="bg-ocean hover:bg-ocean-dark text-white px-6 py-5 text-base rounded-xl shadow-lg shadow-ocean/20 transition-all duration-300 hover:scale-105 gap-2"
+                className="bg-ocean hover:bg-ocean-dark text-white px-6 py-5 text-base rounded-xl shadow-lg shadow-ocean/20 transition-all duration-200 hover:scale-105 gap-2"
               >
                 <Compass className="w-5 h-5" />
                 Explorar planes
@@ -93,28 +80,24 @@ export function VideoShowcase() {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate("cabins")}
-                className="border-ocean/30 text-ocean hover:bg-ocean/5 px-6 py-5 text-base rounded-xl transition-all duration-300 gap-2"
+                className="border-ocean/30 text-ocean hover:bg-ocean/5 px-6 py-5 text-base rounded-xl transition-colors duration-200 gap-2"
               >
                 <MapPin className="w-5 h-5" />
                 Ver cabañas
               </Button>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right: Video Player Area */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative pt-6 sm:pt-0"
-          >
+          <div className="relative pt-6 sm:pt-0">
             {/* Video thumbnail with play button */}
             <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-ocean/10 group cursor-pointer" onClick={handlePlay}>
               {/* Thumbnail */}
               <img
                 src="/video-thumbnail.png"
                 alt="Vive Travel - Descubre el Atlántico"
+                loading="lazy"
+                decoding="async"
                 className="w-full aspect-video object-cover transition-transform duration-700 group-hover:scale-105"
               />
 
@@ -123,13 +106,9 @@ export function VideoShowcase() {
 
               {/* Play button */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl transition-all duration-300 group-hover:bg-white group-hover:shadow-2xl"
-                >
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl transition-all duration-200 group-hover:bg-white group-hover:shadow-2xl group-hover:scale-110">
                   <Play className="w-6 h-6 sm:w-8 sm:h-8 text-ocean fill-ocean ml-1" />
-                </motion.div>
+                </div>
               </div>
 
               {/* Bottom info bar */}
@@ -138,6 +117,8 @@ export function VideoShowcase() {
                   <img
                     src="/logo.png"
                     alt="Vive Travel"
+                    width={56}
+                    height={28}
                     className="h-7 w-auto brightness-0 invert"
                   />
                 </div>
@@ -152,78 +133,56 @@ export function VideoShowcase() {
             </div>
 
             {/* Floating badge - top right */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 bg-white rounded-lg sm:rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 shadow-lg border border-border/50"
-            >
+            <div className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 bg-white rounded-lg sm:rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 shadow-lg border border-border/50">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-leaf animate-pulse" />
                 <span className="text-[10px] sm:text-xs font-semibold text-foreground">Disponible ahora</span>
               </div>
-            </motion.div>
+            </div>
 
             {/* Floating badge - bottom left */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.8 }}
-              className="absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4 bg-ocean-dark rounded-lg sm:rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 shadow-lg"
-            >
+            <div className="absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4 bg-ocean-dark rounded-lg sm:rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 shadow-lg">
               <div className="flex items-center gap-1.5">
                 <Compass className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white/80" />
                 <span className="text-[10px] sm:text-xs font-semibold text-white">+15 destinos</span>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Video Modal */}
-      <AnimatePresence>
-        {videoOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
-            onClick={handleClose}
+      {/* Video Modal — only renders when open */}
+      {videoOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={handleClose}
+        >
+          <div
+            className="relative w-full max-w-5xl animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="relative w-full max-w-5xl"
-              onClick={(e) => e.stopPropagation()}
+            {/* Close button */}
+            <button
+              onClick={handleClose}
+              className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+              aria-label="Cerrar video"
             >
-              {/* Close button */}
-              <button
-                onClick={handleClose}
-                className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
-                aria-label="Cerrar video"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <X className="w-5 h-5" />
+            </button>
 
-              {/* Video container */}
-              <div className="relative rounded-2xl overflow-hidden bg-black aspect-video shadow-2xl">
-                <iframe
-                  src="https://www.youtube.com/embed/?autoplay=1&rel=0&modestbranding=1"
-                  title="Vive Travel - Descubre el Atlántico"
-                  className="absolute inset-0 w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {/* Video container */}
+            <div className="relative rounded-2xl overflow-hidden bg-black aspect-video shadow-2xl">
+              <iframe
+                src="https://www.youtube.com/embed/?autoplay=1&rel=0&modestbranding=1"
+                title="Vive Travel - Descubre el Atlántico"
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

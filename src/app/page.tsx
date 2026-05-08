@@ -1,6 +1,8 @@
 "use client";
 
+import { lazy, Suspense } from "react";
 import { useNavigation } from "@/lib/store";
+import { usePrefetchData } from "@/hooks/use-prefetch-data";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { HeroSection } from "@/components/home/hero-section";
@@ -10,14 +12,32 @@ import { TravelCarousel } from "@/components/home/travel-carousel";
 import { GroupTrips } from "@/components/home/group-trips";
 import { CustomTrips } from "@/components/home/custom-trips";
 import { Testimonials } from "@/components/home/testimonials";
-import { PlansList } from "@/components/plans/plans-list";
-import { PlanDetail } from "@/components/plans/plan-detail";
-import { CabinsList } from "@/components/cabins/cabins-list";
-import { CabinDetail } from "@/components/cabins/cabin-detail";
-import { ContactSection } from "@/components/contact/contact-section";
-import { PoliciesSection } from "@/components/policies/policies-section";
-import { FavoritesSection } from "@/components/favorites/favorites-section";
-import { TeamSection } from "@/components/team/team-section";
+
+// Lazy load all non-home views — these are NOT needed on initial page load
+const PlansList = lazy(() =>
+  import("@/components/plans/plans-list").then((m) => ({ default: m.PlansList }))
+);
+const PlanDetail = lazy(() =>
+  import("@/components/plans/plan-detail").then((m) => ({ default: m.PlanDetail }))
+);
+const CabinsList = lazy(() =>
+  import("@/components/cabins/cabins-list").then((m) => ({ default: m.CabinsList }))
+);
+const CabinDetail = lazy(() =>
+  import("@/components/cabins/cabin-detail").then((m) => ({ default: m.CabinDetail }))
+);
+const ContactSection = lazy(() =>
+  import("@/components/contact/contact-section").then((m) => ({ default: m.ContactSection }))
+);
+const PoliciesSection = lazy(() =>
+  import("@/components/policies/policies-section").then((m) => ({ default: m.PoliciesSection }))
+);
+const FavoritesSection = lazy(() =>
+  import("@/components/favorites/favorites-section").then((m) => ({ default: m.FavoritesSection }))
+);
+const TeamSection = lazy(() =>
+  import("@/components/team/team-section").then((m) => ({ default: m.TeamSection }))
+);
 
 function HomeView() {
   return (
@@ -33,6 +53,14 @@ function HomeView() {
   );
 }
 
+function ViewSkeleton() {
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-ocean border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
 function ViewRouter() {
   const { currentView } = useNavigation();
 
@@ -40,21 +68,53 @@ function ViewRouter() {
     case "home":
       return <HomeView />;
     case "plans":
-      return <PlansList />;
+      return (
+        <Suspense fallback={<ViewSkeleton />}>
+          <PlansList />
+        </Suspense>
+      );
     case "plan-detail":
-      return <PlanDetail />;
+      return (
+        <Suspense fallback={<ViewSkeleton />}>
+          <PlanDetail />
+        </Suspense>
+      );
     case "cabins":
-      return <CabinsList />;
+      return (
+        <Suspense fallback={<ViewSkeleton />}>
+          <CabinsList />
+        </Suspense>
+      );
     case "cabin-detail":
-      return <CabinDetail />;
+      return (
+        <Suspense fallback={<ViewSkeleton />}>
+          <CabinDetail />
+        </Suspense>
+      );
     case "contact":
-      return <ContactSection />;
+      return (
+        <Suspense fallback={<ViewSkeleton />}>
+          <ContactSection />
+        </Suspense>
+      );
     case "policies":
-      return <PoliciesSection />;
+      return (
+        <Suspense fallback={<ViewSkeleton />}>
+          <PoliciesSection />
+        </Suspense>
+      );
     case "team":
-      return <TeamSection />;
+      return (
+        <Suspense fallback={<ViewSkeleton />}>
+          <TeamSection />
+        </Suspense>
+      );
     case "favorites":
-      return <FavoritesSection />;
+      return (
+        <Suspense fallback={<ViewSkeleton />}>
+          <FavoritesSection />
+        </Suspense>
+      );
     default:
       return <HomeView />;
   }
@@ -63,6 +123,10 @@ function ViewRouter() {
 export default function HomePage() {
   const { currentView } = useNavigation();
   const isHome = currentView === "home";
+
+  // Prefetch plans & cabins data in background so navigation is instant
+  usePrefetchData();
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />

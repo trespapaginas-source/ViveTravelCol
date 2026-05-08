@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useMemo, memo } from "react";
 import { MapPin, Clock, Users, Compass, Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +30,6 @@ const categoryColors: Record<string, string> = {
   Cultural: "bg-ocean/80 text-white",
 };
 
-
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
     style: "currency",
@@ -41,7 +39,8 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
-function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: string) => void }) {
+// Memoized plan card — prevents re-rendering when other cards change
+const PlanCard = memo(function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: string) => void }) {
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" ? isFavorite(plan.id) : false
   );
@@ -59,85 +58,79 @@ function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: strin
   );
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      whileHover={{ y: -4 }}
-      className="cursor-pointer"
+    <Card
+      className="overflow-hidden group border-border/50 hover:border-border hover:shadow-lg transition-all duration-200 hover:-translate-y-1 py-0 gap-0 cursor-pointer"
       onClick={() => onNavigate(plan.id)}
     >
-      <Card className="overflow-hidden group border-border/50 hover:border-border hover:shadow-lg transition-all duration-300 py-0 gap-0">
-        {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <img
-            src={plan.images[0]}
-            alt={plan.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+      {/* Image */}
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <img
+          src={plan.images[0]}
+          alt={plan.name}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        {/* Category Badge */}
+        <Badge
+          className={`absolute top-3 left-3 ${categoryColors[plan.category] || "bg-ocean/80 text-white"} border-0 text-[11px] font-medium px-2.5 py-0.5 backdrop-blur-sm`}
+        >
+          {plan.category}
+        </Badge>
+
+        {/* Favorite Button */}
+        <button
+          onClick={handleFavorite}
+          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
+          aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
+        >
+          <Heart
+            className={`w-3.5 h-3.5 transition-colors duration-200 ${
+              isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
+            }`}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        </button>
 
-          {/* Category Badge */}
-          <Badge
-            className={`absolute top-3 left-3 ${categoryColors[plan.category] || "bg-ocean/80 text-white"} border-0 text-[11px] font-medium px-2.5 py-0.5 backdrop-blur-sm`}
-          >
-            {plan.category}
-          </Badge>
+        {/* Price overlay */}
+        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1 shadow-sm">
+          <span className="text-foreground font-semibold text-sm">
+            {formatPrice(plan.price)}
+          </span>
+        </div>
+      </div>
 
-          {/* Favorite Button */}
-          <button
-            onClick={handleFavorite}
-            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
-            aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
-          >
-            <Heart
-              className={`w-3.5 h-3.5 transition-colors duration-200 ${
-                isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
-              }`}
-            />
-          </button>
+      <CardContent className="p-3.5 sm:p-4 space-y-2.5">
+        {/* Name */}
+        <h3 className="font-semibold text-[15px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
+          {plan.name}
+        </h3>
 
-          {/* Price overlay */}
-          <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1 shadow-sm">
-            <span className="text-foreground font-semibold text-sm">
-              {formatPrice(plan.price)}
-            </span>
+        {/* Short Description */}
+        <p className="text-xs text-muted-foreground/70 line-clamp-2 leading-relaxed">
+          {plan.shortDescription}
+        </p>
+
+        {/* Meta Info — compact inline */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground/60 pt-1">
+          <div className="flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            <span>{plan.duration}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <MapPin className="w-3 h-3" />
+            <span className="line-clamp-1">{plan.location}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Users className="w-3 h-3" />
+            <span>Máx. {plan.maxGuests}</span>
           </div>
         </div>
-
-        <CardContent className="p-3.5 sm:p-4 space-y-2.5">
-          {/* Name */}
-          <h3 className="font-semibold text-[15px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors">
-            {plan.name}
-          </h3>
-
-          {/* Short Description */}
-          <p className="text-xs text-muted-foreground/70 line-clamp-2 leading-relaxed">
-            {plan.shortDescription}
-          </p>
-
-          {/* Meta Info — compact inline */}
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground/60 pt-1">
-            <div className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              <span>{plan.duration}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MapPin className="w-3 h-3" />
-              <span className="line-clamp-1">{plan.location}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Users className="w-3 h-3" />
-              <span>Máx. {plan.maxGuests}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
+      </CardContent>
+    </Card>
   );
-}
+});
 
 export function PlansList() {
   const navigate = useNavigation((s) => s.navigate);
@@ -165,9 +158,9 @@ export function PlansList() {
     [publishedPlans, filters]
   );
 
-  const handleNavigate = (planId: string) => {
+  const handleNavigate = useCallback((planId: string) => {
     navigate("plan-detail", planId);
-  };
+  }, [navigate]);
 
   if (isLoading) {
     return (
@@ -232,30 +225,21 @@ export function PlansList() {
             activeCount={activeCount}
           />
 
-          {/* Plans Grid */}
+          {/* Plans Grid — NO AnimatePresence/layout, just CSS transitions */}
           <div className="flex-1 min-w-0">
-            <AnimatePresence mode="popLayout">
-              <motion.div
-                layout
-                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6"
-              >
-                {filteredPlans.map((plan) => (
-                  <PlanCard
-                    key={plan.id}
-                    plan={plan}
-                    onNavigate={handleNavigate}
-                  />
-                ))}
-              </motion.div>
-            </AnimatePresence>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
+              {filteredPlans.map((plan) => (
+                <PlanCard
+                  key={plan.id}
+                  plan={plan}
+                  onNavigate={handleNavigate}
+                />
+              ))}
+            </div>
 
             {/* Empty State */}
             {filteredPlans.length === 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-16"
-              >
+              <div className="text-center py-16">
                 <Compass className="w-10 h-10 text-muted-foreground/30 mx-auto mb-4" />
                 <p className="text-muted-foreground text-lg mb-2">
                   No hay planes con estos filtros
@@ -269,7 +253,7 @@ export function PlansList() {
                 >
                   Limpiar filtros
                 </button>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>

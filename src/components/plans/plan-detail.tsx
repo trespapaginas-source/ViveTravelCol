@@ -26,7 +26,6 @@ function formatPrice(price: number): string {
     maximumFractionDigits: 0,
   }).format(price);
 }
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -124,41 +123,32 @@ export function PlanDetail() {
     );
   }
 
-  const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-  };
-
   return (
     <div className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-28 lg:pb-10">
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
-        <motion.div {...fadeInUp} transition={{ duration: 0.3 }}>
-          <Button
-            variant="ghost"
-            onClick={() => navigate("plans")}
-            className="gap-2 mb-6 -ml-2 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Volver a planes
-          </Button>
-        </motion.div>
+        <Button
+          variant="ghost"
+          onClick={() => navigate("plans")}
+          className="gap-2 mb-6 -ml-2 text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Volver a planes
+        </Button>
 
         {/* Image Gallery */}
-        <motion.div {...fadeInUp} transition={{ duration: 0.4, delay: 0.1 }}>
-          <PropertyGallery
-            images={plan.images}
-            title={plan.name}
-            className="mb-8"
-          />
-        </motion.div>
+        <PropertyGallery
+          images={plan.images}
+          title={plan.name}
+          className="mb-8"
+        />
 
         {/* Main Content + Sticky Price Card */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Left Content */}
           <div className="flex-1 min-w-0">
             {/* Title Section */}
-            <motion.div {...fadeInUp} transition={{ duration: 0.4, delay: 0.2 }}>
+            <div>
               <div className="flex flex-wrap items-start gap-3 mb-3">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground leading-tight">
                   {plan.name}
@@ -202,12 +192,12 @@ export function PlanDetail() {
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Info Section */}
-            <motion.div {...fadeInUp} transition={{ duration: 0.4, delay: 0.25 }}>
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-4">
                 Información del plan
               </h2>
@@ -223,24 +213,24 @@ export function PlanDetail() {
                   value={`${plan.maxGuests} personas`}
                 />
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Full Description */}
-            <motion.div {...fadeInUp} transition={{ duration: 0.4, delay: 0.3 }}>
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-2.5">
                 Descripción
               </h2>
               <p className="text-muted-foreground leading-relaxed text-sm">
                 {plan.fullDescription}
               </p>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Qué incluye */}
-            <motion.div {...fadeInUp} transition={{ duration: 0.4, delay: 0.35 }}>
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-3.5">
                 Qué incluye
               </h2>
@@ -252,12 +242,12 @@ export function PlanDetail() {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Qué no incluye */}
-            <motion.div {...fadeInUp} transition={{ duration: 0.4, delay: 0.4 }}>
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-3.5">
                 Qué no incluye
               </h2>
@@ -269,12 +259,12 @@ export function PlanDetail() {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Puntos destacados */}
-            <motion.div {...fadeInUp} transition={{ duration: 0.4, delay: 0.45 }}>
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-foreground/30" />
                 Puntos destacados
@@ -289,12 +279,12 @@ export function PlanDetail() {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
             <Separator className="my-5" />
 
             {/* Schedule & Meeting */}
-            <motion.div {...fadeInUp} transition={{ duration: 0.4, delay: 0.5 }}>
+            <div>
               <h2 className="text-base font-semibold text-foreground mb-3.5">
                 Horario y punto de encuentro
               </h2>
@@ -310,19 +300,14 @@ export function PlanDetail() {
                   value={plan.meeting}
                 />
               </div>
-            </motion.div>
+            </div>
 
             {/* Mobile Price Card Spacer */}
             <div className="h-4 lg:hidden" />
           </div>
 
           {/* Right Sticky Price Card */}
-          <motion.aside
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="w-full lg:w-[380px] shrink-0"
-          >
+          <aside className="w-full lg:w-[380px] shrink-0">
             <div className="lg:sticky lg:top-24">
               <Card className="border-border/50 shadow-xl py-0 gap-0">
                 <CardContent className="p-6 space-y-5">
@@ -406,7 +391,7 @@ export function PlanDetail() {
                 </CardContent>
               </Card>
             </div>
-          </motion.aside>
+          </aside>
         </div>
       </div>
 
