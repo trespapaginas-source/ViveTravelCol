@@ -70,6 +70,8 @@ function formatCOP(value: number): string {
 // ─── Filter Configuration Builders ─────────────────────────────────────────────
 
 export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
+  if (plans.length === 0) return [];
+
   // Category counts
   const categoryCounts: Record<string, number> = {};
   plans.forEach((p) => {
@@ -93,6 +95,8 @@ export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
   const prices = plans.map((p) => p.price);
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
+  const safeMin = minPrice;
+  const safeMax = minPrice === maxPrice ? maxPrice + 5000 : maxPrice;
 
   return [
     {
@@ -115,8 +119,8 @@ export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
       id: "price",
       title: "Precio",
       type: "range",
-      min: minPrice,
-      max: maxPrice,
+      min: safeMin,
+      max: safeMax,
       step: 5000,
       formatLabel: formatCOP,
     },
@@ -128,11 +132,12 @@ export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
         .sort(([, a], [, b]) => b - a)
         .map(([label, count]) => ({ label, value: label, count })),
     },
-
   ];
 }
 
 export function buildCabinFilters(cabins: Cabin[]): FilterSection[] {
+  if (cabins.length === 0) return [];
+
   // Location counts
   const locationCounts: Record<string, number> = {};
   cabins.forEach((c) => {
@@ -172,6 +177,8 @@ export function buildCabinFilters(cabins: Cabin[]): FilterSection[] {
   const prices = cabins.map((c) => c.pricePerNight);
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
+  const safeMin = minPrice;
+  const safeMax = minPrice === maxPrice ? maxPrice + 10000 : maxPrice;
 
   return [
     {
@@ -186,8 +193,8 @@ export function buildCabinFilters(cabins: Cabin[]): FilterSection[] {
       id: "price",
       title: "Precio por noche",
       type: "range",
-      min: minPrice,
-      max: maxPrice,
+      min: safeMin,
+      max: safeMax,
       step: 10000,
       formatLabel: formatCOP,
     },
@@ -646,6 +653,16 @@ export function useFilterState(sections: FilterSection[]) {
   );
 
   const [filters, setFilters] = useState<FilterState>(defaultState);
+
+  // Sync filter state when sections change (e.g. data loads)
+  // Using React-recommended pattern: adjust state during render when props change
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  const sectionsKey = sections.map((s) => s.id).join(",");
+  const [prevKey, setPrevKey] = useState(sectionsKey);
+  if (prevKey !== sectionsKey) {
+    setPrevKey(sectionsKey);
+    setFilters(defaultState);
+  }
 
   const toggleCheckbox = useCallback(
     (sectionId: string, value: string) => {
