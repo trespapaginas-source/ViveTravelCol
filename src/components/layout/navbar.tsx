@@ -11,6 +11,7 @@ const navItems = [
   { key: "home" as const, label: "Inicio" },
   { key: "plans" as const, label: "Planes" },
   { key: "cabins" as const, label: "Cabañas" },
+  { key: "team" as const, label: "Equipo" },
   { key: "contact" as const, label: "Contacto" },
   { key: "policies" as const, label: "Políticas" },
 ];

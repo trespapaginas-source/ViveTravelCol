@@ -24,3 +24,27 @@ Stage Summary:
 - Detail pages no longer hidden behind navbar
 - Consistent price formatting across all components
 - Favorites section now displays both plan and cabin favorites with type badges
+
+---
+Task ID: 1
+Agent: Main
+Task: Add "Equipo" (Team) tab/section to Vive Travel website
+
+Work Log:
+- Added "team" to ViewType in src/lib/store.ts
+- Added "Equipo" nav item to navbar between Cabañas and Contacto
+- Created src/components/team/team-section.tsx with:
+  - Three team member cards: Andrés Trespalacios (Creador Digital), Luis Méndez (Influencer & Accionista Mayoritario), Jean Fontalo (Operaciones & Ventas)
+  - Each card has: avatar with initials, color-coded accent (ocean/mint/leaf), role, description, floating role icon
+  - Luis Méndez card featured with "Rostro de la agencia" badge and mint ring highlight
+  - Stats section on dark ocean background: 3 Fundadores, 50+ Experiencias, 15+ Destinos, 100% Pasión Caribeña
+  - CTA buttons to Ver planes and Contacto
+  - Responsive design with Framer Motion animations
+- Added TeamSection to page.tsx ViewRouter as "team" case
+- Added "Nuestro Equipo" link to footer Explorar section
+- Lint passes, dev server compiles successfully
+
+Stage Summary:
+- New "Equipo" tab fully functional in navbar, page router, and footer
+- Team section inspired by reference image but styled with Vive Travel ocean theme
+- Three team members displayed with unique color accents and role descriptions

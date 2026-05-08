@@ -55,6 +55,7 @@ export function Footer() {
                 { label: "Inicio", view: "home" as const },
                 { label: "Planes Turísticos", view: "plans" as const },
                 { label: "Cabañas", view: "cabins" as const },
+                { label: "Nuestro Equipo", view: "team" as const },
                 { label: "Contacto", view: "contact" as const },
                 { label: "Políticas", view: "policies" as const },
               ].map((item) => (
