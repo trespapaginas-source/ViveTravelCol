@@ -135,13 +135,11 @@ export function VideoShowcase() {
               {/* Bottom info bar */}
               <div className="absolute bottom-0 left-0 right-0 px-5 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-ocean flex items-center justify-center">
-                    <Palmtree className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-white text-sm font-semibold leading-tight">Vive Travel</p>
-                    <p className="text-white/60 text-[11px] leading-tight">Atlántico, Colombia</p>
-                  </div>
+                  <img
+                    src="/logo.png"
+                    alt="Vive Travel"
+                    className="h-7 w-auto brightness-0 invert"
+                  />
                 </div>
                 <div className="text-white/50 text-xs flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />

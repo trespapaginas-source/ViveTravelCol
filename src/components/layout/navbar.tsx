@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigation } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, Palmtree, Phone, Heart } from "lucide-react";
+import { Menu, Phone, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -48,35 +48,16 @@ export function Navbar() {
           {/* Logo */}
           <button
             onClick={() => handleNav("home")}
-            className="flex items-center gap-2 group"
+            className="flex items-center group"
           >
-            <div className={cn(
-              "w-9 h-9 rounded-lg flex items-center justify-center transition-colors duration-300",
-              showOpaque ? "bg-ocean/10" : "bg-white/15"
-            )}>
-              <Palmtree className={cn(
-                "w-4 h-4 transition-colors duration-300",
-                showOpaque ? "text-ocean" : "text-white/80"
-              )} />
-            </div>
-            <div className="flex flex-col">
-              <span
-                className={cn(
-                  "text-lg font-bold leading-tight transition-colors duration-300",
-                  showOpaque ? "text-ocean-dark" : "text-white"
-                )}
-              >
-                Vive Travel
-              </span>
-              <span
-                className={cn(
-                  "text-[10px] tracking-widest uppercase leading-tight transition-colors duration-300",
-                  showOpaque ? "text-muted-foreground" : "text-white/50"
-                )}
-              >
-                Atlántico
-              </span>
-            </div>
+            <img
+              src="/logo.png"
+              alt="Vive Travel"
+              className={cn(
+                "h-10 sm:h-12 w-auto transition-all duration-300",
+                !showOpaque && "brightness-0 invert"
+              )}
+            />
           </button>
 
           {/* Desktop Nav */}
@@ -160,12 +141,11 @@ export function Navbar() {
                 <SheetTitle className="sr-only">Menú de navegación</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-ocean/10 flex items-center justify-center">
-                        <Palmtree className="w-4 h-4 text-ocean" />
-                      </div>
-                      <span className="font-bold text-ocean-dark">Vive Travel</span>
-                    </div>
+                    <img
+                      src="/logo.png"
+                      alt="Vive Travel"
+                      className="h-9 w-auto"
+                    />
                   </div>
                   <nav className="flex flex-col p-4 gap-1">
                     {navItems.map((item) => (
