@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useNavigation } from "@/lib/store";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigation, type ViewType } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu, Phone, Heart } from "lucide-react";
@@ -15,6 +15,14 @@ const navItems = [
   { key: "contact" as const, label: "Contacto" },
   { key: "policies" as const, label: "Políticas" },
 ];
+
+/** Check if a nav item is active, including nested detail views */
+function isItemActive(itemKey: string, currentView: ViewType): boolean {
+  if (currentView === itemKey) return true;
+  if (itemKey === "plans" && currentView === "plan-detail") return true;
+  if (itemKey === "cabins" && currentView === "cabin-detail") return true;
+  return false;
+}
 
 export function Navbar() {
   const { currentView, navigate } = useNavigation();
@@ -30,10 +38,19 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleNav = (view: Parameters<typeof navigate>[0]) => {
-    navigate(view);
-    setMobileOpen(false);
-  };
+  // Close mobile menu first, then navigate after a small delay
+  // This ensures the Sheet close animation starts before the view changes,
+  // preventing visual glitches where the old view is visible behind the closing Sheet
+  const handleNav = useCallback(
+    (view: Parameters<typeof navigate>[0]) => {
+      setMobileOpen(false);
+      // Small delay to let the Sheet close animation start
+      setTimeout(() => {
+        navigate(view);
+      }, 150);
+    },
+    [navigate]
+  );
 
   return (
     <header
@@ -69,9 +86,7 @@ export function Navbar() {
                 onClick={() => handleNav(item.key)}
                 className={cn(
                   "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-all duration-300",
-                  currentView === item.key ||
-                    (item.key === "plans" && currentView === "plan-detail") ||
-                    (item.key === "cabins" && currentView === "cabin-detail")
+                  isItemActive(item.key, currentView)
                     ? showOpaque
                       ? "bg-ocean text-white"
                       : "bg-white/20 backdrop-blur-sm text-white"
@@ -93,7 +108,7 @@ export function Navbar() {
               size="icon"
               onClick={() => handleNav("favorites")}
               className={cn(
-                "rounded-full h-9 w-9 transition-all duration-300",
+                "rounded-full h-10 w-10 sm:h-9 sm:w-9 transition-all duration-300",
                 currentView === "favorites"
                   ? showOpaque
                     ? "bg-ocean/10 text-ocean"
@@ -131,7 +146,7 @@ export function Navbar() {
                   variant="ghost"
                   size="icon"
                   className={cn(
-                    "md:hidden",
+                    "md:hidden h-10 w-10",
                     showOpaque ? "text-ocean-dark" : "text-white"
                   )}
                 >
@@ -148,14 +163,14 @@ export function Navbar() {
                       className="h-9 w-auto"
                     />
                   </div>
-                  <nav className="flex flex-col p-4 gap-1">
+                  <nav className="flex flex-col p-4 gap-1 overflow-y-auto">
                     {navItems.map((item) => (
                       <button
                         key={item.key}
                         onClick={() => handleNav(item.key)}
                         className={cn(
                           "px-4 py-3 rounded-xl text-left text-sm font-medium transition-all",
-                          currentView === item.key
+                          isItemActive(item.key, currentView)
                             ? "bg-ocean/10 text-ocean font-semibold"
                             : "text-muted-foreground hover:bg-muted hover:text-ocean"
                         )}

@@ -204,7 +204,7 @@ export function CabinDetail() {
   }
 
   return (
-    <div className="pb-16">
+    <div className="pb-28 lg:pb-16">
       {/* Back Button */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 pt-20 sm:pt-24">
         <motion.div

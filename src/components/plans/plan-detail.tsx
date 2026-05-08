@@ -130,7 +130,7 @@ export function PlanDetail() {
   };
 
   return (
-    <div className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24">
+    <div className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-28 lg:pb-10">
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
         <motion.div {...fadeInUp} transition={{ duration: 0.3 }}>

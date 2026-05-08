@@ -122,8 +122,9 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               onClick={() => navigate("cabins")}
-              className="border-white/40 text-white hover:bg-white/15 backdrop-blur-sm px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl transition-all duration-300 hover:scale-105 bg-transparent"
+              className="border-white/40 text-white hover:bg-white/15 backdrop-blur-sm px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl transition-all duration-300 hover:scale-105 bg-transparent gap-2"
             >
+              <Palmtree className="w-5 h-5" />
               Ver Cabañas
             </Button>
           </motion.div>
