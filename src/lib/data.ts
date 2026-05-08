@@ -372,7 +372,7 @@ export const cabins: Cabin[] = [
       "Acceso directo a la playa",
       "WiFi gratuito",
       "Estacionamiento",
-      " Parrilla/BBQ",
+      "Parrilla/BBQ",
       "TV Smart 55\"",
       "Toallas de playa",
     ],

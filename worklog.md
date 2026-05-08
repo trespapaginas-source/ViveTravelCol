@@ -467,3 +467,57 @@ Stage Summary:
 - Custom StarRating function removed from plan-detail.tsx
 - Check, X, Sparkles imports removed from lucide-react (replaced by IconCheck)
 - All existing functionality, layout, and structure preserved
+
+---
+Task ID: Session-3
+Agent: Main Orchestrator
+Task: Redesign cabin card icons, remove reviews/ratings, implement share dialog, create favorites/wishlist system, remove check-in/out section
+
+Work Log:
+- Audited all cabin-related components and premium icon system
+- Redesigned cabins-list.tsx:
+  - Removed rating badge (Star + "4.7") from image overlay
+  - Removed RatingStars component and review count from bottom row
+  - Added heart/favorite button to card image overlay with coral styling
+  - Replaced PremiumIcon containers with simple inline Lucide icons (w-3 h-3, muted-foreground)
+  - Changed stats row to dot-separated compact format (6 · 2 hab. · 2 baños)
+  - Reduced padding and spacing for mobile optimization
+  - Price badge changed to white/90 background for subtlety
+- Redesigned cabin-detail.tsx:
+  - Removed RatingStars, review count, and Superhost badge from header
+  - Removed entire check-in/check-out section
+  - Stats row: replaced IconStat gradient containers with subtle muted/60 bg containers
+  - Highlights: replaced PremiumIcon gradient containers with inline icons (ocean/50 color) + simpler hover:bg-muted/40 cards
+  - Amenities: replaced PremiumIcon containers with simple inline icons (muted-foreground/50)
+  - Rules: replaced PremiumIcon minimal with simple inline icons (muted-foreground/40)
+  - Section headers: replaced SectionIcon gradient containers with simple inline icons (ocean/60)
+  - Added ShareDialog integration for share button
+  - Improved favorite button styling (coral fill when active)
+  - Fixed double padding bug (removed pt-20 sm:pt-24, page.tsx handles padding)
+  - Added getHighlightIcon() function for contextual highlight icons
+- Created ShareDialog component (src/components/shared/share-dialog.tsx):
+  - WhatsApp sharing with pre-filled message
+  - Facebook sharing with share dialog
+  - Copy link to clipboard with visual feedback
+  - Native Web Share API option (shown on mobile devices that support it)
+  - Clean dialog UI with icon buttons and descriptions
+- Created FavoritesSection component (src/components/favorites/favorites-section.tsx):
+  - "Tu Colección" section with favorite cabin cards
+  - Animated card removal with AnimatePresence
+  - Empty state with Compass icon and "Explorar cabañas" CTA
+  - Favorite cards match cabin card styling (compact, minimal icons)
+  - Remove from favorites directly from collection view
+- Updated store.ts: Added "favorites" to ViewType
+- Updated page.tsx: Added FavoritesSection import and view case
+- Updated navbar.tsx: Added heart/favorites button next to "Reservar" CTA, added "Mi Colección" to mobile menu
+- Fixed data quality bug: Leading space in " Parrilla/BBQ" amenity → "Parrilla/BBQ"
+- Lint check passes clean, dev server compiles successfully
+
+Stage Summary:
+- All review/rating references removed from cabin cards (stars, scores, counts, badges, Superhost)
+- Icons redesigned: compact, subtle, minimal with neutral/muted colors (no colorful containers)
+- Check-in/check-out section completely removed
+- ShareDialog with WhatsApp, Facebook, copy link, and native Web Share API
+- Favorites/wishlist system: dedicated "Tu Colección" view accessible from navbar heart icon
+- Cabin cards mobile-optimized with reduced padding and compact dot-separated stats
+- Double padding bug fixed on cabin detail page

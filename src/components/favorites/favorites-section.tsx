@@ -1,26 +1,25 @@
 "use client";
 
-import { Cabin } from "@/lib/data";
-import { fetchCabins } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
+import { getFavorites } from "@/lib/favorites";
+import { fetchCabin } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { ImageCarousel } from "@/components/shared/image-carousel";
-import { SectionHeader } from "@/components/shared/section-header";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/components/shared/section-header";
 import {
+  Heart,
+  MapPin,
   Users,
   BedDouble,
   Bath,
-  MapPin,
   ArrowRight,
-  Waves,
-  Heart,
+  Compass,
 } from "lucide-react";
-import { motion } from "framer-motion";
-import { isFavorite, toggleFavorite } from "@/lib/favorites";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
+import { toggleFavorite } from "@/lib/favorites";
 import { toast } from "sonner";
 
 function formatPrice(price: number): string {
@@ -32,42 +31,57 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
-function CabinCard({
-  cabin,
-  index,
+function FavoriteCard({
+  cabinId,
   onSelect,
+  onRemove,
 }: {
-  cabin: Cabin;
-  index: number;
+  cabinId: string;
   onSelect: () => void;
+  onRemove: () => void;
 }) {
-  const [isFav, setIsFav] = useState(() =>
-    typeof window !== "undefined" ? isFavorite(cabin.id) : false
-  );
+  const { data: cabin, isLoading } = useQuery({
+    queryKey: ["cabin", cabinId],
+    queryFn: () => fetchCabin(cabinId),
+    enabled: !!cabinId,
+  });
 
-  const handleFavorite = useCallback(
+  const handleRemove = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      const nowFav = toggleFavorite(cabin.id);
-      setIsFav(nowFav);
-      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
-        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
-      });
+      toggleFavorite(cabinId);
+      onRemove();
+      toast.success("Eliminado de tu colección");
     },
-    [cabin.id]
+    [cabinId, onRemove]
   );
+
+  if (isLoading) {
+    return (
+      <Card className="overflow-hidden border-border/50 py-0 gap-0">
+        <div className="aspect-video bg-muted animate-pulse" />
+        <CardContent className="p-4 space-y-3">
+          <div className="h-5 bg-muted rounded animate-pulse w-3/4" />
+          <div className="h-4 bg-muted rounded animate-pulse w-1/2" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!cabin) return null;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      layout
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.3 }}
     >
       <Card
         className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-300 py-0 gap-0"
         onClick={onSelect}
       >
-        {/* Image Carousel */}
         <div className="relative">
           <ImageCarousel
             images={cabin.images}
@@ -75,28 +89,16 @@ function CabinCard({
             showExpand={false}
             className="[&_.border-0]:border-0"
           />
-          {/* Price Badge */}
-          <div className="absolute top-3 left-3 z-10">
-            <Badge className="bg-white/90 text-foreground backdrop-blur-sm border-0 text-[11px] font-semibold px-2.5 py-0.5 shadow-sm">
-              {formatPrice(cabin.pricePerNight)}/noche
-            </Badge>
-          </div>
-          {/* Favorite Button */}
           <button
-            onClick={handleFavorite}
+            onClick={handleRemove}
             className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
-            aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
+            aria-label="Eliminar de favoritos"
           >
-            <Heart
-              className={`w-3.5 h-3.5 transition-colors duration-200 ${
-                isFav ? "fill-coral text-coral" : "text-muted-foreground"
-              }`}
-            />
+            <Heart className="w-3.5 h-3.5 fill-coral text-coral" />
           </button>
         </div>
 
         <CardContent className="p-3.5 sm:p-4 space-y-2">
-          {/* Name and Location */}
           <div>
             <h3 className="font-semibold text-[15px] text-foreground group-hover:text-ocean transition-colors line-clamp-1 leading-snug">
               {cabin.name}
@@ -107,12 +109,10 @@ function CabinCard({
             </div>
           </div>
 
-          {/* Short Description */}
           <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
             {cabin.shortDescription}
           </p>
 
-          {/* Compact Stats Row */}
           <div className="flex items-center gap-0 text-xs text-muted-foreground/70 pt-1">
             <div className="flex items-center gap-1">
               <Users className="w-3 h-3" />
@@ -130,8 +130,10 @@ function CabinCard({
             </div>
           </div>
 
-          {/* Bottom: CTA */}
-          <div className="flex items-center justify-end pt-1.5 border-t border-border/30">
+          <div className="flex items-center justify-between pt-1.5 border-t border-border/30">
+            <span className="text-sm font-semibold text-foreground">
+              {formatPrice(cabin.pricePerNight)}<span className="text-xs font-normal text-muted-foreground">/noche</span>
+            </span>
             <Button
               variant="ghost"
               size="sm"
@@ -147,71 +149,68 @@ function CabinCard({
   );
 }
 
-export function CabinsList() {
+export function FavoritesSection() {
   const { navigate } = useNavigation();
-  const { data: cabins = [], isLoading } = useQuery({
-    queryKey: ["cabins"],
-    queryFn: fetchCabins,
-  });
+  const [favIds, setFavIds] = useState<string[]>(() =>
+    typeof window !== "undefined" ? getFavorites() : []
+  );
 
-  const publishedCabins = cabins.filter((c) => c.published !== false);
+  const handleRemove = useCallback(() => {
+    setFavIds(getFavorites());
+  }, []);
 
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           <SectionHeader
-            title="Nuestras Cabañas"
-            subtitle="Descubre el alojamiento perfecto para tu escapada al Caribe colombiano. Desde refugios románticos hasta espacios familiares frente al mar."
+            title="Tu Colección"
+            subtitle="Tus cabañas favoritas guardadas para comparar y encontrar tu escapada ideal."
           />
         </motion.div>
 
-        {/* Decorative wave */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex items-center justify-center gap-2 mb-10"
-        >
-          <div className="h-px w-12 bg-ocean/20" />
-          <Waves className="w-4 h-4 text-ocean/40" />
-          <div className="h-px w-12 bg-ocean/20" />
-        </motion.div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-          {publishedCabins.map((cabin, index) => (
-            <CabinCard
-              key={cabin.id}
-              cabin={cabin}
-              index={index}
-              onSelect={() => navigate("cabin-detail", cabin.id)}
-            />
-          ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-12 text-center"
-        >
-          <p className="text-sm text-muted-foreground mb-4">
-            ¿No encuentras lo que buscas? Escríbenos y te ayudamos a encontrar la cabaña ideal.
-          </p>
-          <Button
-            onClick={() => navigate("contact")}
-            className="bg-ocean hover:bg-ocean-dark text-white rounded-full px-8"
+        {favIds.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-center py-16"
           >
-            Contáctanos
-          </Button>
-        </motion.div>
+            <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center mx-auto mb-4">
+              <Compass className="w-7 h-7 text-muted-foreground/40" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-1.5">
+              Tu colección está vacía
+            </h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
+              Explora nuestras cabañas y guarda las que más te gusten tocando el ícono de corazón.
+            </p>
+            <Button
+              onClick={() => navigate("cabins")}
+              className="bg-ocean hover:bg-ocean-dark text-white rounded-full px-8 gap-2"
+            >
+              Explorar cabañas
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </motion.div>
+        ) : (
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            <AnimatePresence mode="popLayout">
+              {favIds.map((id) => (
+                <FavoriteCard
+                  key={id}
+                  cabinId={id}
+                  onSelect={() => navigate("cabin-detail", id)}
+                  onRemove={handleRemove}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
     </section>
   );

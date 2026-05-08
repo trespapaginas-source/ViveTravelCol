@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigation } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, Palmtree, Phone } from "lucide-react";
+import { Menu, Palmtree, Phone, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PremiumIcon } from "@/components/shared/premium-icon";
 
@@ -22,7 +22,6 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isHome = currentView === "home";
-  // When not on home page, always show opaque navbar (no hero image behind it)
   const showOpaque = !isHome || scrolled;
 
   useEffect(() => {
@@ -97,8 +96,32 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* CTA + Mobile */}
-          <div className="flex items-center gap-3">
+          {/* CTA + Favorites + Mobile */}
+          <div className="flex items-center gap-2">
+            {/* Favorites */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handleNav("favorites")}
+              className={cn(
+                "rounded-full h-9 w-9 transition-all duration-300",
+                currentView === "favorites"
+                  ? showOpaque
+                    ? "bg-coral/10 text-coral"
+                    : "bg-white/20 text-white"
+                  : showOpaque
+                  ? "text-foreground/60 hover:text-coral hover:bg-coral/5"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
+              )}
+              aria-label="Mis favoritos"
+            >
+              <Heart className={cn(
+                "w-4 h-4",
+                currentView === "favorites" && "fill-current"
+              )} />
+            </Button>
+
+            {/* Reservar CTA */}
             <Button
               onClick={() => handleNav("contact")}
               className={cn(
@@ -150,6 +173,21 @@ export function Navbar() {
                         {item.label}
                       </button>
                     ))}
+                    <button
+                      onClick={() => handleNav("favorites")}
+                      className={cn(
+                        "flex items-center gap-2.5 px-4 py-3 rounded-xl text-left text-sm font-medium transition-all",
+                        currentView === "favorites"
+                          ? "bg-coral/10 text-coral font-semibold"
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      <Heart className={cn(
+                        "w-4 h-4",
+                        currentView === "favorites" && "fill-current"
+                      )} />
+                      Mi Colección
+                    </button>
                   </nav>
                   <div className="mt-auto p-4 border-t">
                     <Button

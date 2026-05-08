@@ -16,12 +16,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-  PremiumIcon,
-  RatingStars,
-  IconStat,
-  SectionIcon,
-} from "@/components/shared/premium-icon";
-import {
   ArrowLeft,
   MapPin,
   Users,
@@ -30,7 +24,6 @@ import {
   Check,
   ShieldCheck,
   Clock,
-  CalendarDays,
   MessageCircle,
   Sparkles,
   AlertCircle,
@@ -71,6 +64,7 @@ import { format, differenceInDays } from "date-fns";
 import { es } from "date-fns/locale/es";
 import { toast } from "sonner";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
+import { ShareDialog } from "@/components/shared/share-dialog";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -129,6 +123,32 @@ function getRuleIcon(rule: string) {
   return AlertCircle;
 }
 
+// Map highlight keywords to icons
+function getHighlightIcon(highlight: string) {
+  const lower = highlight.toLowerCase();
+  if (lower.includes("mar") || lower.includes("frente")) return Waves;
+  if (lower.includes("piscina")) return Waves;
+  if (lower.includes("sostenible") || lower.includes("eco")) return TreeDeciduous;
+  if (lower.includes("manglar")) return TreePalm;
+  if (lower.includes("muelle")) return Sailboat;
+  if (lower.includes("ave") || lower.includes("observación")) return Binoculars;
+  if (lower.includes("familia") || lower.includes("familiar")) return Users;
+  if (lower.includes("habitación")) return BedDouble;
+  if (lower.includes("juego")) return Baby;
+  if (lower.includes("seguridad")) return Shield;
+  if (lower.includes("jacuzzi")) return ShowerHead;
+  if (lower.includes("romántic") || lower.includes("bohem")) return Heart;
+  if (lower.includes("desayuno")) return Coffee;
+  if (lower.includes("atardecer")) return Sun;
+  if (lower.includes("auténtic") || lower.includes("costeñ")) return TreePalm;
+  if (lower.includes("palma") || lower.includes("techo")) return TreePalm;
+  if (lower.includes("económica")) return Badge;
+  if (lower.includes("jardín")) return TreeDeciduous;
+  if (lower.includes("caribe") || lower.includes("diseño")) return Sparkles;
+  if (lower.includes("playa") || lower.includes("acceso")) return Waves;
+  return Sparkles;
+}
+
 export function CabinDetail() {
   const { selectedItemId, navigate } = useNavigation();
 
@@ -144,29 +164,15 @@ export function CabinDetail() {
       : false
   );
 
-  const handleShare = useCallback(async () => {
-    const shareData = {
-      title: cabin?.name ?? "Cabaña Vive Travel",
-      text: `Mira esta cabaña: ${cabin?.name} en ${cabin?.location}`,
-      url: window.location.href,
-    };
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch {
-        // User cancelled or share failed — do nothing
-      }
-    } else {
-      await navigator.clipboard.writeText(window.location.href);
-      toast.success("Enlace copiado al portapapeles");
-    }
-  }, [cabin]);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const handleToggleFavorite = useCallback(() => {
     if (!selectedItemId) return;
     const nowFav = toggleFavorite(selectedItemId);
     setIsFav(nowFav);
-    toast.success(nowFav ? "Añadido a favoritos" : "Eliminado de favoritos");
+    toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+      description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+    });
   }, [selectedItemId]);
 
   if (isLoading) {
@@ -198,9 +204,9 @@ export function CabinDetail() {
   }
 
   return (
-    <div className="pt-20 sm:pt-24 pb-16">
+    <div className="pb-16">
       {/* Back Button */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 pt-4">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -233,11 +239,11 @@ export function CabinDetail() {
       </motion.div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Left Column - Details */}
           <div className="flex-1 min-w-0">
-            {/* Title, Rating, Location */}
+            {/* Title, Location, Actions */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -245,34 +251,20 @@ export function CabinDetail() {
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                     {cabin.name}
                   </h1>
-                  <div className="flex items-center gap-3 mt-2 flex-wrap">
-                    <div className="flex items-center gap-1">
-                      <RatingStars rating={cabin.rating} size="md" showValue />
-                      <span className="text-sm text-muted-foreground ml-0.5">
-                        ({cabin.reviewCount} evaluaciones)
-                      </span>
-                    </div>
-                    <Badge
-                      variant="secondary"
-                      className="bg-ocean/10 text-ocean border-0 text-xs"
-                    >
-                      Superhost
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-muted-foreground mt-2">
-                    <PremiumIcon icon={MapPin} variant="default" theme="sunset" size="xs" />
+                  <div className="flex items-center gap-1.5 text-muted-foreground mt-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />
                     <span className="text-sm">{cabin.location}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full"
-                    onClick={handleShare}
+                    className="rounded-full h-9 w-9 border-border/50 hover:border-border"
+                    onClick={() => setShareOpen(true)}
                     aria-label="Compartir"
                   >
                     <Share2 className="w-4 h-4" />
@@ -280,35 +272,54 @@ export function CabinDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full"
+                    className={`rounded-full h-9 w-9 border-border/50 hover:border-border transition-colors ${
+                      isFav ? "border-coral/30 bg-coral/5" : ""
+                    }`}
                     onClick={handleToggleFavorite}
-                    aria-label={isFav ? "Eliminar de favoritos" : "Añadir a favoritos"}
+                    aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
                   >
                     <Heart
-                      className={`w-4 h-4 ${isFav ? "fill-sunset text-sunset" : ""}`}
+                      className={`w-4 h-4 transition-colors ${
+                        isFav ? "fill-coral text-coral" : ""
+                      }`}
                     />
                   </Button>
                 </div>
               </div>
             </motion.div>
 
-            <Separator className="my-6" />
+            <Separator className="my-5" />
 
-            {/* Key Stats Row - Airbnb style */}
+            {/* Key Stats Row */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex items-center gap-6 flex-wrap"
+              className="flex items-center gap-5 flex-wrap"
             >
-              <IconStat icon={Users} value={`${cabin.capacity} huéspedes`} theme="ocean" />
-              <div className="w-px h-8 bg-border" />
-              <IconStat icon={BedDouble} value={`${cabin.bedrooms} habitación${cabin.bedrooms > 1 ? "es" : ""}`} theme="ocean" />
-              <div className="w-px h-8 bg-border" />
-              <IconStat icon={Bath} value={`${cabin.bathrooms} baño${cabin.bathrooms > 1 ? "s" : ""}`} theme="ocean" />
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center">
+                  <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                </div>
+                <span className="text-sm text-foreground">{cabin.capacity} huéspedes</span>
+              </div>
+              <div className="w-px h-6 bg-border/60" />
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center">
+                  <BedDouble className="w-3.5 h-3.5 text-muted-foreground" />
+                </div>
+                <span className="text-sm text-foreground">{cabin.bedrooms} habitación{cabin.bedrooms > 1 ? "es" : ""}</span>
+              </div>
+              <div className="w-px h-6 bg-border/60" />
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center">
+                  <Bath className="w-3.5 h-3.5 text-muted-foreground" />
+                </div>
+                <span className="text-sm text-foreground">{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
+              </div>
             </motion.div>
 
-            <Separator className="my-6" />
+            <Separator className="my-5" />
 
             {/* Full Description */}
             <motion.div
@@ -316,15 +327,15 @@ export function CabinDetail() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <h2 className="text-lg font-semibold text-foreground mb-3">
+              <h2 className="text-base font-semibold text-foreground mb-2.5">
                 Acerca de esta cabaña
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
+              <p className="text-muted-foreground leading-relaxed text-sm">
                 {cabin.fullDescription}
               </p>
             </motion.div>
 
-            <Separator className="my-6" />
+            <Separator className="my-5" />
 
             {/* Highlights */}
             <motion.div
@@ -332,26 +343,29 @@ export function CabinDetail() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.35 }}
             >
-              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <SectionIcon icon={Sparkles} theme="sunset" />
+              <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-ocean/60" />
                 Puntos destacados
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {cabin.highlights.map((highlight, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-ocean/5 border border-ocean/10"
-                  >
-                    <PremiumIcon icon={Sparkles} variant="gradient" theme="ocean" size="xs" />
-                    <span className="text-sm font-medium text-foreground">
-                      {highlight}
-                    </span>
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {cabin.highlights.map((highlight, i) => {
+                  const HIcon = getHighlightIcon(highlight);
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-center gap-2.5 py-2 px-3 rounded-lg hover:bg-muted/40 transition-colors"
+                    >
+                      <HIcon className="w-4 h-4 text-ocean/50 shrink-0" />
+                      <span className="text-sm text-foreground">
+                        {highlight}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </motion.div>
 
-            <Separator className="my-6" />
+            <Separator className="my-5" />
 
             {/* Amenities */}
             <motion.div
@@ -359,19 +373,19 @@ export function CabinDetail() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <SectionIcon icon={Home} theme="ocean" />
+              <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
+                <Home className="w-4 h-4 text-ocean/60" />
                 Comodidades
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                 {cabin.amenities.map((amenity, i) => {
-                  const Icon = getAmenityIcon(amenity);
+                  const AIcon = getAmenityIcon(amenity);
                   return (
                     <div
                       key={i}
-                      className="flex items-center gap-3 py-2"
+                      className="flex items-center gap-2.5 py-1.5 px-1"
                     >
-                      <PremiumIcon icon={Icon} variant="default" theme="ocean" size="xs" />
+                      <AIcon className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />
                       <span className="text-sm text-foreground">{amenity}</span>
                     </div>
                   );
@@ -379,65 +393,27 @@ export function CabinDetail() {
               </div>
             </motion.div>
 
-            <Separator className="my-6" />
-
-            {/* Check-in / Check-out */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.45 }}
-            >
-              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <SectionIcon icon={CalendarDays} theme="ocean" />
-                Horarios de llegada y salida
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-palm/5 border border-palm/10">
-                  <div className="flex items-center gap-2 mb-1">
-                    <PremiumIcon icon={Clock} variant="gradient" theme="palm" size="xs" />
-                    <span className="text-xs font-medium text-palm uppercase tracking-wider">
-                      Check-in
-                    </span>
-                  </div>
-                  <p className="text-lg font-bold text-foreground">
-                    {cabin.checkIn}
-                  </p>
-                </div>
-                <div className="p-4 rounded-xl bg-sunset/5 border border-sunset/10">
-                  <div className="flex items-center gap-2 mb-1">
-                    <PremiumIcon icon={Clock} variant="gradient" theme="sunset" size="xs" />
-                    <span className="text-xs font-medium text-sunset uppercase tracking-wider">
-                      Check-out
-                    </span>
-                  </div>
-                  <p className="text-lg font-bold text-foreground">
-                    {cabin.checkOut}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            <Separator className="my-6" />
+            <Separator className="my-5" />
 
             {/* Rules */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
+              transition={{ duration: 0.5, delay: 0.45 }}
             >
-              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <SectionIcon icon={ShieldCheck} theme="ocean" />
+              <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-ocean/60" />
                 Reglas de la cabaña
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {cabin.rules.map((rule, i) => {
-                  const Icon = getRuleIcon(rule);
+                  const RIcon = getRuleIcon(rule);
                   return (
                     <div
                       key={i}
-                      className="flex items-start gap-3 p-3 rounded-lg bg-muted/50"
+                      className="flex items-start gap-2.5 py-1.5"
                     >
-                      <PremiumIcon icon={Icon} variant="minimal" theme="ocean" size="xs" iconClassName="text-muted-foreground" className="mt-0.5" />
+                      <RIcon className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 mt-0.5" />
                       <span className="text-sm text-foreground">{rule}</span>
                     </div>
                   );
@@ -445,21 +421,21 @@ export function CabinDetail() {
               </div>
             </motion.div>
 
-            <Separator className="my-6" />
+            <Separator className="my-5" />
 
             {/* Cancellation Policy */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.55 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
             >
-              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <SectionIcon icon={ShieldCheck} theme="palm" />
+              <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-palm/60" />
                 Política de cancelación
               </h2>
-              <div className="p-4 rounded-xl bg-palm/5 border border-palm/10">
+              <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
                 <div className="flex items-start gap-3">
-                  <ShieldCheck className="w-5 h-5 text-palm shrink-0 mt-0.5" />
+                  <ShieldCheck className="w-4 h-4 text-palm/60 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       {cabin.cancellationPolicy}
@@ -486,6 +462,14 @@ export function CabinDetail() {
           </div>
         </div>
       </div>
+
+      {/* Share Dialog */}
+      <ShareDialog
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        title={cabin.name}
+        text={`Mira esta cabaña: ${cabin.name} en ${cabin.location}`}
+      />
     </div>
   );
 }
@@ -577,7 +561,6 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
                   selected={dateRange}
                   onSelect={(range) => {
                     setDateRange(range);
-                    // Auto-close when both dates are selected
                     if (range?.to) {
                       setDatePopoverOpen(false);
                     }

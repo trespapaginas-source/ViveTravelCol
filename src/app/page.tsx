@@ -15,6 +15,7 @@ import { CabinsList } from "@/components/cabins/cabins-list";
 import { CabinDetail } from "@/components/cabins/cabin-detail";
 import { ContactSection } from "@/components/contact/contact-section";
 import { PoliciesSection } from "@/components/policies/policies-section";
+import { FavoritesSection } from "@/components/favorites/favorites-section";
 
 function HomeView() {
   return (
@@ -47,7 +48,8 @@ function ViewRouter() {
       return <ContactSection />;
     case "policies":
       return <PoliciesSection />;
-
+    case "favorites":
+      return <FavoritesSection />;
     default:
       return <HomeView />;
   }
