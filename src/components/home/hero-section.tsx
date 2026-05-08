@@ -94,7 +94,7 @@ export function HeroSection() {
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             Descubre el{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-ocean-light to-sand-light">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-ocean-light to-mint-light">
               Atlántico
             </span>
           </h1>

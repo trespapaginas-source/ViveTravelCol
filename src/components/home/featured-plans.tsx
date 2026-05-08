@@ -11,12 +11,12 @@ import { fetchPlans } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 const categoryColors: Record<string, string> = {
-  Naturaleza: "bg-foreground/80 text-white",
-  Playa: "bg-foreground/80 text-white",
-  Aventura: "bg-foreground/80 text-white",
-  Ecoturismo: "bg-foreground/80 text-white",
-  Experiencia: "bg-foreground/80 text-white",
-  Cultural: "bg-foreground/80 text-white",
+  Naturaleza: "bg-ocean/80 text-white",
+  Playa: "bg-ocean/80 text-white",
+  Aventura: "bg-ocean/80 text-white",
+  Ecoturismo: "bg-ocean/80 text-white",
+  Experiencia: "bg-ocean/80 text-white",
+  Cultural: "bg-ocean/80 text-white",
 };
 
 function formatPrice(price: number) {
@@ -76,7 +76,7 @@ export function FeaturedPlans() {
                   {/* Category badge */}
                   <Badge
                     className={`absolute top-3 left-3 ${
-                      categoryColors[plan.category] || "bg-foreground/80 text-white"
+                      categoryColors[plan.category] || "bg-ocean/80 text-white"
                     } border-0 text-[11px] font-medium px-2.5 py-0.5 backdrop-blur-sm`}
                   >
                     {plan.category}

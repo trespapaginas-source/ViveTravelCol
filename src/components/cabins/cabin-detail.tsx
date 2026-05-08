@@ -271,14 +271,14 @@ export function CabinDetail() {
                     variant="outline"
                     size="icon"
                     className={`rounded-full h-9 w-9 border-border/50 hover:border-border transition-colors ${
-                      isFav ? "border-coral/30 bg-coral/5" : ""
+                      isFav ? "border-indigo/30 bg-indigo/5" : ""
                     }`}
                     onClick={handleToggleFavorite}
                     aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
                   >
                     <Heart
                       className={`w-4 h-4 transition-colors ${
-                        isFav ? "fill-coral text-coral" : ""
+                        isFav ? "fill-indigo text-indigo" : ""
                       }`}
                     />
                   </Button>
@@ -428,12 +428,12 @@ export function CabinDetail() {
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-palm/60" />
+                <ShieldCheck className="w-4 h-4 text-leaf/60" />
                 Política de cancelación
               </h2>
               <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
                 <div className="flex items-start gap-3">
-                  <ShieldCheck className="w-4 h-4 text-palm/60 shrink-0 mt-0.5" />
+                  <ShieldCheck className="w-4 h-4 text-leaf/60 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       {cabin.cancellationPolicy}
@@ -630,7 +630,7 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
 
           {/* Reserve Button */}
           <Button
-            className="w-full bg-sunset hover:bg-sunset/90 text-white rounded-xl h-12 text-base font-semibold"
+            className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-xl h-12 text-base font-semibold"
             onClick={() => navigate("contact")}
           >
             Reservar ahora
@@ -640,7 +640,7 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
           <Button
             asChild
             variant="outline"
-            className="w-full rounded-xl h-11 border-palm/30 text-palm hover:bg-palm/5 gap-2"
+            className="w-full rounded-xl h-11 border-leaf/30 text-leaf hover:bg-leaf/5 gap-2"
           >
             <a
               href={`https://wa.me/573001234567?text=${encodeURIComponent(

@@ -18,10 +18,10 @@ type IconSize = keyof typeof SIZES;
 export type IconTheme =
   | "ocean"
   | "ocean-light"
-  | "sunset"
-  | "palm"
-  | "coral"
-  | "sand"
+  | "mint"
+  | "sky"
+  | "indigo"
+  | "leaf"
   | "white";
 
 interface ThemeConfig {
@@ -41,7 +41,7 @@ const THEMES: Record<IconTheme, ThemeConfig> = {
     text: "text-ocean",
     border: "border-ocean/20",
     shadow: "shadow-ocean/10",
-    glow: "shadow-[0_0_14px_rgba(14,116,144,0.3)]",
+    glow: "shadow-[0_0_14px_rgba(0,139,139,0.3)]",
     gradient: "bg-gradient-to-br from-ocean/15 to-ocean-light/10",
     solidBg: "bg-ocean",
     solidText: "text-white",
@@ -51,49 +51,49 @@ const THEMES: Record<IconTheme, ThemeConfig> = {
     text: "text-ocean-light",
     border: "border-ocean-light/20",
     shadow: "shadow-ocean-light/10",
-    glow: "shadow-[0_0_14px_rgba(34,211,238,0.3)]",
-    gradient: "bg-gradient-to-br from-ocean-light/15 to-cyan-300/10",
+    glow: "shadow-[0_0_14px_rgba(51,166,166,0.3)]",
+    gradient: "bg-gradient-to-br from-ocean-light/15 to-ocean/5",
     solidBg: "bg-ocean-light",
     solidText: "text-ocean-dark",
   },
-  sunset: {
-    bg: "bg-sunset/10",
-    text: "text-sunset",
-    border: "border-sunset/20",
-    shadow: "shadow-sunset/10",
-    glow: "shadow-[0_0_14px_rgba(249,115,22,0.3)]",
-    gradient: "bg-gradient-to-br from-sunset/15 to-sunset-light/10",
-    solidBg: "bg-sunset",
+  mint: {
+    bg: "bg-mint/10",
+    text: "text-mint",
+    border: "border-mint/20",
+    shadow: "shadow-mint/10",
+    glow: "shadow-[0_0_14px_rgba(103,191,163,0.3)]",
+    gradient: "bg-gradient-to-br from-mint/15 to-mint-light/10",
+    solidBg: "bg-mint",
     solidText: "text-white",
   },
-  palm: {
-    bg: "bg-palm/10",
-    text: "text-palm",
-    border: "border-palm/20",
-    shadow: "shadow-palm/10",
-    glow: "shadow-[0_0_14px_rgba(5,150,105,0.3)]",
-    gradient: "bg-gradient-to-br from-palm/15 to-palm-light/10",
-    solidBg: "bg-palm",
+  sky: {
+    bg: "bg-sky/10",
+    text: "text-sky",
+    border: "border-sky/20",
+    shadow: "shadow-sky/10",
+    glow: "shadow-[0_0_14px_rgba(103,162,191,0.3)]",
+    gradient: "bg-gradient-to-br from-sky/15 to-sky-light/10",
+    solidBg: "bg-sky",
     solidText: "text-white",
   },
-  coral: {
-    bg: "bg-coral/10",
-    text: "text-coral",
-    border: "border-coral/20",
-    shadow: "shadow-coral/10",
-    glow: "shadow-[0_0_14px_rgba(251,113,133,0.3)]",
-    gradient: "bg-gradient-to-br from-coral/15 to-rose-300/10",
-    solidBg: "bg-coral",
+  indigo: {
+    bg: "bg-indigo/10",
+    text: "text-indigo",
+    border: "border-indigo/20",
+    shadow: "shadow-indigo/10",
+    glow: "shadow-[0_0_14px_rgba(103,134,191,0.3)]",
+    gradient: "bg-gradient-to-br from-indigo/15 to-indigo-light/10",
+    solidBg: "bg-indigo",
     solidText: "text-white",
   },
-  sand: {
-    bg: "bg-sand/15",
-    text: "text-sand",
-    border: "border-sand/25",
-    shadow: "shadow-sand/10",
-    glow: "shadow-[0_0_14px_rgba(212,165,116,0.3)]",
-    gradient: "bg-gradient-to-br from-sand/20 to-sand-light/10",
-    solidBg: "bg-sand",
+  leaf: {
+    bg: "bg-leaf/10",
+    text: "text-leaf",
+    border: "border-leaf/20",
+    shadow: "shadow-leaf/10",
+    glow: "shadow-[0_0_14px_rgba(103,191,133,0.3)]",
+    gradient: "bg-gradient-to-br from-leaf/15 to-leaf-light/10",
+    solidBg: "bg-leaf",
     solidText: "text-white",
   },
   white: {
@@ -341,21 +341,21 @@ const CHECK_CONFIG: Record<
 > = {
   include: {
     icon: Check,
-    bg: "bg-palm/12",
-    text: "text-palm",
-    ring: "ring-palm/15",
+    bg: "bg-leaf/12",
+    text: "text-leaf",
+    ring: "ring-leaf/15",
   },
   exclude: {
     icon: X,
-    bg: "bg-coral/12",
-    text: "text-coral",
-    ring: "ring-coral/15",
+    bg: "bg-indigo/12",
+    text: "text-indigo",
+    ring: "ring-indigo/15",
   },
   highlight: {
     icon: Sparkles,
-    bg: "bg-sunset/12",
-    text: "text-sunset",
-    ring: "ring-sunset/15",
+    bg: "bg-mint/12",
+    text: "text-mint",
+    ring: "ring-mint/15",
   },
 };
 
@@ -388,7 +388,7 @@ interface SocialIconProps {
   icon: LucideIcon;
   href: string;
   label: string;
-  hoverTheme?: "default" | "sunset" | "palm";
+  hoverTheme?: "default" | "sky" | "leaf";
   className?: string;
 }
 
@@ -400,10 +400,10 @@ export function SocialIcon({
   className,
 }: SocialIconProps) {
   const hoverBg =
-    hoverTheme === "sunset"
-      ? "hover:bg-sunset hover:border-sunset/50"
-      : hoverTheme === "palm"
-      ? "hover:bg-palm hover:border-palm/50"
+    hoverTheme === "sky"
+      ? "hover:bg-sky hover:border-sky/50"
+      : hoverTheme === "leaf"
+      ? "hover:bg-leaf hover:border-leaf/50"
       : "hover:bg-ocean hover:border-ocean/50";
 
   return (
@@ -459,7 +459,7 @@ export function RatingStars({
             className={cn(
               iconSize,
               filled || half
-                ? "text-sunset fill-sunset drop-shadow-[0_0_4px_rgba(249,115,22,0.3)]"
+                ? "text-mint fill-mint drop-shadow-[0_0_4px_rgba(103,191,163,0.3)]"
                 : "text-muted-foreground/25"
             )}
           />

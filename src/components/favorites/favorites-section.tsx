@@ -94,7 +94,7 @@ function FavoriteCard({
             className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
             aria-label="Eliminar de favoritos"
           >
-            <Heart className="w-3.5 h-3.5 fill-coral text-coral" />
+            <Heart className="w-3.5 h-3.5 fill-indigo text-indigo" />
           </button>
         </div>
 

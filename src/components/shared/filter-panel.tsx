@@ -380,7 +380,7 @@ function FilterCheckboxSection({
             <Checkbox
               checked={selectedValues.includes(option.value)}
               onCheckedChange={() => onToggle(section.id, option.value)}
-              className="data-[state=checked]:bg-foreground data-[state=checked]:border-foreground data-[state=checked]:text-white"
+              className="data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white"
             />
             <span className="text-[13px] text-foreground/80 group-hover/item:text-foreground transition-colors flex-1 leading-tight">
               {option.label}
@@ -477,7 +477,7 @@ function FilterPanelContent({
           {activeCount > 0 && (
             <Badge
               variant="secondary"
-              className="h-5 min-w-5 text-[10px] px-1.5 bg-foreground text-white rounded-full"
+              className="h-5 min-w-5 text-[10px] px-1.5 bg-ocean text-white rounded-full"
             >
               {activeCount}
             </Badge>
@@ -614,7 +614,7 @@ export function FilterMobileSheet(props: {
             <SlidersHorizontal className="w-3.5 h-3.5" />
             Filtros
             {activeCount > 0 && (
-              <Badge className="h-4 min-w-4 text-[9px] px-1 bg-foreground text-white rounded-full absolute -top-1.5 -right-1.5">
+              <Badge className="h-4 min-w-4 text-[9px] px-1 bg-ocean text-white rounded-full absolute -top-1.5 -right-1.5">
                 {activeCount}
               </Badge>
             )}

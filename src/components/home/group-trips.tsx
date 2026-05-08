@@ -34,7 +34,7 @@ export function GroupTrips() {
   return (
     <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-foreground" />
+      <div className="absolute inset-0 bg-ocean-dark" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">

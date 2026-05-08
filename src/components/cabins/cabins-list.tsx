@@ -96,7 +96,7 @@ function CabinCard({
           >
             <Heart
               className={`w-3.5 h-3.5 transition-colors duration-200 ${
-                isFav ? "fill-coral text-coral" : "text-muted-foreground"
+                isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
               }`}
             />
           </button>

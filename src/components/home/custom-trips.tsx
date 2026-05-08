@@ -101,7 +101,7 @@ export function CustomTrips() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <div className="relative bg-foreground rounded-3xl overflow-hidden">
+          <div className="relative bg-ocean-dark rounded-3xl overflow-hidden">
             <div className="relative z-10 px-6 sm:px-10 lg:px-16 py-10 sm:py-14 flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
               <div className="flex-1 text-center lg:text-left">
                 <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">

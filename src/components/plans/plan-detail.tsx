@@ -26,12 +26,12 @@ import { fetchPlan } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 const categoryColors: Record<string, string> = {
-  Naturaleza: "bg-foreground/80 text-white",
-  Playa: "bg-foreground/80 text-white",
-  Aventura: "bg-foreground/80 text-white",
-  Ecoturismo: "bg-foreground/80 text-white",
-  Experiencia: "bg-foreground/80 text-white",
-  Cultural: "bg-foreground/80 text-white",
+  Naturaleza: "bg-ocean/80 text-white",
+  Playa: "bg-ocean/80 text-white",
+  Aventura: "bg-ocean/80 text-white",
+  Ecoturismo: "bg-ocean/80 text-white",
+  Experiencia: "bg-ocean/80 text-white",
+  Cultural: "bg-ocean/80 text-white",
 };
 
 const difficultyColors: Record<string, string> = {
@@ -137,7 +137,7 @@ export function PlanDetail() {
                   {plan.name}
                 </h1>
                 <Badge
-                  className={`${categoryColors[plan.category] || "bg-foreground/80 text-white"} border-0 text-xs font-medium shrink-0 mt-1`}
+                  className={`${categoryColors[plan.category] || "bg-ocean/80 text-white"} border-0 text-xs font-medium shrink-0 mt-1`}
                 >
                   {plan.category}
                 </Badge>
@@ -333,7 +333,7 @@ export function PlanDetail() {
                   {/* CTA Buttons */}
                   <div className="space-y-3">
                     <Button
-                      className="w-full bg-foreground hover:bg-foreground/90 text-white font-semibold h-12 text-base rounded-xl"
+                      className="w-full bg-ocean hover:bg-ocean-dark text-white font-semibold h-12 text-base rounded-xl"
                       onClick={() => navigate("contact", plan.id)}
                     >
                       Reservar ahora

@@ -91,7 +91,7 @@ export function Testimonials() {
                   onClick={() => setCurrent(i)}
                   className={`transition-all duration-300 rounded-full ${
                     i === current
-                      ? "w-8 h-2.5 bg-foreground"
+                      ? "w-8 h-2.5 bg-ocean"
                       : "w-2.5 h-2.5 bg-muted-foreground/25 hover:bg-muted-foreground/40"
                   }`}
                   aria-label={`Ir a testimonio ${i + 1}`}

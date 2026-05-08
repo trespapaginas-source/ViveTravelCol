@@ -52,18 +52,18 @@ export function Navbar() {
           >
             <div className={cn(
               "w-9 h-9 rounded-lg flex items-center justify-center transition-colors duration-300",
-              showOpaque ? "bg-foreground/10" : "bg-white/15"
+              showOpaque ? "bg-ocean/10" : "bg-white/15"
             )}>
               <Palmtree className={cn(
                 "w-4 h-4 transition-colors duration-300",
-                showOpaque ? "text-foreground/60" : "text-white/80"
+                showOpaque ? "text-ocean" : "text-white/80"
               )} />
             </div>
             <div className="flex flex-col">
               <span
                 className={cn(
                   "text-lg font-bold leading-tight transition-colors duration-300",
-                  showOpaque ? "text-foreground" : "text-white"
+                  showOpaque ? "text-ocean-dark" : "text-white"
                 )}
               >
                 Vive Travel
@@ -91,10 +91,10 @@ export function Navbar() {
                     (item.key === "plans" && currentView === "plan-detail") ||
                     (item.key === "cabins" && currentView === "cabin-detail")
                     ? showOpaque
-                      ? "bg-foreground text-white"
+                      ? "bg-ocean text-white"
                       : "bg-white/20 backdrop-blur-sm text-white"
                     : showOpaque
-                    ? "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "text-muted-foreground hover:bg-muted hover:text-ocean-dark"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
                 )}
               >
@@ -114,10 +114,10 @@ export function Navbar() {
                 "rounded-full h-9 w-9 transition-all duration-300",
                 currentView === "favorites"
                   ? showOpaque
-                    ? "bg-muted text-foreground"
+                    ? "bg-ocean/10 text-ocean"
                     : "bg-white/20 text-white"
                   : showOpaque
-                  ? "text-muted-foreground/50 hover:text-foreground hover:bg-muted"
+                  ? "text-muted-foreground/50 hover:text-ocean hover:bg-ocean/5"
                   : "text-white/50 hover:text-white hover:bg-white/10"
               )}
               aria-label="Mis favoritos"
@@ -134,7 +134,7 @@ export function Navbar() {
               className={cn(
                 "hidden sm:flex items-center gap-2 rounded-full transition-all duration-300",
                 showOpaque
-                  ? "bg-foreground hover:bg-foreground/90 text-white"
+                  ? "bg-ocean hover:bg-ocean-dark text-white"
                   : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border border-white/20"
               )}
             >
@@ -150,7 +150,7 @@ export function Navbar() {
                   size="icon"
                   className={cn(
                     "md:hidden",
-                    showOpaque ? "text-foreground" : "text-white"
+                    showOpaque ? "text-ocean-dark" : "text-white"
                   )}
                 >
                   <Menu className="w-6 h-6" />
@@ -161,10 +161,10 @@ export function Navbar() {
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-foreground/10 flex items-center justify-center">
-                        <Palmtree className="w-4 h-4 text-foreground/60" />
+                      <div className="w-8 h-8 rounded-lg bg-ocean/10 flex items-center justify-center">
+                        <Palmtree className="w-4 h-4 text-ocean" />
                       </div>
-                      <span className="font-bold text-foreground">Vive Travel</span>
+                      <span className="font-bold text-ocean-dark">Vive Travel</span>
                     </div>
                   </div>
                   <nav className="flex flex-col p-4 gap-1">
@@ -175,8 +175,8 @@ export function Navbar() {
                         className={cn(
                           "px-4 py-3 rounded-xl text-left text-sm font-medium transition-all",
                           currentView === item.key
-                            ? "bg-muted text-foreground font-semibold"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                            ? "bg-ocean/10 text-ocean font-semibold"
+                            : "text-muted-foreground hover:bg-muted hover:text-ocean"
                         )}
                       >
                         {item.label}
@@ -187,8 +187,8 @@ export function Navbar() {
                       className={cn(
                         "flex items-center gap-2.5 px-4 py-3 rounded-xl text-left text-sm font-medium transition-all",
                         currentView === "favorites"
-                          ? "bg-muted text-foreground font-semibold"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          ? "bg-ocean/10 text-ocean font-semibold"
+                          : "text-muted-foreground hover:bg-muted hover:text-ocean"
                       )}
                     >
                       <Heart className={cn(
@@ -201,7 +201,7 @@ export function Navbar() {
                   <div className="mt-auto p-4 border-t">
                     <Button
                       onClick={() => handleNav("contact")}
-                      className="w-full bg-foreground hover:bg-foreground/90 text-white rounded-full"
+                      className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-full"
                     >
                       <Phone className="w-4 h-4 mr-2" />
                       Reservar ahora

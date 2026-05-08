@@ -320,7 +320,7 @@ export function ContactSection() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto bg-foreground hover:bg-foreground/90 text-white rounded-full px-8 py-3 text-base font-medium transition-all duration-300"
+                    className="w-full sm:w-auto bg-ocean hover:bg-ocean-dark text-white rounded-full px-8 py-3 text-base font-medium transition-all duration-300"
                   >
                     {isSubmitting ? (
                       <>
@@ -427,7 +427,7 @@ export function ContactSection() {
                 </p>
                 <Button
                   asChild
-                  className="bg-foreground hover:bg-foreground/90 text-white rounded-full px-6 text-sm"
+                  className="bg-ocean hover:bg-ocean-dark text-white rounded-full px-6 text-sm"
                 >
                   <a
                     href="https://wa.me/573001234567"

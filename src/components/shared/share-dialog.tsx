@@ -129,7 +129,7 @@ export function ShareDialog({ open, onOpenChange, title, text }: ShareDialogProp
           >
             <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0 group-hover:bg-muted/80 transition-colors">
               {copied ? (
-                <Check className="w-4.5 h-4.5 text-palm" />
+                <Check className="w-4.5 h-4.5 text-leaf" />
               ) : (
                 <Link2 className="w-4.5 h-4.5 text-muted-foreground" />
               )}
