@@ -83,17 +83,17 @@ export function TravelCarousel() {
           {/* Navigation buttons */}
           <button
             onClick={scrollPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2.5 sm:p-3 transition-all duration-300"
+            className="absolute left-2 sm:left-0 top-1/2 -translate-y-1/2 sm:-translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-3 transition-all duration-300"
             aria-label="Anterior"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <button
             onClick={scrollNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2.5 sm:p-3 transition-all duration-300"
+            className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-3 transition-all duration-300"
             aria-label="Siguiente"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </motion.div>
 

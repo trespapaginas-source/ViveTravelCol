@@ -62,13 +62,13 @@ export function Navbar() {
           </button>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
             {navItems.map((item) => (
               <button
                 key={item.key}
                 onClick={() => handleNav(item.key)}
                 className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
+                  "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-all duration-300",
                   currentView === item.key ||
                     (item.key === "plans" && currentView === "plan-detail") ||
                     (item.key === "cabins" && currentView === "cabin-detail")

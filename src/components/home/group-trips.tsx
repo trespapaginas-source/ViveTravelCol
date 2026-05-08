@@ -84,13 +84,13 @@ export function GroupTrips() {
             </div>
 
             {/* Quick stats */}
-            <div className="mt-8 flex gap-6 sm:gap-8">
+            <div className="mt-8 flex flex-wrap gap-4 sm:gap-8">
               {[
                 { value: "20%", label: "Descuento máximo" },
                 { value: "8+", label: "Personas mínimo" },
                 { value: "24h", label: "Respuesta" },
               ].map((stat) => (
-                <div key={stat.label}>
+                <div key={stat.label} className="min-w-[80px]">
                   <p className="text-2xl sm:text-3xl font-bold text-white/80">
                     {stat.value}
                   </p>

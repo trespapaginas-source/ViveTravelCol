@@ -461,6 +461,42 @@ export function CabinDetail() {
         </div>
       </div>
 
+      {/* Mobile Sticky CTA Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-4 py-3 safe-area-bottom">
+        <div className="flex items-center justify-between gap-3 max-w-7xl mx-auto">
+          <div>
+            <p className="text-xs text-muted-foreground">Desde</p>
+            <p className="text-lg font-bold text-foreground">{formatPrice(cabin.pricePerNight)}<span className="text-xs font-normal text-muted-foreground">/noche</span></p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full h-10 border-leaf/30 text-leaf hover:bg-leaf/5 gap-1.5"
+              asChild
+            >
+              <a
+                href={`https://wa.me/573001234567?text=${encodeURIComponent(
+                  `Hola, me interesa la ${cabin.name} en ${cabin.location}.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span className="hidden xs:inline">WhatsApp</span>
+              </a>
+            </Button>
+            <Button
+              size="sm"
+              className="bg-ocean hover:bg-ocean-dark text-white rounded-full h-10 px-5"
+              onClick={() => navigate("contact")}
+            >
+              Reservar
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Share Dialog */}
       <ShareDialog
         open={shareOpen}
@@ -564,7 +600,7 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
                     }
                   }}
                   disabled={{ before: today }}
-                  numberOfMonths={2}
+                  numberOfMonths={1}
                   locale={es}
                   defaultMonth={today}
                 />

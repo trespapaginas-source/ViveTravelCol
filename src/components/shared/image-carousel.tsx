@@ -85,7 +85,7 @@ export function ImageCarousel({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute top-3 right-3 bg-black/40 text-white hover:bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-3 right-3 bg-black/40 text-white hover:bg-black/60 rounded-full sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                       onClick={() => {
                         setSelectedIndex(i);
                         setLightboxOpen(true);
