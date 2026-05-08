@@ -4,6 +4,7 @@ import { useNavigation } from "@/lib/store";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { HeroSection } from "@/components/home/hero-section";
+import { VideoShowcase } from "@/components/home/video-showcase";
 import { FeaturedPlans } from "@/components/home/featured-plans";
 import { TravelCarousel } from "@/components/home/travel-carousel";
 import { GroupTrips } from "@/components/home/group-trips";
@@ -21,6 +22,7 @@ function HomeView() {
   return (
     <>
       <HeroSection />
+      <VideoShowcase />
       <FeaturedPlans />
       <TravelCarousel />
       <Testimonials />
