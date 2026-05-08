@@ -4,42 +4,56 @@ import { useNavigation } from "@/lib/store";
 import { Palmtree, Mail, Phone, MapPin, Instagram, Facebook, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { PremiumIcon, SocialIcon } from "@/components/shared/premium-icon";
 
 export function Footer() {
   const { navigate } = useNavigation();
 
   return (
-    <footer className="bg-ocean-dark text-white mt-auto">
+    <footer className="bg-foreground text-white mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer */}
         <div className="py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <PremiumIcon icon={Palmtree} variant="gradient" theme="ocean" size="md" />
+              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                <Palmtree className="w-4 h-4 text-white/70" />
+              </div>
               <div>
                 <span className="text-lg font-bold">Vive Travel</span>
-                <span className="block text-[10px] tracking-widest uppercase text-ocean-light">
+                <span className="block text-[10px] tracking-widest uppercase text-white/40">
                   Atlántico
                 </span>
               </div>
             </div>
-            <p className="text-sm text-white/70 leading-relaxed">
+            <p className="text-sm text-white/40 leading-relaxed">
               Tu agencia de viajes en el Atlántico, Colombia. Te conectamos con
               las mejores experiencias turísticas y alojamientos del Caribe
               colombiano.
             </p>
-            <div className="flex gap-3">
-              <SocialIcon icon={Instagram} href="#" label="Instagram" hoverTheme="sunset" />
-              <SocialIcon icon={Facebook} href="#" label="Facebook" hoverTheme="default" />
-              <SocialIcon icon={MessageCircle} href="https://wa.me/573001234567" label="WhatsApp" hoverTheme="palm" />
+            <div className="flex gap-2">
+              {[
+                { icon: Instagram, href: "#", label: "Instagram" },
+                { icon: Facebook, href: "#", label: "Facebook" },
+                { icon: MessageCircle, href: "https://wa.me/573001234567", label: "WhatsApp" },
+              ].map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  className="w-9 h-9 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all duration-300"
+                  aria-label={social.label}
+                  target={social.href.startsWith("http") ? "_blank" : undefined}
+                  rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                >
+                  <social.icon className="w-4 h-4" />
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-sm uppercase tracking-wider">
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
               Explorar
             </h3>
             <ul className="space-y-2">
@@ -53,7 +67,7 @@ export function Footer() {
                 <li key={item.view}>
                   <button
                     onClick={() => navigate(item.view)}
-                    className="text-sm text-white/70 hover:text-sunset-light transition-colors"
+                    className="text-sm text-white/40 hover:text-white/80 transition-colors"
                   >
                     {item.label}
                   </button>
@@ -64,20 +78,20 @@ export function Footer() {
 
           {/* Contact */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-sm uppercase tracking-wider">
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
               Contacto
             </h3>
             <ul className="space-y-3">
-              <li className="flex items-center gap-2 text-sm text-white/70">
-                <PremiumIcon icon={Phone} variant="gradient" theme="sunset" size="xs" />
+              <li className="flex items-center gap-2 text-sm text-white/40">
+                <Phone className="w-3.5 h-3.5 text-white/30" />
                 +57 300 123 4567
               </li>
-              <li className="flex items-center gap-2 text-sm text-white/70">
-                <PremiumIcon icon={Mail} variant="gradient" theme="ocean" size="xs" />
+              <li className="flex items-center gap-2 text-sm text-white/40">
+                <Mail className="w-3.5 h-3.5 text-white/30" />
                 info@vivetravel.co
               </li>
-              <li className="flex items-start gap-2 text-sm text-white/70">
-                <PremiumIcon icon={MapPin} variant="gradient" theme="coral" size="xs" />
+              <li className="flex items-start gap-2 text-sm text-white/40">
+                <MapPin className="w-3.5 h-3.5 text-white/30 mt-0.5" />
                 Barranquilla, Atlántico, Colombia
               </li>
             </ul>
@@ -85,15 +99,15 @@ export function Footer() {
 
           {/* WhatsApp CTA */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-sm uppercase tracking-wider">
+            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
               ¿Necesitas ayuda?
             </h3>
-            <p className="text-sm text-white/70">
+            <p className="text-sm text-white/40">
               Escríbenos por WhatsApp y te ayudamos a planear tu viaje ideal.
             </p>
             <Button
               asChild
-              className="w-full bg-palm hover:bg-palm-light text-white rounded-full"
+              className="w-full bg-white/10 hover:bg-white/20 text-white border-0 rounded-full"
             >
               <a
                 href="https://wa.me/573001234567"
@@ -111,11 +125,11 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/50">
+          <p className="text-xs text-white/30">
             © {new Date().getFullYear()} Vive Travel Atlántico. Todos los
             derechos reservados.
           </p>
-          <p className="text-xs text-white/50">
+          <p className="text-xs text-white/30">
             Hecho en el Caribe Colombiano
           </p>
         </div>

@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu, Palmtree, Phone, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PremiumIcon } from "@/components/shared/premium-icon";
 
 const navItems = [
   { key: "home" as const, label: "Inicio" },
@@ -40,7 +39,7 @@ export function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         showOpaque
-          ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-ocean/10"
+          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-border/50"
           : "bg-transparent"
       )}
     >
@@ -51,12 +50,20 @@ export function Navbar() {
             onClick={() => handleNav("home")}
             className="flex items-center gap-2 group"
           >
-            <PremiumIcon icon={Palmtree} variant="solid" theme="ocean" size="md" />
+            <div className={cn(
+              "w-9 h-9 rounded-lg flex items-center justify-center transition-colors duration-300",
+              showOpaque ? "bg-foreground/10" : "bg-white/15"
+            )}>
+              <Palmtree className={cn(
+                "w-4 h-4 transition-colors duration-300",
+                showOpaque ? "text-foreground/60" : "text-white/80"
+              )} />
+            </div>
             <div className="flex flex-col">
               <span
                 className={cn(
                   "text-lg font-bold leading-tight transition-colors duration-300",
-                  showOpaque ? "text-ocean-dark" : "text-white"
+                  showOpaque ? "text-foreground" : "text-white"
                 )}
               >
                 Vive Travel
@@ -64,7 +71,7 @@ export function Navbar() {
               <span
                 className={cn(
                   "text-[10px] tracking-widest uppercase leading-tight transition-colors duration-300",
-                  showOpaque ? "text-ocean/70" : "text-white/70"
+                  showOpaque ? "text-muted-foreground" : "text-white/50"
                 )}
               >
                 Atlántico
@@ -84,11 +91,11 @@ export function Navbar() {
                     (item.key === "plans" && currentView === "plan-detail") ||
                     (item.key === "cabins" && currentView === "cabin-detail")
                     ? showOpaque
-                      ? "bg-ocean text-white shadow-md"
+                      ? "bg-foreground text-white"
                       : "bg-white/20 backdrop-blur-sm text-white"
                     : showOpaque
-                    ? "text-foreground hover:bg-ocean/10 hover:text-ocean"
-                    : "text-white/90 hover:bg-white/10 hover:text-white"
+                    ? "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
                 )}
               >
                 {item.label}
@@ -107,11 +114,11 @@ export function Navbar() {
                 "rounded-full h-9 w-9 transition-all duration-300",
                 currentView === "favorites"
                   ? showOpaque
-                    ? "bg-coral/10 text-coral"
+                    ? "bg-muted text-foreground"
                     : "bg-white/20 text-white"
                   : showOpaque
-                  ? "text-foreground/60 hover:text-coral hover:bg-coral/5"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
+                  ? "text-muted-foreground/50 hover:text-foreground hover:bg-muted"
+                  : "text-white/50 hover:text-white hover:bg-white/10"
               )}
               aria-label="Mis favoritos"
             >
@@ -127,8 +134,8 @@ export function Navbar() {
               className={cn(
                 "hidden sm:flex items-center gap-2 rounded-full transition-all duration-300",
                 showOpaque
-                  ? "bg-sunset hover:bg-sunset/90 text-white"
-                  : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border border-white/30"
+                  ? "bg-foreground hover:bg-foreground/90 text-white"
+                  : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border border-white/20"
               )}
             >
               <Phone className="w-4 h-4" />
@@ -154,8 +161,10 @@ export function Navbar() {
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b">
                     <div className="flex items-center gap-2">
-                      <PremiumIcon icon={Palmtree} variant="solid" theme="ocean" size="sm" />
-                      <span className="font-bold text-ocean-dark">Vive Travel</span>
+                      <div className="w-8 h-8 rounded-lg bg-foreground/10 flex items-center justify-center">
+                        <Palmtree className="w-4 h-4 text-foreground/60" />
+                      </div>
+                      <span className="font-bold text-foreground">Vive Travel</span>
                     </div>
                   </div>
                   <nav className="flex flex-col p-4 gap-1">
@@ -166,8 +175,8 @@ export function Navbar() {
                         className={cn(
                           "px-4 py-3 rounded-xl text-left text-sm font-medium transition-all",
                           currentView === item.key
-                            ? "bg-ocean/10 text-ocean font-semibold"
-                            : "text-foreground hover:bg-muted"
+                            ? "bg-muted text-foreground font-semibold"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         )}
                       >
                         {item.label}
@@ -178,8 +187,8 @@ export function Navbar() {
                       className={cn(
                         "flex items-center gap-2.5 px-4 py-3 rounded-xl text-left text-sm font-medium transition-all",
                         currentView === "favorites"
-                          ? "bg-coral/10 text-coral font-semibold"
-                          : "text-foreground hover:bg-muted"
+                          ? "bg-muted text-foreground font-semibold"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
                     >
                       <Heart className={cn(
@@ -192,7 +201,7 @@ export function Navbar() {
                   <div className="mt-auto p-4 border-t">
                     <Button
                       onClick={() => handleNav("contact")}
-                      className="w-full bg-sunset hover:bg-sunset/90 text-white rounded-full"
+                      className="w-full bg-foreground hover:bg-foreground/90 text-white rounded-full"
                     >
                       <Phone className="w-4 h-4 mr-2" />
                       Reservar ahora

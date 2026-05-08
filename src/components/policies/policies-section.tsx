@@ -15,7 +15,6 @@ import {
   AlertTriangle,
   FileText,
 } from "lucide-react";
-import { PremiumIcon, IconBadge, SectionIcon } from "@/components/shared/premium-icon";
 import {
   Accordion,
   AccordionContent,
@@ -84,8 +83,8 @@ const bookingPolicies: PolicyItem[] = [
           <li>Nequi y Daviplata</li>
           <li>Efectivo en nuestra oficina</li>
         </ul>
-        <div className="bg-ocean/5 rounded-lg p-4 mt-3">
-          <p className="font-medium text-ocean-dark text-sm">
+        <div className="bg-muted/50 rounded-lg p-4 mt-3">
+          <p className="font-medium text-foreground text-sm">
             Plan de pagos diferido
           </p>
           <p className="text-sm text-muted-foreground mt-1">
@@ -261,9 +260,9 @@ const cancellationPolicies: PolicyItem[] = [
             reembolso.
           </li>
         </ul>
-        <div className="bg-sunset/5 rounded-lg p-4 mt-3 border border-sunset/20">
-          <p className="font-medium text-sunset text-sm flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4" />
+        <div className="bg-muted/50 rounded-lg p-4 mt-3 border border-border">
+          <p className="font-medium text-foreground text-sm flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-muted-foreground/60" />
             Nota importante
           </p>
           <p className="text-sm text-muted-foreground mt-1">
@@ -321,7 +320,7 @@ const cancellationPolicies: PolicyItem[] = [
             Solicitar el reembolso por escrito a{" "}
             <a
               href="mailto:info@vivetravel.co"
-              className="text-ocean hover:text-ocean-dark underline underline-offset-2"
+              className="text-foreground underline underline-offset-2"
             >
               info@vivetravel.co
             </a>{" "}
@@ -388,7 +387,7 @@ const cancellationPolicies: PolicyItem[] = [
             recuperables.
           </li>
         </ul>
-        <div className="bg-ocean/5 rounded-lg p-4 mt-3">
+        <div className="bg-muted/50 rounded-lg p-4 mt-3">
           <p className="text-sm text-muted-foreground">
             <strong className="text-foreground">Recomendación:</strong> Siempre
             recomendamos adquirir un seguro de viaje que cubra cancelaciones por
@@ -414,23 +413,28 @@ function PolicyAccordion({
       collapsible={type === "single"}
       className="w-full"
     >
-      {items.map((item) => (
-        <AccordionItem
-          key={item.id}
-          value={item.id}
-          className="border-border/50 px-1"
-        >
-          <AccordionTrigger className="hover:no-underline hover:text-ocean transition-colors py-4">
-            <span className="flex items-center gap-3 text-left">
-              <PremiumIcon icon={item.icon} variant="gradient" theme="ocean" size="sm" />
-              <span className="font-semibold">{item.title}</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="text-muted-foreground leading-relaxed pb-6">
-            <div className="pl-12">{item.content}</div>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
+      {items.map((item) => {
+        const Icon = item.icon;
+        return (
+          <AccordionItem
+            key={item.id}
+            value={item.id}
+            className="border-border/50 px-1"
+          >
+            <AccordionTrigger className="hover:no-underline hover:text-foreground transition-colors py-4">
+              <span className="flex items-center gap-3 text-left">
+                <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center shrink-0">
+                  <Icon className="w-3.5 h-3.5 text-muted-foreground/60" />
+                </div>
+                <span className="font-semibold text-sm">{item.title}</span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-muted-foreground leading-relaxed pb-6">
+              <div className="pl-11">{item.content}</div>
+            </AccordionContent>
+          </AccordionItem>
+        );
+      })}
     </Accordion>
   );
 }
@@ -440,17 +444,20 @@ export function PoliciesSection() {
     <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
       {/* Decorative background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 right-0 w-80 h-80 bg-ocean/3 rounded-full translate-x-1/3" />
-        <div className="absolute bottom-40 left-0 w-64 h-64 bg-sand/10 rounded-full -translate-x-1/4" />
+        <div className="absolute top-20 right-0 w-80 h-80 bg-muted/20 rounded-full translate-x-1/3" />
+        <div className="absolute bottom-40 left-0 w-64 h-64 bg-muted/15 rounded-full -translate-x-1/4" />
       </div>
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Hero-like Header */}
+        {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <IconBadge icon={ScrollText} label="Políticas" theme="ocean" variant="filled" className="mb-4" />
+          <span className="inline-flex items-center gap-1.5 text-muted-foreground/50 text-xs font-medium tracking-wider uppercase mb-4">
+            <ScrollText className="w-3.5 h-3.5" />
+            Políticas
+          </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Políticas de{" "}
-            <span className="text-ocean">Reserva y Cancelación</span>
+            <span className="text-foreground/40">Reserva y Cancelación</span>
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
             Es importante que conozcas nuestras políticas antes de realizar tu
@@ -462,18 +469,20 @@ export function PoliciesSection() {
         {/* Booking Policies */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-6">
-            <SectionIcon icon={ShieldCheck} theme="ocean" />
+            <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center">
+              <ShieldCheck className="w-4 h-4 text-muted-foreground/60" />
+            </div>
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-foreground">
                 Políticas de Reserva
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground/60">
                 Condiciones para realizar y gestionar tu reserva
               </p>
             </div>
           </div>
 
-          <Card className="border-ocean/10 shadow-md shadow-ocean/5">
+          <Card className="border-border/50 shadow-sm">
             <CardContent className="p-4 sm:p-6">
               <PolicyAccordion items={bookingPolicies} />
             </CardContent>
@@ -483,18 +492,20 @@ export function PoliciesSection() {
         {/* Cancellation Policies */}
         <div>
           <div className="flex items-center gap-3 mb-6">
-            <SectionIcon icon={FileText} theme="sunset" />
+            <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center">
+              <FileText className="w-4 h-4 text-muted-foreground/60" />
+            </div>
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-foreground">
                 Políticas de Cancelación
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground/60">
                 Condiciones para cancelaciones, reembolsos y casos especiales
               </p>
             </div>
           </div>
 
-          <Card className="border-sunset/10 shadow-md shadow-sunset/5">
+          <Card className="border-border/50 shadow-sm">
             <CardContent className="p-4 sm:p-6">
               <PolicyAccordion items={cancellationPolicies} />
             </CardContent>
@@ -508,13 +519,13 @@ export function PoliciesSection() {
             Si tienes alguna pregunta sobre nuestras políticas, no dudes en{" "}
             <a
               href="mailto:info@vivetravel.co"
-              className="text-ocean hover:text-ocean-dark underline underline-offset-2 font-medium"
+              className="text-foreground underline underline-offset-2 font-medium"
             >
               contactarnos
             </a>
             . Estamos aquí para ayudarte.
           </p>
-          <p className="text-xs text-muted-foreground/60 mt-3">
+          <p className="text-xs text-muted-foreground/40 mt-3">
             Última actualización: Enero 2025. Las políticas están sujetas a
             cambios sin previo aviso.
           </p>

@@ -3,9 +3,8 @@
 import { useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Camera } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
-import { PremiumIcon } from "@/components/shared/premium-icon";
 import { pastTripImages } from "@/lib/data";
 
 export function TravelCarousel() {
@@ -61,12 +60,9 @@ export function TravelCarousel() {
 
                     {/* Caption on hover */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                      <div className="flex items-center gap-2 mb-1">
-                        <PremiumIcon icon={Camera} variant="glass" theme="white" size="xs" />
-                        <span className="text-ocean-light text-xs font-medium">
-                          Vive Travel
-                        </span>
-                      </div>
+                      <p className="text-white/60 text-xs font-medium mb-0.5">
+                        Vive Travel
+                      </p>
                       <p className="text-white text-sm font-medium leading-snug">
                         {trip.caption}
                       </p>
@@ -87,14 +83,14 @@ export function TravelCarousel() {
           {/* Navigation buttons */}
           <button
             onClick={scrollPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 bg-white hover:bg-ocean text-ocean hover:text-white shadow-lg rounded-full p-2.5 sm:p-3 transition-all duration-300"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 bg-white hover:bg-foreground hover:text-white text-foreground shadow-lg rounded-full p-2.5 sm:p-3 transition-all duration-300"
             aria-label="Anterior"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={scrollNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 bg-white hover:bg-ocean text-ocean hover:text-white shadow-lg rounded-full p-2.5 sm:p-3 transition-all duration-300"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 bg-white hover:bg-foreground hover:text-white text-foreground shadow-lg rounded-full p-2.5 sm:p-3 transition-all duration-300"
             aria-label="Siguiente"
           >
             <ChevronRight className="w-5 h-5" />
@@ -112,11 +108,10 @@ export function TravelCarousel() {
           {[
             { value: "500+", label: "Viajeros felices" },
             { value: "50+", label: "Viajes realizados" },
-            { value: "4.8", label: "Calificación promedio" },
             { value: "6", label: "Destinos del Atlántico" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <p className="text-2xl sm:text-3xl font-bold text-ocean">
+              <p className="text-2xl sm:text-3xl font-bold text-foreground">
                 {stat.value}
               </p>
               <p className="text-muted-foreground text-xs sm:text-sm mt-1">

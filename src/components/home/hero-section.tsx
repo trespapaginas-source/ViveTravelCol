@@ -8,7 +8,6 @@ import { ChevronLeft, ChevronRight, MapPin, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/lib/store";
 import { heroImages } from "@/lib/data";
-import { PremiumIcon } from "@/components/shared/premium-icon";
 
 export function HeroSection() {
   const { navigate } = useNavigation();
@@ -86,11 +85,11 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="flex items-center justify-center gap-2 mb-4 sm:mb-6"
           >
-            <PremiumIcon icon={Palmtree} variant="glass" theme="white" size="sm" />
-            <span className="text-ocean-light text-sm sm:text-base font-medium tracking-wider uppercase">
+            <Palmtree className="w-4 h-4 text-white/70" />
+            <span className="text-white/70 text-sm sm:text-base font-medium tracking-wider uppercase">
               Vive Travel
             </span>
-            <PremiumIcon icon={MapPin} variant="glass" theme="white" size="sm" />
+            <MapPin className="w-4 h-4 text-white/70" />
           </motion.div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">

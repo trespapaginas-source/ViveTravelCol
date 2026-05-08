@@ -16,10 +16,8 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SectionHeader } from "@/components/shared/section-header";
-import { RatingStars, IconStat, PremiumIcon } from "@/components/shared/premium-icon";
 import { useNavigation } from "@/lib/store";
 import { type TourPlan } from "@/lib/data";
 import { fetchPlans } from "@/lib/api";
@@ -36,18 +34,18 @@ const categories = [
 ];
 
 const categoryColors: Record<string, string> = {
-  Naturaleza: "bg-palm text-white",
-  Playa: "bg-ocean text-white",
-  Aventura: "bg-sunset text-white",
-  Ecoturismo: "bg-palm-light text-white",
-  Experiencia: "bg-coral text-white",
-  Cultural: "bg-sand text-white",
+  Naturaleza: "bg-foreground/80 text-white",
+  Playa: "bg-foreground/80 text-white",
+  Aventura: "bg-foreground/80 text-white",
+  Ecoturismo: "bg-foreground/80 text-white",
+  Experiencia: "bg-foreground/80 text-white",
+  Cultural: "bg-foreground/80 text-white",
 };
 
 const difficultyColors: Record<string, string> = {
-  Fácil: "bg-palm/15 text-palm border-palm/30",
-  Moderado: "bg-sunset/15 text-sunset border-sunset/30",
-  Avanzado: "bg-coral/15 text-coral border-coral/30",
+  Fácil: "bg-muted text-foreground border-border",
+  Moderado: "bg-muted text-foreground border-border",
+  Avanzado: "bg-muted text-foreground border-border",
 };
 
 function formatPrice(price: number): string {
@@ -62,11 +60,11 @@ function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: strin
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      whileHover={{ y: -6 }}
+      whileHover={{ y: -4 }}
       className="cursor-pointer"
       onClick={() => onNavigate(plan.id)}
     >
-      <Card className="overflow-hidden group border-border/50 hover:border-ocean/40 hover:shadow-xl transition-all duration-300 py-0 gap-0">
+      <Card className="overflow-hidden group border-border/50 hover:border-border hover:shadow-lg transition-all duration-300 py-0 gap-0">
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden">
           <img
@@ -78,7 +76,7 @@ function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: strin
 
           {/* Category Badge */}
           <Badge
-            className={`absolute top-3 left-3 ${categoryColors[plan.category] || "bg-ocean text-white"} border-0 text-xs font-semibold px-3 py-1`}
+            className={`absolute top-3 left-3 ${categoryColors[plan.category] || "bg-foreground/80 text-white"} border-0 text-[11px] font-medium px-2.5 py-0.5 backdrop-blur-sm`}
           >
             {plan.category}
           </Badge>
@@ -86,44 +84,45 @@ function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: strin
           {/* Difficulty Badge */}
           <Badge
             variant="outline"
-            className={`absolute top-3 right-3 text-xs font-medium ${difficultyColors[plan.difficulty]}`}
+            className={`absolute top-3 right-3 text-[11px] font-medium ${difficultyColors[plan.difficulty]} backdrop-blur-sm`}
           >
             {plan.difficulty}
           </Badge>
 
           {/* Price overlay */}
-          <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-md">
-            <span className="text-ocean font-bold text-sm">
+          <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1 shadow-sm">
+            <span className="text-foreground font-semibold text-sm">
               ${formatPrice(plan.price)}
             </span>
-            <span className="text-muted-foreground text-xs"> COP</span>
+            <span className="text-muted-foreground text-[10px]"> COP</span>
           </div>
         </div>
 
-        <CardContent className="p-4 space-y-3">
-          {/* Name & Rating */}
-          <div>
-            <h3 className="font-bold text-foreground text-base leading-tight line-clamp-1 group-hover:text-ocean transition-colors">
-              {plan.name}
-            </h3>
-            <div className="flex items-center gap-1.5 mt-1.5">
-              <RatingStars rating={plan.rating} size="sm" showValue={false} />
-              <span className="text-xs text-muted-foreground">
-                ({plan.reviewCount} reseñas)
-              </span>
-            </div>
-          </div>
+        <CardContent className="p-3.5 sm:p-4 space-y-2.5">
+          {/* Name */}
+          <h3 className="font-semibold text-[15px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors">
+            {plan.name}
+          </h3>
 
           {/* Short Description */}
-          <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+          <p className="text-xs text-muted-foreground/70 line-clamp-2 leading-relaxed">
             {plan.shortDescription}
           </p>
 
-          {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-3 pt-1">
-            <IconStat icon={Clock} value={plan.duration} theme="ocean" className="flex-shrink-0" />
-            <IconStat icon={MapPin} value={plan.location} theme="coral" className="flex-shrink-0" />
-            <IconStat icon={Users} value={`Máx. ${plan.maxGuests}`} theme="palm" className="flex-shrink-0" />
+          {/* Meta Info — compact inline */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground/60 pt-1">
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span>{plan.duration}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MapPin className="w-3 h-3" />
+              <span className="line-clamp-1">{plan.location}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              <span>Máx. {plan.maxGuests}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -171,7 +170,7 @@ export function PlansList() {
                   <TabsTrigger
                     key={cat.value}
                     value={cat.value}
-                    className="text-xs sm:text-sm data-[state=active]:bg-ocean data-[state=active]:text-white gap-1.5 px-2.5 sm:px-3 py-1.5"
+                    className="text-xs sm:text-sm data-[state=active]:bg-foreground data-[state=active]:text-white gap-1.5 px-2.5 sm:px-3 py-1.5"
                   >
                     <Icon className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">{cat.label}</span>
@@ -186,7 +185,7 @@ export function PlansList() {
         <AnimatePresence mode="popLayout">
           <motion.div
             layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
           >
             {filteredPlans.map((plan, i) => (
               <PlanCard
@@ -205,14 +204,7 @@ export function PlansList() {
             animate={{ opacity: 1 }}
             className="text-center py-16"
           >
-            <PremiumIcon
-              icon={Compass}
-              variant="minimal"
-              theme="ocean"
-              size="xl"
-              iconClassName="text-muted-foreground/50"
-              className="mx-auto mb-4"
-            />
+            <Compass className="w-10 h-10 text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-muted-foreground text-lg">
               No hay planes disponibles en esta categoría
             </p>

@@ -17,8 +17,6 @@ import {
   Loader2,
   Waves,
 } from "lucide-react";
-import { PremiumIcon, IconBadge, SocialIcon } from "@/components/shared/premium-icon";
-import type { IconTheme } from "@/components/shared/premium-icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -70,28 +68,24 @@ const contactInfo = [
     label: "WhatsApp",
     value: "+57 300 123 4567",
     href: "https://wa.me/573001234567",
-    theme: "palm" as IconTheme,
   },
   {
     icon: Mail,
     label: "Email",
     value: "info@vivetravel.co",
     href: "mailto:info@vivetravel.co",
-    theme: "ocean" as IconTheme,
   },
   {
     icon: MapPin,
     label: "Ubicación",
     value: "Barranquilla, Atlántico, Colombia",
     href: null,
-    theme: "sunset" as IconTheme,
   },
   {
     icon: Clock,
     label: "Horario",
     value: "Lun - Sáb: 8:00 AM - 6:00 PM\nDom: 9:00 AM - 1:00 PM",
     href: null,
-    theme: "coral" as IconTheme,
   },
 ];
 
@@ -112,7 +106,6 @@ export function ContactSection() {
 
   async function onSubmit(_data: ContactFormValues) {
     setIsSubmitting(true);
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsSubmitting(false);
     toast.success("Mensaje enviado", {
@@ -123,24 +116,25 @@ export function ContactSection() {
 
   return (
     <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
-      {/* Decorative background elements */}
+      {/* Decorative background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-ocean/5 rounded-full -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-sunset/5 rounded-full translate-x-1/3 translate-y-1/3" />
-        <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-palm/5 rounded-full" />
-        {/* Wave decoration */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-muted/30 rounded-full -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-muted/20 rounded-full translate-x-1/3 translate-y-1/3" />
         <div className="absolute bottom-0 left-0 right-0 opacity-[0.03]">
-          <Waves className="w-full h-32 text-ocean" />
+          <Waves className="w-full h-32 text-foreground" />
         </div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <IconBadge icon={MessageCircle} label="Contáctanos" theme="ocean" variant="filled" className="mb-4" />
+          <span className="inline-flex items-center gap-1.5 text-muted-foreground/50 text-xs font-medium tracking-wider uppercase mb-4">
+            <MessageCircle className="w-3.5 h-3.5" />
+            Contáctanos
+          </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             ¿Listo para tu{" "}
-            <span className="text-ocean">próxima aventura</span>?
+            <span className="text-foreground/40">próxima aventura</span>?
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
             Estamos aquí para ayudarte a planear el viaje perfecto. Escríbenos y
@@ -151,10 +145,10 @@ export function ContactSection() {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Left: Contact Form */}
-          <Card className="lg:col-span-3 border-ocean/10 shadow-lg shadow-ocean/5">
+          <Card className="lg:col-span-3 border-border/50 shadow-sm">
             <CardContent className="p-6 sm:p-8">
-              <h3 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
-                <PremiumIcon icon={Send} variant="gradient" theme="ocean" size="sm" />
+              <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+                <Send className="w-4 h-4 text-muted-foreground/40" />
                 Envíanos un mensaje
               </h3>
 
@@ -285,33 +279,33 @@ export function ContactSection() {
                             defaultValue={field.value}
                             className="flex flex-wrap gap-4"
                           >
-                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:border-palm/50 hover:bg-palm/5 transition-colors cursor-pointer has-[data-state=checked]:border-palm has-[data-state=checked]:bg-palm/10">
+                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer has-[data-state=checked]:bg-muted has-[data-state=checked]:border-foreground/20">
                               <RadioGroupItem value="whatsapp" id="whatsapp" />
                               <label
                                 htmlFor="whatsapp"
                                 className="text-sm font-medium cursor-pointer flex items-center gap-1.5"
                               >
-                                <MessageCircle className="w-4 h-4 text-palm" />
+                                <MessageCircle className="w-4 h-4 text-muted-foreground/50" />
                                 WhatsApp
                               </label>
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:border-ocean/50 hover:bg-ocean/5 transition-colors cursor-pointer has-[data-state=checked]:border-ocean has-[data-state=checked]:bg-ocean/10">
+                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer has-[data-state=checked]:bg-muted has-[data-state=checked]:border-foreground/20">
                               <RadioGroupItem value="email" id="email" />
                               <label
                                 htmlFor="email"
                                 className="text-sm font-medium cursor-pointer flex items-center gap-1.5"
                               >
-                                <Mail className="w-4 h-4 text-ocean" />
+                                <Mail className="w-4 h-4 text-muted-foreground/50" />
                                 Email
                               </label>
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:border-sunset/50 hover:bg-sunset/5 transition-colors cursor-pointer has-[data-state=checked]:border-sunset has-[data-state=checked]:bg-sunset/10">
+                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer has-[data-state=checked]:bg-muted has-[data-state=checked]:border-foreground/20">
                               <RadioGroupItem value="phone" id="phone" />
                               <label
                                 htmlFor="phone"
                                 className="text-sm font-medium cursor-pointer flex items-center gap-1.5"
                               >
-                                <Phone className="w-4 h-4 text-sunset" />
+                                <Phone className="w-4 h-4 text-muted-foreground/50" />
                                 Teléfono
                               </label>
                             </div>
@@ -326,7 +320,7 @@ export function ContactSection() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto bg-ocean hover:bg-ocean-dark text-white rounded-full px-8 py-3 text-base font-medium shadow-lg shadow-ocean/25 transition-all duration-300 hover:shadow-xl hover:shadow-ocean/30"
+                    className="w-full sm:w-auto bg-foreground hover:bg-foreground/90 text-white rounded-full px-8 py-3 text-base font-medium transition-all duration-300"
                   >
                     {isSubmitting ? (
                       <>
@@ -346,87 +340,94 @@ export function ContactSection() {
           </Card>
 
           {/* Right: Contact Info */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4">
             {/* Direct Contact Cards */}
-            <div className="space-y-4">
-              {contactInfo.map((item) => (
-                <Card
-                  key={item.label}
-                  className="border-border/50 hover:border-ocean/20 transition-all duration-300 hover:shadow-md group"
-                >
-                  <CardContent className="p-4 sm:p-5">
-                    {item.href ? (
-                      <a
-                        href={item.href}
-                        target={item.href.startsWith("http") ? "_blank" : undefined}
-                        rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                        className="flex items-start gap-4"
-                      >
-                        <PremiumIcon
-                          icon={item.icon}
-                          variant="gradient"
-                          theme={item.theme}
-                          className="group-hover:scale-110 transition-transform duration-300"
-                        />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-muted-foreground">
-                            {item.label}
-                          </p>
-                          <p className="text-foreground font-semibold whitespace-pre-line">
-                            {item.value}
-                          </p>
-                        </div>
-                      </a>
-                    ) : (
-                      <div className="flex items-start gap-4">
-                        <PremiumIcon
-                          icon={item.icon}
-                          variant="gradient"
-                          theme={item.theme}
-                          className="group-hover:scale-110 transition-transform duration-300"
-                        />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-muted-foreground">
-                            {item.label}
-                          </p>
-                          <p className="text-foreground font-semibold whitespace-pre-line">
-                            {item.value}
-                          </p>
-                        </div>
+            {contactInfo.map((item) => (
+              <Card
+                key={item.label}
+                className="border-border/50 hover:border-border transition-all duration-300 group"
+              >
+                <CardContent className="p-4">
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      target={item.href.startsWith("http") ? "_blank" : undefined}
+                      rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="flex items-start gap-3"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-muted/60 flex items-center justify-center shrink-0 group-hover:bg-muted transition-colors">
+                        <item.icon className="w-4 h-4 text-muted-foreground/60" />
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground/60 font-medium">
+                          {item.label}
+                        </p>
+                        <p className="text-foreground font-medium text-sm whitespace-pre-line">
+                          {item.value}
+                        </p>
+                      </div>
+                    </a>
+                  ) : (
+                    <div className="flex items-start gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-muted/60 flex items-center justify-center shrink-0">
+                        <item.icon className="w-4 h-4 text-muted-foreground/60" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs text-muted-foreground/60 font-medium">
+                          {item.label}
+                        </p>
+                        <p className="text-foreground font-medium text-sm whitespace-pre-line">
+                          {item.value}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
 
             {/* Social Media */}
             <Card className="border-border/50">
-              <CardContent className="p-4 sm:p-5">
-                <p className="text-sm font-medium text-muted-foreground mb-3">
+              <CardContent className="p-4">
+                <p className="text-xs text-muted-foreground/60 font-medium mb-3">
                   Síguenos en redes sociales
                 </p>
-                <div className="flex gap-3">
-                  <SocialIcon icon={Instagram} href="#" label="Instagram" hoverTheme="sunset" />
-                  <SocialIcon icon={Facebook} href="#" label="Facebook" hoverTheme="default" />
-                  <SocialIcon icon={MessageCircle} href="https://wa.me/573001234567" label="WhatsApp" hoverTheme="palm" />
+                <div className="flex gap-2">
+                  {[
+                    { icon: Instagram, href: "#", label: "Instagram" },
+                    { icon: Facebook, href: "#", label: "Facebook" },
+                    { icon: MessageCircle, href: "https://wa.me/573001234567", label: "WhatsApp" },
+                  ].map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      className="w-10 h-10 rounded-xl bg-muted/60 border border-border/50 flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-muted transition-all duration-300"
+                      aria-label={social.label}
+                      target={social.href.startsWith("http") ? "_blank" : undefined}
+                      rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    >
+                      <social.icon className="w-4 h-4" />
+                    </a>
+                  ))}
                 </div>
               </CardContent>
             </Card>
 
             {/* WhatsApp CTA */}
-            <Card className="bg-gradient-to-br from-palm/10 to-ocean/10 border-palm/20">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <PremiumIcon icon={MessageCircle} variant="glow" theme="palm" size="lg" className="mx-auto mb-3" />
-                <h4 className="font-semibold text-foreground mb-2">
+            <Card className="bg-muted/40 border-border/50">
+              <CardContent className="p-5 text-center">
+                <div className="w-10 h-10 rounded-xl bg-muted/80 flex items-center justify-center mx-auto mb-3">
+                  <MessageCircle className="w-5 h-5 text-muted-foreground/50" />
+                </div>
+                <h4 className="font-semibold text-foreground mb-1.5 text-sm">
                   ¿Prefieres chatear?
                 </h4>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-xs text-muted-foreground/60 mb-4">
                   Escríbenos por WhatsApp y recibe atención inmediata.
                 </p>
                 <Button
                   asChild
-                  className="bg-palm hover:bg-palm-light text-white rounded-full px-6"
+                  className="bg-foreground hover:bg-foreground/90 text-white rounded-full px-6 text-sm"
                 >
                   <a
                     href="https://wa.me/573001234567"

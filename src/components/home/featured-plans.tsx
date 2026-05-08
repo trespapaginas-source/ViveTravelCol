@@ -7,18 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/shared/section-header";
 import { useNavigation } from "@/lib/store";
-import { type TourPlan } from "@/lib/data";
 import { fetchPlans } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { PremiumIcon, RatingStars } from "@/components/shared/premium-icon";
 
 const categoryColors: Record<string, string> = {
-  Naturaleza: "bg-palm text-white",
-  Playa: "bg-ocean text-white",
-  Aventura: "bg-sunset text-white",
-  Ecoturismo: "bg-palm-light text-white",
-  Experiencia: "bg-coral text-white",
-  Cultural: "bg-sand text-white",
+  Naturaleza: "bg-foreground/80 text-white",
+  Playa: "bg-foreground/80 text-white",
+  Aventura: "bg-foreground/80 text-white",
+  Ecoturismo: "bg-foreground/80 text-white",
+  Experiencia: "bg-foreground/80 text-white",
+  Cultural: "bg-foreground/80 text-white",
 };
 
 function formatPrice(price: number) {
@@ -63,7 +61,7 @@ export function FeaturedPlans() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Card
-                className="group cursor-pointer overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 py-0 gap-0"
+                className="group cursor-pointer overflow-hidden border-border/50 hover:border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 py-0 gap-0"
                 onClick={() => navigate("plan-detail", plan.id)}
               >
                 {/* Image */}
@@ -78,54 +76,47 @@ export function FeaturedPlans() {
                   {/* Category badge */}
                   <Badge
                     className={`absolute top-3 left-3 ${
-                      categoryColors[plan.category] || "bg-ocean text-white"
-                    } border-0 text-xs font-medium`}
+                      categoryColors[plan.category] || "bg-foreground/80 text-white"
+                    } border-0 text-[11px] font-medium px-2.5 py-0.5 backdrop-blur-sm`}
                   >
                     {plan.category}
                   </Badge>
 
-                  {/* Rating */}
-                  <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm rounded-full px-2 py-1 [&_span]:text-white">
-                    <RatingStars rating={plan.rating} size="sm" showValue={true} />
-                  </div>
-
                   {/* Duration */}
                   <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
-                    <PremiumIcon icon={Clock} variant="glass" theme="white" size="xs" />
-                    <span className="text-white/90 text-xs">{plan.duration}</span>
+                    <Clock className="w-3 h-3 text-white/60" />
+                    <span className="text-white/80 text-xs">{plan.duration}</span>
                   </div>
                 </div>
 
-                <CardContent className="p-4 sm:p-5">
-                  <h3 className="font-semibold text-foreground text-sm sm:text-base mb-1.5 line-clamp-1 group-hover:text-ocean transition-colors">
+                <CardContent className="p-3.5 sm:p-4 space-y-2">
+                  <h3 className="font-semibold text-sm sm:text-[15px] text-foreground line-clamp-1 group-hover:text-ocean transition-colors leading-snug">
                     {plan.name}
                   </h3>
 
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <PremiumIcon icon={MapPin} variant="default" theme="coral" size="xs" />
-                    <span className="text-muted-foreground text-xs line-clamp-1">
-                      {plan.location}
-                    </span>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground/70">
+                    <MapPin className="w-3 h-3 shrink-0 text-muted-foreground/50" />
+                    <span className="line-clamp-1">{plan.location}</span>
                   </div>
 
-                  <p className="text-muted-foreground text-xs sm:text-sm mb-3 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-muted-foreground/70 line-clamp-2 leading-relaxed">
                     {plan.shortDescription}
                   </p>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                  <div className="flex items-center justify-between pt-1.5 border-t border-border/30">
                     <div>
-                      <span className="text-xs text-muted-foreground">Desde</span>
-                      <p className="text-ocean font-bold text-sm sm:text-base">
+                      <span className="text-[10px] text-muted-foreground/60">Desde</span>
+                      <p className="text-foreground font-semibold text-sm">
                         {formatPrice(plan.price)}
                       </p>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-ocean hover:text-ocean-dark hover:bg-ocean/10 -mr-2"
+                      className="text-ocean hover:text-ocean-dark hover:bg-ocean/5 -mr-2 text-xs h-7 px-2"
                     >
                       Ver más
-                      <ArrowRight className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" />
+                      <ArrowRight className="w-3 h-3 ml-0.5 transition-transform group-hover:translate-x-0.5" />
                     </Button>
                   </div>
                 </CardContent>

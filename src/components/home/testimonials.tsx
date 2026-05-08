@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
-import { PremiumIcon, RatingStars } from "@/components/shared/premium-icon";
 import { testimonials } from "@/lib/data";
 
 export function Testimonials() {
@@ -47,34 +46,23 @@ export function Testimonials() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="relative"
         >
-          <div className="bg-card rounded-3xl shadow-lg border border-border/50 p-8 sm:p-12 relative overflow-hidden">
+          <div className="bg-card rounded-3xl shadow-sm border border-border/50 p-8 sm:p-12 relative overflow-hidden">
             {/* Decorative quote */}
             <div className="absolute top-6 left-6">
-              <PremiumIcon
-                icon={Quote}
-                variant="minimal"
-                theme="ocean"
-                size="xl"
-                iconClassName="text-ocean/5"
-              />
+              <Quote className="w-12 h-12 text-foreground/[0.04]" />
             </div>
 
             {/* Avatar + Info */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-ocean to-ocean-dark flex items-center justify-center text-white font-bold text-lg">
+              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-foreground font-semibold text-sm">
                 {t.avatar}
               </div>
               <div>
-                <h4 className="font-semibold text-foreground text-lg">
+                <h4 className="font-semibold text-foreground text-base">
                   {t.name}
                 </h4>
-                <p className="text-sm text-muted-foreground">{t.location}</p>
+                <p className="text-sm text-muted-foreground/60">{t.location}</p>
               </div>
-            </div>
-
-            {/* Stars */}
-            <div className="mb-4">
-              <RatingStars rating={t.rating} size="md" />
             </div>
 
             {/* Quote */}
@@ -83,17 +71,17 @@ export function Testimonials() {
             </blockquote>
 
             {/* Trip name */}
-            <p className="text-ocean text-sm font-medium">{t.tripName}</p>
+            <p className="text-muted-foreground/50 text-sm font-medium">{t.tripName}</p>
           </div>
 
           {/* Navigation */}
           <div className="flex items-center justify-center gap-4 mt-8">
             <button
               onClick={prev}
-              className="w-10 h-10 rounded-full border border-border hover:border-ocean hover:bg-ocean/5 flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-full border border-border hover:border-foreground/20 hover:bg-muted/50 flex items-center justify-center transition-colors"
               aria-label="Testimonio anterior"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-5 h-5 text-muted-foreground" />
             </button>
 
             <div className="flex gap-2">
@@ -103,8 +91,8 @@ export function Testimonials() {
                   onClick={() => setCurrent(i)}
                   className={`transition-all duration-300 rounded-full ${
                     i === current
-                      ? "w-8 h-2.5 bg-ocean"
-                      : "w-2.5 h-2.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                      ? "w-8 h-2.5 bg-foreground"
+                      : "w-2.5 h-2.5 bg-muted-foreground/25 hover:bg-muted-foreground/40"
                   }`}
                   aria-label={`Ir a testimonio ${i + 1}`}
                 />
@@ -113,10 +101,10 @@ export function Testimonials() {
 
             <button
               onClick={next}
-              className="w-10 h-10 rounded-full border border-border hover:border-ocean hover:bg-ocean/5 flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-full border border-border hover:border-foreground/20 hover:bg-muted/50 flex items-center justify-center transition-colors"
               aria-label="Siguiente testimonio"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </button>
           </div>
         </motion.div>
