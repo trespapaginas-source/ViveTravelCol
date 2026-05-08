@@ -1,37 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  MapPin,
-  Clock,
-  Star,
-  Users,
-  Mountain,
-  Waves,
-  Compass,
-  Leaf,
-  Sparkles,
-  Landmark,
-} from "lucide-react";
+import { MapPin, Clock, Users, Compass } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SectionHeader } from "@/components/shared/section-header";
+import {
+  FilterSidebar,
+  FilterMobileSheet,
+  buildPlanFilters,
+  filterPlans,
+  useFilterState,
+} from "@/components/shared/filter-panel";
 import { useNavigation } from "@/lib/store";
 import { type TourPlan } from "@/lib/data";
 import { fetchPlans } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-
-const categories = [
-  { value: "Todos", label: "Todos", icon: Compass },
-  { value: "Naturaleza", label: "Naturaleza", icon: Leaf },
-  { value: "Playa", label: "Playa", icon: Waves },
-  { value: "Aventura", label: "Aventura", icon: Mountain },
-  { value: "Ecoturismo", label: "Ecoturismo", icon: Sparkles },
-  { value: "Experiencia", label: "Experiencia", icon: Star },
-  { value: "Cultural", label: "Cultural", icon: Landmark },
-];
 
 const categoryColors: Record<string, string> = {
   Naturaleza: "bg-foreground/80 text-white",
@@ -131,7 +116,6 @@ function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: strin
 }
 
 export function PlansList() {
-  const [activeCategory, setActiveCategory] = useState("Todos");
   const navigate = useNavigation((s) => s.navigate);
 
   const { data: tourPlans = [], isLoading } = useQuery({
@@ -139,10 +123,23 @@ export function PlansList() {
     queryFn: fetchPlans,
   });
 
-  const filteredPlans =
-    activeCategory === "Todos"
-      ? tourPlans.filter((p) => p.published !== false)
-      : tourPlans.filter((p) => p.category === activeCategory && p.published !== false);
+  const publishedPlans = useMemo(
+    () => tourPlans.filter((p) => p.published !== false),
+    [tourPlans]
+  );
+
+  const filterSections = useMemo(
+    () => buildPlanFilters(publishedPlans),
+    [publishedPlans]
+  );
+
+  const { filters, toggleCheckbox, changeRange, clearAll, activeCount } =
+    useFilterState(filterSections);
+
+  const filteredPlans = useMemo(
+    () => filterPlans(publishedPlans, filters),
+    [publishedPlans, filters]
+  );
 
   const handleNavigate = (planId: string) => {
     navigate("plan-detail", planId);
@@ -156,60 +153,77 @@ export function PlansList() {
           subtitle="Descubre experiencias únicas en el Atlántico colombiano. Desde aventuras en la naturaleza hasta noches mágicas bajo las estrellas."
         />
 
-        {/* Filter Tabs */}
-        <div className="mb-8 sm:mb-10 flex justify-center">
-          <Tabs
-            value={activeCategory}
-            onValueChange={setActiveCategory}
-            className="w-full"
-          >
-            <TabsList className="mx-auto flex-wrap h-auto gap-1 bg-muted/60 p-1.5">
-              {categories.map((cat) => {
-                const Icon = cat.icon;
-                return (
-                  <TabsTrigger
-                    key={cat.value}
-                    value={cat.value}
-                    className="text-xs sm:text-sm data-[state=active]:bg-foreground data-[state=active]:text-white gap-1.5 px-2.5 sm:px-3 py-1.5"
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">{cat.label}</span>
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-          </Tabs>
+        {/* Mobile filter button */}
+        <div className="flex items-center justify-between mb-6 lg:mb-10">
+          <div className="flex items-center gap-2">
+            <FilterMobileSheet
+              sections={filterSections}
+              filters={filters}
+              onToggleCheckbox={toggleCheckbox}
+              onChangeRange={changeRange}
+              onClearAll={clearAll}
+              activeCount={activeCount}
+              resultCount={filteredPlans.length}
+            />
+            <span className="text-xs text-muted-foreground/50">
+              {filteredPlans.length} plan{filteredPlans.length !== 1 ? "es" : ""}
+            </span>
+          </div>
         </div>
 
-        {/* Plans Grid */}
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
-          >
-            {filteredPlans.map((plan, i) => (
-              <PlanCard
-                key={plan.id}
-                plan={plan}
-                onNavigate={handleNavigate}
-              />
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        {/* Content: Sidebar + Grid */}
+        <div className="flex gap-8">
+          {/* Desktop Sidebar */}
+          <FilterSidebar
+            sections={filterSections}
+            filters={filters}
+            onToggleCheckbox={toggleCheckbox}
+            onChangeRange={changeRange}
+            onClearAll={clearAll}
+            activeCount={activeCount}
+          />
 
-        {/* Empty State */}
-        {filteredPlans.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
-          >
-            <Compass className="w-10 h-10 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground text-lg">
-              No hay planes disponibles en esta categoría
-            </p>
-          </motion.div>
-        )}
+          {/* Plans Grid */}
+          <div className="flex-1 min-w-0">
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                layout
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6"
+              >
+                {filteredPlans.map((plan) => (
+                  <PlanCard
+                    key={plan.id}
+                    plan={plan}
+                    onNavigate={handleNavigate}
+                  />
+                ))}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Empty State */}
+            {filteredPlans.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-16"
+              >
+                <Compass className="w-10 h-10 text-muted-foreground/30 mx-auto mb-4" />
+                <p className="text-muted-foreground text-lg mb-2">
+                  No hay planes con estos filtros
+                </p>
+                <p className="text-muted-foreground/60 text-sm mb-4">
+                  Intenta ajustar los filtros para encontrar más opciones
+                </p>
+                <button
+                  onClick={clearAll}
+                  className="text-sm text-foreground/60 hover:text-foreground transition-colors underline underline-offset-2"
+                >
+                  Limpiar filtros
+                </button>
+              </motion.div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -558,3 +558,34 @@ Stage Summary:
 - Custom trips CTA: bg-foreground instead of sunset/coral gradient
 - Consistent dot-separated compact stats format throughout
 - Lint clean, dev server compiles successfully
+
+---
+Task ID: 1
+Agent: main
+Task: Create lateral filter module for Plans and Cabins sections
+
+Work Log:
+- Analyzed uploaded reference image (tour filter panel with destino, precio, actividades, tipos de viaje sections)
+- Explored full codebase: data types, component structure, existing filters (only category tabs in plans-list)
+- Created comprehensive FilterPanel component at src/components/shared/filter-panel.tsx
+- Implemented filter configuration builders: buildPlanFilters() and buildCabinFilters()
+- Implemented filter logic: filterPlans() and filterCabins() with multi-criteria AND filtering
+- Built FilterCheckboxSection with collapsible sections, counts, and "Mostrar más" for long lists
+- Built FilterRangeSection with dual-thumb price slider and COP formatting
+- Built FilterSidebar for desktop (sticky left sidebar with glassmorphism card)
+- Built FilterMobileSheet for mobile (left Sheet/drawer with footer clear button)
+- Built useFilterState hook for managing filter state
+- Added active filter count badges and individual filter tag pills (removable)
+- Updated plans-list.tsx: removed old category tabs, integrated sidebar + mobile sheet
+- Updated cabins-list.tsx: integrated sidebar + mobile sheet
+- Added empty states with "Limpiar filtros" CTA when no results match
+- Lint passed clean, dev server compiles successfully
+
+Stage Summary:
+- New file: src/components/shared/filter-panel.tsx (reusable filter system)
+- Modified: src/components/plans/plans-list.tsx (removed tabs, added sidebar layout)
+- Modified: src/components/cabins/cabins-list.tsx (added sidebar layout)
+- Plans filters: Categoría, Ubicación, Precio (range), Duración, Dificultad
+- Cabins filters: Ubicación, Precio por noche (range), Capacidad, Habitaciones, Baños, Servicios
+- Desktop: sticky sidebar (w-64/w-72) with collapsible sections
+- Mobile: Sheet drawer from left with filter button + result count badge

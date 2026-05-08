@@ -1,11 +1,19 @@
 "use client";
 
+import { useMemo } from "react";
 import { Cabin } from "@/lib/data";
 import { fetchCabins } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
 import { ImageCarousel } from "@/components/shared/image-carousel";
 import { SectionHeader } from "@/components/shared/section-header";
+import {
+  FilterSidebar,
+  FilterMobileSheet,
+  buildCabinFilters,
+  filterCabins,
+  useFilterState,
+} from "@/components/shared/filter-panel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,7 +23,6 @@ import {
   Bath,
   MapPin,
   ArrowRight,
-  Waves,
   Heart,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -154,7 +161,23 @@ export function CabinsList() {
     queryFn: fetchCabins,
   });
 
-  const publishedCabins = cabins.filter((c) => c.published !== false);
+  const publishedCabins = useMemo(
+    () => cabins.filter((c) => c.published !== false),
+    [cabins]
+  );
+
+  const filterSections = useMemo(
+    () => buildCabinFilters(publishedCabins),
+    [publishedCabins]
+  );
+
+  const { filters, toggleCheckbox, changeRange, clearAll, activeCount } =
+    useFilterState(filterSections);
+
+  const filteredCabins = useMemo(
+    () => filterCabins(publishedCabins, filters),
+    [publishedCabins, filters]
+  );
 
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
@@ -171,28 +194,72 @@ export function CabinsList() {
           />
         </motion.div>
 
-        {/* Decorative wave */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex items-center justify-center gap-2 mb-10"
-        >
-          <div className="h-px w-12 bg-ocean/20" />
-          <Waves className="w-4 h-4 text-ocean/40" />
-          <div className="h-px w-12 bg-ocean/20" />
-        </motion.div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-          {publishedCabins.map((cabin, index) => (
-            <CabinCard
-              key={cabin.id}
-              cabin={cabin}
-              index={index}
-              onSelect={() => navigate("cabin-detail", cabin.id)}
+        {/* Mobile filter button + result count */}
+        <div className="flex items-center justify-between mb-6 lg:mb-10">
+          <div className="flex items-center gap-2">
+            <FilterMobileSheet
+              sections={filterSections}
+              filters={filters}
+              onToggleCheckbox={toggleCheckbox}
+              onChangeRange={changeRange}
+              onClearAll={clearAll}
+              activeCount={activeCount}
+              resultCount={filteredCabins.length}
             />
-          ))}
+            <span className="text-xs text-muted-foreground/50">
+              {filteredCabins.length} cabaña{filteredCabins.length !== 1 ? "s" : ""}
+            </span>
+          </div>
+        </div>
+
+        {/* Content: Sidebar + Grid */}
+        <div className="flex gap-8">
+          {/* Desktop Sidebar */}
+          <FilterSidebar
+            sections={filterSections}
+            filters={filters}
+            onToggleCheckbox={toggleCheckbox}
+            onChangeRange={changeRange}
+            onClearAll={clearAll}
+            activeCount={activeCount}
+          />
+
+          {/* Cabins Grid */}
+          <div className="flex-1 min-w-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+              {filteredCabins.map((cabin, index) => (
+                <CabinCard
+                  key={cabin.id}
+                  cabin={cabin}
+                  index={index}
+                  onSelect={() => navigate("cabin-detail", cabin.id)}
+                />
+              ))}
+            </div>
+
+            {/* Empty State */}
+            {filteredCabins.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-16"
+              >
+                <MapPin className="w-10 h-10 text-muted-foreground/30 mx-auto mb-4" />
+                <p className="text-muted-foreground text-lg mb-2">
+                  No hay cabañas con estos filtros
+                </p>
+                <p className="text-muted-foreground/60 text-sm mb-4">
+                  Intenta ajustar los filtros para encontrar más opciones
+                </p>
+                <button
+                  onClick={clearAll}
+                  className="text-sm text-foreground/60 hover:text-foreground transition-colors underline underline-offset-2"
+                >
+                  Limpiar filtros
+                </button>
+              </motion.div>
+            )}
+          </div>
         </div>
 
         {/* Bottom CTA */}
