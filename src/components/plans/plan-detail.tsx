@@ -34,11 +34,6 @@ const categoryColors: Record<string, string> = {
   Cultural: "bg-ocean/80 text-white",
 };
 
-const difficultyColors: Record<string, string> = {
-  Fácil: "bg-muted text-foreground border-border",
-  Moderado: "bg-muted text-foreground border-border",
-  Avanzado: "bg-muted text-foreground border-border",
-};
 
 function InfoItem({
   icon: Icon,
@@ -167,19 +162,6 @@ export function PlanDetail() {
                   label="Máximo de huéspedes"
                   value={`${plan.maxGuests} personas`}
                 />
-                <InfoItem
-                  icon={Mountain}
-                  label="Dificultad"
-                  value={plan.difficulty}
-                />
-              </div>
-              <div className="mt-4">
-                <Badge
-                  variant="outline"
-                  className={`text-sm px-4 py-1.5 ${difficultyColors[plan.difficulty]}`}
-                >
-                  {plan.difficulty}
-                </Badge>
               </div>
             </motion.div>
 

@@ -27,11 +27,6 @@ const categoryColors: Record<string, string> = {
   Cultural: "bg-ocean/80 text-white",
 };
 
-const difficultyColors: Record<string, string> = {
-  Fácil: "bg-muted text-foreground border-border",
-  Moderado: "bg-muted text-foreground border-border",
-  Avanzado: "bg-muted text-foreground border-border",
-};
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO").format(price);
@@ -64,14 +59,6 @@ function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: strin
             className={`absolute top-3 left-3 ${categoryColors[plan.category] || "bg-ocean/80 text-white"} border-0 text-[11px] font-medium px-2.5 py-0.5 backdrop-blur-sm`}
           >
             {plan.category}
-          </Badge>
-
-          {/* Difficulty Badge */}
-          <Badge
-            variant="outline"
-            className={`absolute top-3 right-3 text-[11px] font-medium ${difficultyColors[plan.difficulty]} backdrop-blur-sm`}
-          >
-            {plan.difficulty}
           </Badge>
 
           {/* Price overlay */}
