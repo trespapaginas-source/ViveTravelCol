@@ -42,13 +42,118 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
-// Memoized cabin card
-const CabinCard = memo(function CabinCard({
+// ─── Horizontal Cabin Card (1-column list view) ────────────────────────────────
+const CabinCardHorizontal = memo(function CabinCardHorizontal({
   cabin,
   onSelect,
 }: {
   cabin: Cabin;
-  index: number;
+  onSelect: () => void;
+}) {
+  const [isFav, setIsFav] = useState(() =>
+    typeof window !== "undefined" ? isFavorite(cabin.id) : false
+  );
+
+  const handleFavorite = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const nowFav = toggleFavorite(cabin.id);
+      setIsFav(nowFav);
+      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+      });
+    },
+    [cabin.id]
+  );
+
+  return (
+    <Card
+      className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-200 py-0 gap-0 flex flex-row"
+      onClick={onSelect}
+    >
+      {/* Image — square on the left */}
+      <div className="relative w-[200px] sm:w-[260px] md:w-[300px] shrink-0 overflow-hidden">
+        <img
+          src={cabin.images[0]}
+          alt={cabin.name}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+        />
+        {/* Price Badge */}
+        <div className="absolute top-3 left-3 z-10">
+          <Badge className="bg-white/90 text-foreground backdrop-blur-sm border-0 text-[11px] font-semibold px-2.5 py-0.5 shadow-sm">
+            {formatPrice(cabin.pricePerNight)}/noche
+          </Badge>
+        </div>
+        {/* Favorite Button */}
+        <button
+          onClick={handleFavorite}
+          className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[44px] min-h-[44px]"
+          aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
+        >
+          <Heart
+            className={`w-3.5 h-3.5 transition-colors duration-200 ${
+              isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
+            }`}
+          />
+        </button>
+      </div>
+
+      {/* Content — right side */}
+      <CardContent className="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
+        <div>
+          <h3 className="font-semibold text-base sm:text-lg text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
+            {cabin.name}
+          </h3>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+            <MapPin className="w-3.5 h-3.5 shrink-0 text-muted-foreground/60" />
+            <span className="line-clamp-1">{cabin.location}</span>
+          </div>
+
+          <p className="text-xs sm:text-sm text-muted-foreground/70 line-clamp-2 leading-relaxed mt-2">
+            {cabin.shortDescription}
+          </p>
+
+          {/* Stats */}
+          <div className="flex items-center gap-3 text-xs text-muted-foreground/60 mt-3">
+            <div className="flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5" />
+              <span>{cabin.capacity} huéspedes</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <BedDouble className="w-3.5 h-3.5" />
+              <span>{cabin.bedrooms} hab.</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Bath className="w-3.5 h-3.5" />
+              <span>{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom row: CTA */}
+        <div className="flex items-center justify-end mt-4 pt-3 border-t border-border/30">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-ocean hover:text-ocean-dark hover:bg-ocean/5 gap-1 text-xs font-medium px-3 h-8"
+          >
+            Ver detalles
+            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+});
+
+// ─── Vertical Cabin Card (2-3 column grid view) ───────────────────────────────
+const CabinCardVertical = memo(function CabinCardVertical({
+  cabin,
+  onSelect,
+}: {
+  cabin: Cabin;
   onSelect: () => void;
 }) {
   const [isFav, setIsFav] = useState(() =>
@@ -151,6 +256,7 @@ const CabinCard = memo(function CabinCard({
   );
 });
 
+// ─── Main Cabins List ──────────────────────────────────────────────────────────
 export function CabinsList() {
   const { navigate } = useNavigation();
   const { data: cabins = [], isLoading } = useQuery({
@@ -221,6 +327,7 @@ export function CabinsList() {
   );
 
   const gridCols = getGridCols(viewMode);
+  const isHorizontal = viewMode === "1";
 
   if (isLoading) {
     return (
@@ -299,14 +406,21 @@ export function CabinsList() {
             </div>
 
             <div className={`grid ${gridCols} gap-5 sm:gap-6`}>
-              {paginatedCabins.map((cabin, index) => (
-                <CabinCard
-                  key={cabin.id}
-                  cabin={cabin}
-                  index={index}
-                  onSelect={() => handleSelect(cabin.id)}
-                />
-              ))}
+              {paginatedCabins.map((cabin) =>
+                isHorizontal ? (
+                  <CabinCardHorizontal
+                    key={cabin.id}
+                    cabin={cabin}
+                    onSelect={() => handleSelect(cabin.id)}
+                  />
+                ) : (
+                  <CabinCardVertical
+                    key={cabin.id}
+                    cabin={cabin}
+                    onSelect={() => handleSelect(cabin.id)}
+                  />
+                )
+              )}
             </div>
 
             {/* Empty State */}

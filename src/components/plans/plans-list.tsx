@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, memo } from "react";
-import { MapPin, Clock, Users, Compass, Heart } from "lucide-react";
+import { MapPin, Clock, Users, Compass, Heart, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/shared/section-header";
 import {
   FilterSidebar,
@@ -42,8 +43,125 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
-// Memoized plan card — prevents re-rendering when other cards change
-const PlanCard = memo(function PlanCard({ plan, onNavigate }: { plan: TourPlan; onNavigate: (id: string) => void }) {
+// ─── Horizontal Card (1-column list view) ─────────────────────────────────────
+const PlanCardHorizontal = memo(function PlanCardHorizontal({
+  plan,
+  onNavigate,
+}: {
+  plan: TourPlan;
+  onNavigate: (id: string) => void;
+}) {
+  const [isFav, setIsFav] = useState(() =>
+    typeof window !== "undefined" ? isFavorite(plan.id) : false
+  );
+
+  const handleFavorite = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const nowFav = toggleFavorite(plan.id);
+      setIsFav(nowFav);
+      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+      });
+    },
+    [plan.id]
+  );
+
+  return (
+    <Card
+      className="overflow-hidden group border-border/50 hover:border-border hover:shadow-lg transition-all duration-200 py-0 gap-0 cursor-pointer flex flex-row"
+      onClick={() => onNavigate(plan.id)}
+    >
+      {/* Image — square on the left */}
+      <div className="relative w-[200px] sm:w-[260px] md:w-[300px] shrink-0 overflow-hidden">
+        <img
+          src={plan.images[0]}
+          alt={plan.name}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10" />
+
+        {/* Category Badge */}
+        <Badge
+          className={`absolute top-3 left-3 ${categoryColors[plan.category] || "bg-ocean/80 text-white"} border-0 text-[11px] font-medium px-2.5 py-0.5 backdrop-blur-sm`}
+        >
+          {plan.category}
+        </Badge>
+
+        {/* Favorite Button */}
+        <button
+          onClick={handleFavorite}
+          className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[44px] min-h-[44px]"
+          aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
+        >
+          <Heart
+            className={`w-3.5 h-3.5 transition-colors duration-200 ${
+              isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
+            }`}
+          />
+        </button>
+      </div>
+
+      {/* Content — right side */}
+      <CardContent className="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
+        <div>
+          <h3 className="font-semibold text-base sm:text-lg text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
+            {plan.name}
+          </h3>
+
+          <p className="text-xs sm:text-sm text-muted-foreground/70 line-clamp-2 leading-relaxed mt-1.5">
+            {plan.shortDescription}
+          </p>
+
+          {/* Meta Info */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground/60 mt-3">
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5" />
+              <span>{plan.duration}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5" />
+              <span className="line-clamp-1">{plan.location}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5" />
+              <span>Máx. {plan.maxGuests}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom row: Price + CTA */}
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-border/30">
+          <div>
+            <span className="text-[10px] text-muted-foreground/50">Desde</span>
+            <p className="text-foreground font-bold text-base">
+              {formatPrice(plan.price)}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-ocean hover:text-ocean-dark hover:bg-ocean/5 gap-1 text-xs font-medium px-3 h-8"
+          >
+            Ver detalles
+            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+});
+
+// ─── Vertical Card (2-3 column grid view) ─────────────────────────────────────
+const PlanCardVertical = memo(function PlanCardVertical({
+  plan,
+  onNavigate,
+}: {
+  plan: TourPlan;
+  onNavigate: (id: string) => void;
+}) {
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" ? isFavorite(plan.id) : false
   );
@@ -136,6 +254,7 @@ const PlanCard = memo(function PlanCard({ plan, onNavigate }: { plan: TourPlan; 
   );
 });
 
+// ─── Main Plans List ───────────────────────────────────────────────────────────
 export function PlansList() {
   const navigate = useNavigation((s) => s.navigate);
 
@@ -198,7 +317,6 @@ export function PlansList() {
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-    // Scroll to top of the section
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -207,6 +325,7 @@ export function PlansList() {
   }, [navigate]);
 
   const gridCols = getGridCols(viewMode);
+  const isHorizontal = viewMode === "1";
 
   if (isLoading) {
     return (
@@ -283,13 +402,21 @@ export function PlansList() {
             </div>
 
             <div className={`grid ${gridCols} gap-5 sm:gap-6`}>
-              {paginatedPlans.map((plan) => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  onNavigate={handleNavigate}
-                />
-              ))}
+              {paginatedPlans.map((plan) =>
+                isHorizontal ? (
+                  <PlanCardHorizontal
+                    key={plan.id}
+                    plan={plan}
+                    onNavigate={handleNavigate}
+                  />
+                ) : (
+                  <PlanCardVertical
+                    key={plan.id}
+                    plan={plan}
+                    onNavigate={handleNavigate}
+                  />
+                )
+              )}
             </div>
 
             {/* Empty State */}
