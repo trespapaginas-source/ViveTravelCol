@@ -1,6 +1,7 @@
 #!/bin/bash
 cd /home/z/my-project
 while true; do
-  npx next dev -p 3000 2>/dev/null
-  sleep 2
+  npx next dev -p 3000 > /home/z/my-project/dev.log 2>&1
+  echo "Server died, restarting in 3s..." >> /home/z/my-project/dev.log
+  sleep 3
 done
