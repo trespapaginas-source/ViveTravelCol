@@ -12,6 +12,8 @@ import {
   filterPlans,
   useFilterState,
 } from "@/components/shared/filter-panel";
+import { ListToolbar, type ViewMode, type SortOption } from "@/components/shared/list-toolbar";
+import { ListPagination } from "@/components/shared/list-pagination";
 import { useNavigation } from "@/lib/store";
 import { type TourPlan } from "@/lib/data";
 import { fetchPlans } from "@/lib/api";
@@ -20,6 +22,7 @@ import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { sortPlans, getGridCols, ITEMS_PER_PAGE } from "@/lib/sorting";
 
 const categoryColors: Record<string, string> = {
   Naturaleza: "bg-ocean/80 text-white",
@@ -141,6 +144,11 @@ export function PlansList() {
     queryFn: fetchPlans,
   });
 
+  // View mode state
+  const [viewMode, setViewMode] = useState<ViewMode>("3");
+  const [sortOption, setSortOption] = useState<SortOption>("popular");
+  const [currentPage, setCurrentPage] = useState(1);
+
   const publishedPlans = useMemo(
     () => tourPlans.filter((p) => p.published !== false),
     [tourPlans]
@@ -154,14 +162,51 @@ export function PlansList() {
   const { filters, toggleCheckbox, changeRange, clearAll, activeCount } =
     useFilterState(filterSections);
 
+  // Apply filters
   const filteredPlans = useMemo(
     () => filterPlans(publishedPlans, filters),
     [publishedPlans, filters]
   );
 
+  // Apply sorting
+  const sortedPlans = useMemo(
+    () => sortPlans(filteredPlans, sortOption),
+    [filteredPlans, sortOption]
+  );
+
+  // Pagination
+  const totalPages = Math.ceil(sortedPlans.length / ITEMS_PER_PAGE);
+  const paginatedPlans = useMemo(
+    () => sortedPlans.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
+    [sortedPlans, currentPage]
+  );
+
+  // Reset page when filters or sort change
+  const handleSortChange = useCallback((option: SortOption) => {
+    setSortOption(option);
+    setCurrentPage(1);
+  }, []);
+
+  const handleViewModeChange = useCallback((mode: ViewMode) => {
+    setViewMode(mode);
+  }, []);
+
+  const handleClearAll = useCallback(() => {
+    clearAll();
+    setCurrentPage(1);
+  }, [clearAll]);
+
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of the section
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const handleNavigate = useCallback((planId: string) => {
     navigate("plan-detail", planId);
   }, [navigate]);
+
+  const gridCols = getGridCols(viewMode);
 
   if (isLoading) {
     return (
@@ -196,21 +241,18 @@ export function PlansList() {
           subtitle="Descubre experiencias únicas en el Atlántico colombiano. Desde aventuras en la naturaleza hasta noches mágicas bajo las estrellas."
         />
 
-        {/* Mobile filter button */}
-        <div className="flex items-center justify-between mb-6 lg:mb-10">
+        {/* Mobile filter button + Toolbar row */}
+        <div className="flex items-center justify-between mb-4 lg:mb-6">
           <div className="flex items-center gap-2">
             <FilterMobileSheet
               sections={filterSections}
               filters={filters}
               onToggleCheckbox={toggleCheckbox}
               onChangeRange={changeRange}
-              onClearAll={clearAll}
+              onClearAll={handleClearAll}
               activeCount={activeCount}
               resultCount={filteredPlans.length}
             />
-            <span className="text-xs text-muted-foreground/50">
-              {filteredPlans.length} plan{filteredPlans.length !== 1 ? "es" : ""}
-            </span>
           </div>
         </div>
 
@@ -222,14 +264,26 @@ export function PlansList() {
             filters={filters}
             onToggleCheckbox={toggleCheckbox}
             onChangeRange={changeRange}
-            onClearAll={clearAll}
+            onClearAll={handleClearAll}
             activeCount={activeCount}
           />
 
-          {/* Plans Grid — NO AnimatePresence/layout, just CSS transitions */}
+          {/* Plans Grid */}
           <div className="flex-1 min-w-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
-              {filteredPlans.map((plan) => (
+            {/* Toolbar: Sort + View toggle */}
+            <div className="mb-5">
+              <ListToolbar
+                viewMode={viewMode}
+                onViewModeChange={handleViewModeChange}
+                sortOption={sortOption}
+                onSortOptionChange={handleSortChange}
+                resultCount={filteredPlans.length}
+                resultLabel={`plan${filteredPlans.length !== 1 ? "es" : ""}`}
+              />
+            </div>
+
+            <div className={`grid ${gridCols} gap-5 sm:gap-6`}>
+              {paginatedPlans.map((plan) => (
                 <PlanCard
                   key={plan.id}
                   plan={plan}
@@ -249,13 +303,20 @@ export function PlansList() {
                   Intenta ajustar los filtros para encontrar más opciones
                 </p>
                 <button
-                  onClick={clearAll}
+                  onClick={handleClearAll}
                   className="text-sm text-foreground/60 hover:text-foreground transition-colors underline underline-offset-2"
                 >
                   Limpiar filtros
                 </button>
               </div>
             )}
+
+            {/* Pagination */}
+            <ListPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
       </div>

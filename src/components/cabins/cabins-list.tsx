@@ -14,6 +14,8 @@ import {
   filterCabins,
   useFilterState,
 } from "@/components/shared/filter-panel";
+import { ListToolbar, type ViewMode, type SortOption, cabinSortOptions } from "@/components/shared/list-toolbar";
+import { ListPagination } from "@/components/shared/list-pagination";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,6 +31,7 @@ import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { sortCabins, getGridCols, ITEMS_PER_PAGE } from "@/lib/sorting";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -155,6 +158,11 @@ export function CabinsList() {
     queryFn: fetchCabins,
   });
 
+  // View mode state
+  const [viewMode, setViewMode] = useState<ViewMode>("2");
+  const [sortOption, setSortOption] = useState<SortOption>("popular");
+  const [currentPage, setCurrentPage] = useState(1);
+
   const publishedCabins = useMemo(
     () => cabins.filter((c) => c.published !== false),
     [cabins]
@@ -168,15 +176,51 @@ export function CabinsList() {
   const { filters, toggleCheckbox, changeRange, clearAll, activeCount } =
     useFilterState(filterSections);
 
+  // Apply filters
   const filteredCabins = useMemo(
     () => filterCabins(publishedCabins, filters),
     [publishedCabins, filters]
   );
 
+  // Apply sorting
+  const sortedCabins = useMemo(
+    () => sortCabins(filteredCabins, sortOption),
+    [filteredCabins, sortOption]
+  );
+
+  // Pagination
+  const totalPages = Math.ceil(sortedCabins.length / ITEMS_PER_PAGE);
+  const paginatedCabins = useMemo(
+    () => sortedCabins.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
+    [sortedCabins, currentPage]
+  );
+
+  // Reset page when filters or sort change
+  const handleSortChange = useCallback((option: SortOption) => {
+    setSortOption(option);
+    setCurrentPage(1);
+  }, []);
+
+  const handleViewModeChange = useCallback((mode: ViewMode) => {
+    setViewMode(mode);
+  }, []);
+
+  const handleClearAll = useCallback(() => {
+    clearAll();
+    setCurrentPage(1);
+  }, [clearAll]);
+
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const handleSelect = useCallback(
     (cabinId: string) => navigate("cabin-detail", cabinId),
     [navigate]
   );
+
+  const gridCols = getGridCols(viewMode);
 
   if (isLoading) {
     return (
@@ -212,21 +256,18 @@ export function CabinsList() {
           subtitle="Descubre el alojamiento perfecto para tu escapada al Caribe colombiano. Desde refugios románticos hasta espacios familiares frente al mar."
         />
 
-        {/* Mobile filter button + result count */}
-        <div className="flex items-center justify-between mb-6 lg:mb-10">
+        {/* Mobile filter button */}
+        <div className="flex items-center justify-between mb-4 lg:mb-6">
           <div className="flex items-center gap-2">
             <FilterMobileSheet
               sections={filterSections}
               filters={filters}
               onToggleCheckbox={toggleCheckbox}
               onChangeRange={changeRange}
-              onClearAll={clearAll}
+              onClearAll={handleClearAll}
               activeCount={activeCount}
               resultCount={filteredCabins.length}
             />
-            <span className="text-xs text-muted-foreground/50">
-              {filteredCabins.length} cabaña{filteredCabins.length !== 1 ? "s" : ""}
-            </span>
           </div>
         </div>
 
@@ -238,14 +279,27 @@ export function CabinsList() {
             filters={filters}
             onToggleCheckbox={toggleCheckbox}
             onChangeRange={changeRange}
-            onClearAll={clearAll}
+            onClearAll={handleClearAll}
             activeCount={activeCount}
           />
 
-          {/* Cabins Grid — simple CSS transitions, no framer-motion layout */}
+          {/* Cabins Grid */}
           <div className="flex-1 min-w-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-              {filteredCabins.map((cabin, index) => (
+            {/* Toolbar: Sort + View toggle */}
+            <div className="mb-5">
+              <ListToolbar
+                viewMode={viewMode}
+                onViewModeChange={handleViewModeChange}
+                sortOption={sortOption}
+                onSortOptionChange={handleSortChange}
+                sortOptions={cabinSortOptions}
+                resultCount={filteredCabins.length}
+                resultLabel={`cabaña${filteredCabins.length !== 1 ? "s" : ""}`}
+              />
+            </div>
+
+            <div className={`grid ${gridCols} gap-5 sm:gap-6`}>
+              {paginatedCabins.map((cabin, index) => (
                 <CabinCard
                   key={cabin.id}
                   cabin={cabin}
@@ -266,13 +320,20 @@ export function CabinsList() {
                   Intenta ajustar los filtros para encontrar más opciones
                 </p>
                 <button
-                  onClick={clearAll}
+                  onClick={handleClearAll}
                   className="text-sm text-foreground/60 hover:text-foreground transition-colors underline underline-offset-2"
                 >
                   Limpiar filtros
                 </button>
               </div>
             )}
+
+            {/* Pagination */}
+            <ListPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
 
