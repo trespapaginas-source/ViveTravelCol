@@ -36,7 +36,7 @@ export function CustomTrips() {
   const { navigate } = useNavigation();
 
   return (
-    <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
+    <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden content-visibility-auto contain-intrinsic-size-auto">
       {/* Subtle background */}
       <div className="absolute inset-0 bg-muted/30" />
 
@@ -63,7 +63,7 @@ export function CustomTrips() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 mb-12 sm:mb-16">
           {benefits.map((benefit) => (
             <div key={benefit.title} className="group">
-              <div className="bg-card border border-border/50 rounded-2xl p-6 sm:p-8 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 h-full">
+              <div className="bg-card border border-border/50 rounded-2xl p-6 sm:p-8 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 h-full">
                 <div className="mb-4 sm:mb-5">
                   <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center">
                     <benefit.icon className="w-5 h-5 text-muted-foreground/60" />

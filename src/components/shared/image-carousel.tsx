@@ -79,7 +79,8 @@ export function ImageCarousel({
                   <img
                     src={img}
                     alt={`Imagen ${i + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   {showExpand && (
                     <Button

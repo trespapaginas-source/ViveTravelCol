@@ -18,7 +18,7 @@ export function TravelCarousel() {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-muted/30">
+    <section className="py-16 sm:py-20 lg:py-24 bg-muted/30 content-visibility-auto contain-intrinsic-size-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           title="Viajes Realizados"
@@ -40,7 +40,7 @@ export function TravelCarousel() {
                       alt={trip.caption}
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
 
                     {/* Overlay */}
@@ -71,14 +71,14 @@ export function TravelCarousel() {
           {/* Navigation buttons */}
           <button
             onClick={scrollPrev}
-            className="absolute left-2 sm:left-0 top-1/2 -translate-y-1/2 sm:-translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-3 transition-colors duration-200"
+            className="absolute left-2 sm:left-0 top-1/2 -translate-y-1/2 sm:-translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2.5 sm:p-3 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Anterior"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <button
             onClick={scrollNext}
-            className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-3 transition-colors duration-200"
+            className="absolute right-2 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2.5 sm:p-3 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Siguiente"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />

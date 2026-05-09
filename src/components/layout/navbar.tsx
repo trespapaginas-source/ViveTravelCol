@@ -48,12 +48,16 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Navigate immediately — no delay. Close mobile menu after navigate.
+  // Navigate first, then close mobile menu after the next frame
+  // so the view has time to render before the Sheet starts closing
   const handleNav = useCallback(
     (view: Parameters<typeof navigate>[0]) => {
       navigate(view);
-      // Close mobile menu after navigation starts
-      setMobileOpen(false);
+      // Use requestAnimationFrame to ensure navigation renders before Sheet closes
+      // This prevents the visual glitch where the old view is visible behind the closing Sheet
+      requestAnimationFrame(() => {
+        setMobileOpen(false);
+      });
     },
     [navigate]
   );
@@ -173,13 +177,13 @@ export function Navbar() {
                       className="h-9 w-auto"
                     />
                   </div>
-                  <nav className="flex flex-col p-4 gap-1 overflow-y-auto">
+                  <nav className="flex flex-col p-4 gap-1.5 overflow-y-auto">
                     {navItems.map((item) => (
                       <button
                         key={item.key}
                         onClick={() => handleNav(item.key)}
                         className={cn(
-                          "px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150",
+                          "px-4 py-3.5 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center",
                           isItemActive(item.key, currentView)
                             ? "bg-ocean/10 text-ocean font-semibold"
                             : "text-muted-foreground hover:bg-muted hover:text-ocean"
@@ -191,7 +195,7 @@ export function Navbar() {
                     <button
                       onClick={() => handleNav("favorites")}
                       className={cn(
-                        "flex items-center gap-2.5 px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150",
+                        "flex items-center gap-2.5 px-4 py-3.5 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px]",
                         currentView === "favorites"
                           ? "bg-ocean/10 text-ocean font-semibold"
                           : "text-muted-foreground hover:bg-muted hover:text-ocean"

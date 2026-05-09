@@ -59,7 +59,7 @@ const PlanCard = memo(function PlanCard({ plan, onNavigate }: { plan: TourPlan; 
 
   return (
     <Card
-      className="overflow-hidden group border-border/50 hover:border-border hover:shadow-lg transition-all duration-200 hover:-translate-y-1 py-0 gap-0 cursor-pointer"
+      className="overflow-hidden group border-border/50 hover:border-border hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 py-0 gap-0 cursor-pointer"
       onClick={() => onNavigate(plan.id)}
     >
       {/* Image */}
@@ -69,7 +69,8 @@ const PlanCard = memo(function PlanCard({ plan, onNavigate }: { plan: TourPlan; 
           alt={plan.name}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
@@ -83,7 +84,7 @@ const PlanCard = memo(function PlanCard({ plan, onNavigate }: { plan: TourPlan; 
         {/* Favorite Button */}
         <button
           onClick={handleFavorite}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
+          className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[44px] min-h-[44px]"
           aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
         >
           <Heart

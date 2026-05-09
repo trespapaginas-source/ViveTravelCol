@@ -38,7 +38,7 @@ const PlanCard = memo(function PlanCard({
 }) {
   return (
     <Card
-      className="group cursor-pointer overflow-hidden border-border/50 hover:border-border hover:shadow-lg transition-all duration-200 hover:-translate-y-1 py-0 gap-0"
+      className="group cursor-pointer overflow-hidden border-border/50 hover:border-border hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 py-0 gap-0"
       onClick={() => onNavigate(plan.id)}
     >
       {/* Image */}
@@ -48,7 +48,8 @@ const PlanCard = memo(function PlanCard({
           alt={plan.name}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
@@ -143,7 +144,7 @@ export function FeaturedPlans() {
   const featuredPlans = allPlans.filter((p) => p.published !== false).slice(0, 4);
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+    <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 content-visibility-auto contain-intrinsic-size-auto">
       <div className="max-w-7xl mx-auto">
         <SectionHeader
           title="Planes Destacados"

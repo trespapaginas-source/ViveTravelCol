@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useRef, useState, useEffect, type ReactNode } from "react";
 import { useNavigation } from "@/lib/store";
 import { usePrefetchData } from "@/hooks/use-prefetch-data";
 import { Navbar } from "@/components/layout/navbar";
@@ -39,16 +39,62 @@ const TeamSection = lazy(() =>
   import("@/components/team/team-section").then((m) => ({ default: m.TeamSection }))
 );
 
+/**
+ * LazySection: Defers rendering children until the section is near the viewport.
+ * Uses IntersectionObserver with rootMargin to start loading slightly before visible.
+ * This saves initial render time by not mounting off-screen components.
+ */
+function LazySection({ children, className }: { children: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" } // Start loading 200px before entering viewport
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className={className} style={{ contentVisibility: isVisible ? "visible" : "auto" }}>
+      {isVisible ? children : <div className="min-h-[300px]" />}
+    </div>
+  );
+}
+
 function HomeView() {
   return (
     <>
       <HeroSection />
-      <VideoShowcase />
-      <FeaturedPlans />
-      <TravelCarousel />
-      <Testimonials />
-      <GroupTrips />
-      <CustomTrips />
+      <LazySection>
+        <VideoShowcase />
+      </LazySection>
+      <LazySection>
+        <FeaturedPlans />
+      </LazySection>
+      <LazySection>
+        <TravelCarousel />
+      </LazySection>
+      <LazySection>
+        <Testimonials />
+      </LazySection>
+      <LazySection>
+        <GroupTrips />
+      </LazySection>
+      <LazySection>
+        <CustomTrips />
+      </LazySection>
     </>
   );
 }

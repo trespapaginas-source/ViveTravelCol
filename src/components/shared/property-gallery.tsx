@@ -110,7 +110,7 @@ function MobileGallery({
   const extraCount = images.length > 4 ? images.length - 4 : 0;
 
   return (
-    <div className="grid grid-cols-2 grid-rows-2 gap-1.5 rounded-xl overflow-hidden">
+    <div className="grid grid-cols-2 grid-rows-2 gap-1.5 rounded-xl overflow-hidden max-w-full">
       {displayImages.map((img, i) => (
         <div
           key={i}
@@ -154,7 +154,8 @@ function GalleryImage({
       alt={alt}
       loading={priority ? "eager" : "lazy"}
       decoding="async"
-      className="w-full h-full object-cover transition-transform duration-500"
+      sizes="(max-width: 640px) 48vw, (max-width: 1024px) 60vw, 720px"
+      className="w-full h-full object-cover transition-transform duration-300"
     />
   );
 }

@@ -24,7 +24,7 @@ export function Testimonials() {
   const t = testimonials[current];
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+    <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 content-visibility-auto contain-intrinsic-size-auto">
       <div className="max-w-4xl mx-auto">
         <SectionHeader
           title="Lo que dicen nuestros viajeros"
@@ -64,7 +64,7 @@ export function Testimonials() {
           <div className="flex items-center justify-center gap-4 mt-8">
             <button
               onClick={prev}
-              className="w-10 h-10 rounded-full border border-border hover:border-foreground/20 hover:bg-muted/50 flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-full border border-border hover:border-foreground/20 hover:bg-muted/50 flex items-center justify-center transition-colors min-w-[44px] min-h-[44px]"
               aria-label="Testimonio anterior"
             >
               <ChevronLeft className="w-5 h-5 text-muted-foreground" />
@@ -87,7 +87,7 @@ export function Testimonials() {
 
             <button
               onClick={next}
-              className="w-10 h-10 rounded-full border border-border hover:border-foreground/20 hover:bg-muted/50 flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-full border border-border hover:border-foreground/20 hover:bg-muted/50 flex items-center justify-center transition-colors min-w-[44px] min-h-[44px]"
               aria-label="Siguiente testimonio"
             >
               <ChevronRight className="w-5 h-5 text-muted-foreground" />

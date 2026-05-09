@@ -113,3 +113,72 @@ Stage Summary:
 - Scroll handler no longer causes excessive re-renders
 - React.memo prevents unnecessary card re-renders
 - All lint checks pass, dev server compiles without errors
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Fix mobile navbar navigation bug, performance optimization, and mobile responsiveness
+
+Work Log:
+
+### Task 1: Fix Mobile Navbar Navigation Bug
+- Changed `handleNav` in navbar.tsx to use `requestAnimationFrame` before closing the Sheet
+- Previously: `navigate(view)` then immediate `setMobileOpen(false)` — could cause Sheet to close before view rendered visually
+- Now: `navigate(view)` then `requestAnimationFrame(() => setMobileOpen(false))` — ensures the new view renders before Sheet starts closing
+- This prevents the visual glitch where the old view is briefly visible behind the closing Sheet animation
+
+### Task 2: Performance Optimization
+1. **Removed Prisma query logging**: Changed `log: ['query']` to `log: []` in db.ts — query logging adds significant overhead to every DB call
+2. **Lazy loaded below-fold home components**: Created `LazySection` component in page.tsx using IntersectionObserver with 200px rootMargin. VideoShowcase, FeaturedPlans, TravelCarousel, Testimonials, GroupTrips, CustomTrips are now wrapped in LazySection — they only render when near the viewport, saving initial render time
+3. **Added image size hints**: Added `sizes` attribute to responsive images across the site:
+   - Hero carousel: `sizes="100vw"`
+   - Video thumbnail: `sizes="(max-width: 1024px) 100vw, 50vw"`
+   - FeaturedPlans cards: `sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"`
+   - PlansList cards: `sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"`
+   - ImageCarousel: `sizes="(max-width: 768px) 100vw, 50vw"`
+   - PropertyGallery: `sizes="(max-width: 640px) 48vw, (max-width: 1024px) 60vw, 720px"`
+4. **Replaced Framer Motion in TeamSection**: Removed all `motion.div`, `motion.h3`, and `motion` imports. Replaced with CSS `animate-in` classes and `animation-delay` via inline styles. Stagger effect preserved using `animationDelay: ${index * 150}ms`. Removed containerVariants and cardVariants objects. Reduced bundle size by eliminating framer-motion dependency from this component.
+5. **Reduced animation durations**: Changed `duration-500` and `duration-700` hover transitions to `duration-300` across:
+   - FeaturedPlans card images
+   - PlansList card images
+   - TravelCarousel card images
+   - VideoShowcase thumbnail
+   - PropertyGallery images
+   - ImageCarousel images
+   - CustomTrips hover translate
+   - Also reduced `hover:-translate-y-1` to `hover:-translate-y-0.5` on card hover effects for subtler movement
+6. **Added content-visibility: auto**: Added `content-visibility-auto contain-intrinsic-size-auto` classes to all off-screen home sections:
+   - VideoShowcase, FeaturedPlans, TravelCarousel, Testimonials, GroupTrips, CustomTrips, TeamSection
+   - This allows the browser to skip rendering off-screen sections until they're needed
+
+### Task 3: Mobile Responsiveness Fixes
+1. **Hero section height**: Changed `h-[70vh]` to `h-[60vh] min-h-[480px]` for small screens, with sm:h-[80vh] breakpoint. Reduced title from `text-4xl` to `text-3xl` on mobile, paragraph from `text-base` to `text-sm`, button padding from `py-5` to `py-4` — prevents content overflow on very small screens.
+2. **Touch targets**: Added `min-h-[44px]` and/or `min-w-[44px]` to all interactive elements:
+   - Hero carousel navigation arrows
+   - Hero dot indicators (using inner `<span>` for visual dot with padded button for touch target)
+   - Mobile Sheet menu items (py-3.5 + min-h-[44px])
+   - TravelCarousel navigation arrows
+   - Testimonial prev/next buttons
+   - Favorite buttons in PlansList and CabinsList (increased from w-8 h-8 to w-9 h-9 + min-w-[44px] min-h-[44px])
+   - Footer social icons (increased from w-9 h-9 to w-10 h-10 + min-w-[44px] min-h-[44px])
+   - Footer link buttons (added min-h-[44px])
+   - Footer WhatsApp CTA button (added min-h-[44px])
+3. **Sheet menu items**: Increased padding from `py-3` to `py-3.5`, added `min-h-[44px]` and `flex items-center` for proper vertical centering. Increased gap from `gap-1` to `gap-1.5`.
+4. **Plan/Cabin detail pages**: Previously fixed in Task ID 2 (pb-28 padding for mobile CTA bar). No further changes needed.
+5. **Gallery images**: Added `max-w-full` to mobile gallery grid in PropertyGallery to prevent horizontal scroll. PropertyGallery already had `overflow-hidden` on grid container.
+6. **Footer layout**: Changed grid from `md:grid-cols-2` to `sm:grid-cols-2` for better small-screen layout. Added `break-all` to email text to prevent overflow. Added `shrink-0` to contact icons. Added `text-center sm:text-left` to copyright text. Increased footer link touch targets to `min-h-[44px]` with `flex items-center`.
+
+Stage Summary:
+- Mobile navbar Sheet now closes smoothly after navigation renders (no more visual glitch)
+- Prisma query logging removed — significant DB overhead eliminated
+- Below-fold home components lazy loaded with IntersectionObserver — faster initial page load
+- Image `sizes` hints added across the site — browser can choose right image size
+- Framer Motion completely removed from TeamSection — lighter bundle
+- Animation durations reduced from 500-700ms to 200-300ms — snappier feel
+- content-visibility: auto added to off-screen sections — faster initial render
+- Hero section properly scales on very small screens (min-height, smaller text)
+- All touch targets meet 44x44px minimum across the site
+- Mobile Sheet menu items have proper spacing and touch targets
+- Gallery images no longer cause horizontal scroll on mobile
+- Footer layout works on all screen sizes with proper touch targets
+- All lint checks pass, dev server compiles without errors

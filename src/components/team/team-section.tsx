@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Code2, Star, TrendingUp, Heart, Users, Globe, Sparkles, ArrowRight } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
 import { Button } from "@/components/ui/button";
@@ -56,30 +55,11 @@ const stats = [
   { value: "100%", label: "Pasión Caribeña", icon: Sparkles },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
-  },
-};
-
 export function TeamSection() {
   const { navigate } = useNavigation();
 
   return (
-    <section className="py-16 sm:py-20 lg:py-28 relative overflow-hidden">
+    <section className="py-16 sm:py-20 lg:py-28 relative overflow-hidden content-visibility-auto contain-intrinsic-size-auto">
       {/* Background decorations */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-ocean/[0.02] to-background" />
       <div className="absolute top-40 -left-32 w-96 h-96 bg-ocean/5 rounded-full blur-3xl" />
@@ -87,26 +67,18 @@ export function TeamSection() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-leaf/3 rounded-full blur-3xl" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
+        {/* Header — CSS animation */}
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <SectionHeader
             title="Nuestro Equipo"
             subtitle="Tres amigos, una pasión: conectar al mundo con la magia del Atlántico colombiano"
           />
-        </motion.div>
+        </div>
 
-        {/* Story intro */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="max-w-3xl mx-auto text-center mb-12 sm:mb-16"
+        {/* Story intro — CSS animation with delay */}
+        <div
+          className="max-w-3xl mx-auto text-center mb-12 sm:mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500"
+          style={{ animationDelay: "100ms", animationFillMode: "both" }}
         >
           <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
             Lo que comenzó como un sueño entre tres amigos se convirtió en una agencia
@@ -119,24 +91,18 @@ export function TeamSection() {
             <div className="w-3 h-3 rounded-full bg-ocean/20" />
             <div className="w-12 h-0.5 bg-ocean/30 rounded-full" />
           </div>
-        </motion.div>
+        </div>
 
-        {/* Team Cards */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-16 sm:mb-20"
-        >
-          {teamMembers.map((member) => (
-            <motion.div
+        {/* Team Cards — CSS stagger animation */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-16 sm:mb-20">
+          {teamMembers.map((member, index) => (
+            <div
               key={member.name}
-              variants={cardVariants}
-              className="group relative"
+              className="group relative animate-in fade-in slide-in-from-bottom-6 duration-500"
+              style={{ animationDelay: `${index * 150}ms`, animationFillMode: "both" }}
             >
               <div
-                className={`relative bg-card rounded-2xl border border-border/50 overflow-hidden transition-all duration-500 hover:shadow-xl hover:shadow-ocean/5 hover:-translate-y-1 ${
+                className={`relative bg-card rounded-2xl border border-border/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-ocean/5 hover:-translate-y-1 ${
                   member.featured ? "ring-2 ring-mint/30" : ""
                 }`}
               >
@@ -158,7 +124,7 @@ export function TeamSection() {
                   <div className="relative mx-auto mb-6 w-28 h-28 sm:w-32 sm:h-32">
                     {/* Decorative ring */}
                     <div
-                      className={`absolute inset-0 rounded-full ${member.accentLight} scale-110 group-hover:scale-115 transition-transform duration-500`}
+                      className={`absolute inset-0 rounded-full ${member.accentLight} scale-110 group-hover:scale-115 transition-transform duration-300`}
                     />
                     <div
                       className={`absolute inset-0 rounded-full border-2 ${member.accentBorder} scale-105`}
@@ -171,16 +137,13 @@ export function TeamSection() {
                         {member.initials}
                       </span>
                     </div>
-                    {/* Floating icon */}
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: 0.4 }}
-                      className={`absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-white shadow-md border border-border/50 flex items-center justify-center`}
+                    {/* Floating icon — CSS animation with stagger delay */}
+                    <div
+                      className={`absolute -bottom-1 -right-1 w-10 h-10 rounded-full bg-white shadow-md border border-border/50 flex items-center justify-center animate-in fade-in zoom-in-95 duration-300`}
+                      style={{ animationDelay: `${400 + index * 150}ms`, animationFillMode: "both" }}
                     >
                       <member.icon className={`w-5 h-5 ${member.accentText}`} />
-                    </motion.div>
+                    </div>
                   </div>
 
                   {/* Name & Role */}
@@ -206,17 +169,14 @@ export function TeamSection() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Stats Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="relative"
+        {/* Stats Section — CSS animation */}
+        <div
+          className="relative animate-in fade-in slide-in-from-bottom-6 duration-500"
+          style={{ animationDelay: "200ms", animationFillMode: "both" }}
         >
           <div className="relative rounded-3xl overflow-hidden bg-ocean-dark">
             {/* Background pattern */}
@@ -227,15 +187,12 @@ export function TeamSection() {
 
             <div className="relative z-10 py-12 sm:py-16 px-6 sm:px-10">
               <div className="text-center mb-10">
-                <motion.h3
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                  className="text-2xl sm:text-3xl font-bold text-white mb-2"
+                <h3
+                  className="text-2xl sm:text-3xl font-bold text-white mb-2 animate-in fade-in slide-in-from-bottom-2 duration-500"
+                  style={{ animationDelay: "300ms", animationFillMode: "both" }}
                 >
                   Cifras que hablan por nosotros
-                </motion.h3>
+                </h3>
                 <p className="text-white/50 text-sm sm:text-base max-w-lg mx-auto">
                   Nos hemos encargado de entregar experiencias significativas a cada viajero
                 </p>
@@ -243,13 +200,10 @@ export function TeamSection() {
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat, i) => (
-                  <motion.div
+                  <div
                     key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                    className="text-center"
+                    className="text-center animate-in fade-in slide-in-from-bottom-2 duration-500"
+                    style={{ animationDelay: `${350 + i * 100}ms`, animationFillMode: "both" }}
                   >
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-3">
                       <stat.icon className="w-5 h-5 text-mint-light" />
@@ -260,20 +214,17 @@ export function TeamSection() {
                     <p className="text-white/40 text-xs sm:text-sm uppercase tracking-wider font-medium">
                       {stat.label}
                     </p>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-center mt-12 sm:mt-16"
+        {/* CTA — CSS animation */}
+        <div
+          className="text-center mt-12 sm:mt-16 animate-in fade-in slide-in-from-bottom-4 duration-500"
+          style={{ animationDelay: "400ms", animationFillMode: "both" }}
         >
           <p className="text-muted-foreground mb-6 text-base sm:text-lg">
             Conoce de primera mano lo que podemos hacer por ti
@@ -282,7 +233,7 @@ export function TeamSection() {
             <Button
               size="lg"
               onClick={() => navigate("plans")}
-              className="bg-ocean hover:bg-ocean-dark text-white px-8 py-5 text-base rounded-xl shadow-lg shadow-ocean/20 transition-all duration-300 hover:scale-105 gap-2"
+              className="bg-ocean hover:bg-ocean-dark text-white px-8 py-5 text-base rounded-xl shadow-lg shadow-ocean/20 transition-all duration-200 hover:scale-105 gap-2"
             >
               Ver nuestros planes
               <ArrowRight className="w-4 h-4" />
@@ -291,12 +242,12 @@ export function TeamSection() {
               size="lg"
               variant="outline"
               onClick={() => navigate("contact")}
-              className="border-ocean/30 text-ocean hover:bg-ocean/5 px-8 py-5 text-base rounded-xl transition-all duration-300 gap-2"
+              className="border-ocean/30 text-ocean hover:bg-ocean/5 px-8 py-5 text-base rounded-xl transition-colors duration-200 gap-2"
             >
               Contáctanos
             </Button>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

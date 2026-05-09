@@ -66,7 +66,7 @@ const CabinCard = memo(function CabinCard({
 
   return (
     <Card
-      className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-200 hover:-translate-y-1 py-0 gap-0"
+      className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 py-0 gap-0"
       onClick={onSelect}
     >
       {/* Image Carousel */}
@@ -86,7 +86,7 @@ const CabinCard = memo(function CabinCard({
         {/* Favorite Button */}
         <button
           onClick={handleFavorite}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
+          className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[44px] min-h-[44px]"
           aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
         >
           <Heart

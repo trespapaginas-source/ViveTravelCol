@@ -35,7 +35,7 @@ export function HeroSection() {
   }, [emblaApi, onSelect]);
 
   return (
-    <section className="relative w-full h-[70vh] sm:h-[80vh] lg:h-[90vh] overflow-hidden">
+    <section className="relative w-full h-[60vh] min-h-[480px] sm:h-[80vh] lg:h-[90vh] overflow-hidden">
       {/* Embla Carousel */}
       <div className="absolute inset-0" ref={emblaRef}>
         <div className="flex h-full">
@@ -46,6 +46,7 @@ export function HeroSection() {
                 alt={image.caption}
                 loading={index === 0 ? "eager" : "lazy"}
                 decoding="async"
+                sizes="100vw"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -59,14 +60,14 @@ export function HeroSection() {
       {/* Navigation arrows */}
       <button
         onClick={scrollPrev}
-        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2 sm:p-3 transition-colors duration-200"
+        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2.5 sm:p-3 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
         aria-label="Imagen anterior"
       >
         <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
       <button
         onClick={scrollNext}
-        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2 sm:p-3 transition-colors duration-200"
+        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2.5 sm:p-3 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
         aria-label="Siguiente imagen"
       >
         <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -83,14 +84,14 @@ export function HeroSection() {
             <MapPin className="w-4 h-4 text-white/70" />
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             Descubre el{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-ocean-light to-mint-light">
               Atlántico
             </span>
           </h1>
 
-          <p className="text-white/80 text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed">
+          <p className="text-white/80 text-sm sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed">
             Experiencias únicas en el departamento del Atlántico, Colombia.
             Playas, naturaleza, aventura y cultura caribeña te esperan.
           </p>
@@ -99,7 +100,7 @@ export function HeroSection() {
             <Button
               size="lg"
               onClick={() => navigate("plans")}
-              className="bg-ocean hover:bg-ocean-dark text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl shadow-lg shadow-ocean/30 transition-all duration-200 hover:scale-105"
+              className="bg-ocean hover:bg-ocean-dark text-white px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg rounded-xl shadow-lg shadow-ocean/30 transition-all duration-200 hover:scale-105 min-h-[44px]"
             >
               <MapPin className="w-5 h-5 mr-2" />
               Ver Planes
@@ -108,7 +109,7 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               onClick={() => navigate("cabins")}
-              className="border-white/40 text-white hover:bg-white/15 backdrop-blur-sm px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl transition-all duration-200 hover:scale-105 bg-transparent gap-2"
+              className="border-white/40 text-white hover:bg-white/15 backdrop-blur-sm px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg rounded-xl transition-all duration-200 hover:scale-105 bg-transparent gap-2 min-h-[44px]"
             >
               <Palmtree className="w-5 h-5" />
               Ver Cabañas
@@ -118,18 +119,24 @@ export function HeroSection() {
       </div>
 
       {/* Dot indicators */}
-      <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+      <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-1">
         {heroImages.map((_, index) => (
           <button
             key={index}
             onClick={() => emblaApi?.scrollTo(index)}
-            className={`transition-all duration-300 rounded-full ${
+            className={`p-2.5 transition-all duration-300 rounded-full ${
               index === selectedIndex
-                ? "w-8 h-2.5 bg-ocean-light"
-                : "w-2.5 h-2.5 bg-white/50 hover:bg-white/70"
+                ? ""
+                : ""
             }`}
             aria-label={`Ir a imagen ${index + 1}`}
-          />
+          >
+            <span className={`block rounded-full transition-all duration-300 ${
+              index === selectedIndex
+                ? "w-6 h-2 bg-ocean-light"
+                : "w-2 h-2 bg-white/50 hover:bg-white/70"
+            }`} />
+          </button>
         ))}
       </div>
 

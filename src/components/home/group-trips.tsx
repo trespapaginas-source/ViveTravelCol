@@ -31,7 +31,7 @@ export function GroupTrips() {
   const { navigate } = useNavigation();
 
   return (
-    <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
+    <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden content-visibility-auto contain-intrinsic-size-auto">
       {/* Background */}
       <div className="absolute inset-0 bg-ocean-dark" />
 

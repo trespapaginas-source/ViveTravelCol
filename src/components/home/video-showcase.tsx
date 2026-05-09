@@ -18,7 +18,7 @@ export function VideoShowcase() {
   }, []);
 
   return (
-    <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden">
+    <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden content-visibility-auto contain-intrinsic-size-auto">
       {/* Background with subtle pattern */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-ocean/[0.03] to-background" />
 
@@ -98,7 +98,8 @@ export function VideoShowcase() {
                 alt="Vive Travel - Descubre el Atlántico"
                 loading="lazy"
                 decoding="async"
-                className="w-full aspect-video object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="w-full aspect-video object-cover transition-transform duration-300 group-hover:scale-105"
               />
 
               {/* Gradient overlay */}
@@ -106,7 +107,7 @@ export function VideoShowcase() {
 
               {/* Play button */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl transition-all duration-200 group-hover:bg-white group-hover:shadow-2xl group-hover:scale-110">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl transition-all duration-200 group-hover:bg-white group-hover:shadow-2xl group-hover:scale-105 min-w-[44px] min-h-[44px]">
                   <Play className="w-6 h-6 sm:w-8 sm:h-8 text-ocean fill-ocean ml-1" />
                 </div>
               </div>
