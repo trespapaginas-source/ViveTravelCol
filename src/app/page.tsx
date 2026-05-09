@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/footer";
 import { HeroSection } from "@/components/home/hero-section";
 import { VideoShowcase } from "@/components/home/video-showcase";
 import { FeaturedPlans } from "@/components/home/featured-plans";
+import { DestinationsGallery } from "@/components/home/destinations-gallery";
 import { TravelCarousel } from "@/components/home/travel-carousel";
 import { GroupTrips } from "@/components/home/group-trips";
 import { CustomTrips } from "@/components/home/custom-trips";
@@ -82,6 +83,9 @@ function HomeView() {
       </LazySection>
       <LazySection>
         <FeaturedPlans />
+      </LazySection>
+      <LazySection>
+        <DestinationsGallery />
       </LazySection>
       <LazySection>
         <TravelCarousel />
