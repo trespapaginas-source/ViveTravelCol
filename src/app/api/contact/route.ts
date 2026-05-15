@@ -49,3 +49,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const runtime = 'edge';
+
+export const runtime = 'edge';

@@ -7,3 +7,5 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   if (!cabin) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(cabin);
 }
+
+export const runtime = 'edge';

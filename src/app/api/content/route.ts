@@ -38,3 +38,7 @@ export async function GET() {
     return NextResponse.json(defaultSiteContent);
   }
 }
+
+export const runtime = 'edge';
+
+export const runtime = 'edge';

@@ -5,3 +5,7 @@ export async function GET() {
   const plans = await db.tourPlan.findMany({ orderBy: { order: "asc" } });
   return NextResponse.json(plans);
 }
+
+export const runtime = 'edge';
+
+export const runtime = 'edge';
