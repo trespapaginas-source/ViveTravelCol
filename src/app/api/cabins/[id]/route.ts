@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { cabins } from "@/lib/data";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const cabin = await db.cabin.findUnique({ where: { id } });
+  const cabin = cabins.find((c) => c.id === id || c.slug === id);
   if (!cabin) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(cabin);
 }

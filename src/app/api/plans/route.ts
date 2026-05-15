@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { tourPlans } from "@/lib/data";
 
 export async function GET() {
-  const plans = await db.tourPlan.findMany({ orderBy: { order: "asc" } });
-  return NextResponse.json(plans);
-}export const runtime = 'edge';
+  return NextResponse.json(tourPlans);
+}

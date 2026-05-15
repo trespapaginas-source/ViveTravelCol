@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { cabins } from "@/lib/data";
 
 export async function GET() {
-  const cabins = await db.cabin.findMany({ orderBy: { order: "asc" } });
-  return NextResponse.json(cabins);
-}export const runtime = 'edge';
+  const sorted = [...cabins].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  return NextResponse.json(sorted);
+}
