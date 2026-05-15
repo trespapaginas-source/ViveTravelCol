@@ -32,14 +32,15 @@ export function SafeImage({
       )}
       
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img         src={currentSrc}
+      <img
+        src={currentSrc}
         alt={alt || "Image"}
         className={cn(
           "w-full h-full object-cover transition-opacity duration-300 z-10 relative",
           loaded ? "opacity-100" : "opacity-0",
           className
         )}
-        onLoad={() = onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }}> setLoaded(true)}
+        onLoad={() => setLoaded(true)}
         onError={() => {
           setError(true);
           setLoaded(true);

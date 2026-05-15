@@ -280,7 +280,8 @@ export const tourPlans: TourPlan[] = [
     priceRange: "$180.000 - $250.000 COP",
     duration: "Noche completa (6 horas)",
     location: "Mirador Costero, Juan de Acosta",
-    category: "Experiencia",
+    category: "Grupal",
+    fecha_salida: "12 Jul",
     includes: [
       "Transporte ida y vuelta",
       "Cena gourmet frente al mar",

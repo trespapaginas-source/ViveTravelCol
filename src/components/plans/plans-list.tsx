@@ -148,17 +148,17 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
           );
         })()}
 
-        {/* Top Right Badges: Date & Favorite */}
-        <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-          {/* Date Badge for Grupales */}
-          {plan.category === "Grupal" && plan.fecha_salida && (
-            <div className="bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 text-xs font-medium text-slate-800 shadow-[0_2px_6px_rgba(0,0,0,0.08)] max-w-[40vw] sm:max-w-none">
-              <Calendar className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-              <span className="truncate">{plan.fecha_salida}</span>
-            </div>
-          )}
+        {/* Date Badge for Grupales — top left */}
+        {plan.category === "Grupal" && plan.fecha_salida && (
+          <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-slate-700"
+            style={{ background: "rgba(255,255,255,0.88)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", boxShadow: "0 1px 4px rgba(0,0,0,0.10)" }}>
+            <Calendar className="w-3 h-3 shrink-0 text-slate-600" />
+            <span>{plan.fecha_salida}</span>
+          </div>
+        )}
 
-          {/* Favorite Button */}
+        {/* Favorite Button — top right */}
+        <div className="absolute top-3 right-3 z-10">
           <button
             onClick={handleFavorite}
             className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] shrink-0"
@@ -281,17 +281,17 @@ const PlanCardVertical = memo(function PlanCardVertical({
           );
         })()}
 
-        {/* Top Right Badges: Date & Favorite */}
-        <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-          {/* Date Badge for Grupales */}
-          {plan.category === "Grupal" && plan.fecha_salida && (
-            <div className="bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 text-xs font-medium text-slate-800 shadow-[0_2px_6px_rgba(0,0,0,0.08)] max-w-[40vw] sm:max-w-none">
-              <Calendar className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-              <span className="truncate">{plan.fecha_salida}</span>
-            </div>
-          )}
+        {/* Date Badge for Grupales — top left */}
+        {plan.category === "Grupal" && plan.fecha_salida && (
+          <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold text-slate-800"
+            style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", boxShadow: "0 1px 4px rgba(0,0,0,0.12)" }}>
+            <Calendar className="w-3 h-3 shrink-0 text-slate-600" />
+            <span>{plan.fecha_salida}</span>
+          </div>
+        )}
 
-          {/* Favorite Button */}
+        {/* Favorite Button — top right */}
+        <div className="absolute top-3 right-3 z-10">
           <button
             onClick={handleFavorite}
             className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] shrink-0"
