@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { ChevronLeft, ChevronRight, MapPin, Palmtree } from "lucide-react";
+import { MapPin, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/lib/store";
 import { heroImages } from "@/lib/data";
@@ -16,9 +16,6 @@ export function HeroSection() {
     Autoplay({ delay: 5000, stopOnInteraction: false }),
   ]);
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
-
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
     setSelectedIndex(emblaApi.selectedScrollSnap());
@@ -26,7 +23,7 @@ export function HeroSection() {
 
   useEffect(() => {
     if (!emblaApi) return;
-    onSelect();
+    setTimeout(() => onSelect(), 0);
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
     return () => {
@@ -41,14 +38,13 @@ export function HeroSection() {
         <div className="flex h-full">
           {heroImages.map((image, index) => (
             <div key={image.id} className="flex-[0_0_100%] min-w-0 relative h-full">
-              <img
-                src={image.url}
+              <img                 src={image.url}
                 alt={image.caption}
                 loading={index === 0 ? "eager" : "lazy"}
                 decoding="async"
                 sizes="100vw"
                 className="w-full h-full object-cover"
-              />
+               onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
             </div>
           ))}
         </div>
@@ -57,21 +53,7 @@ export function HeroSection() {
       {/* Overlay gradient */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 z-10" />
 
-      {/* Navigation arrows */}
-      <button
-        onClick={scrollPrev}
-        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2.5 sm:p-3 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
-        aria-label="Imagen anterior"
-      >
-        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-      </button>
-      <button
-        onClick={scrollNext}
-        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white rounded-full p-2.5 sm:p-3 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
-        aria-label="Siguiente imagen"
-      >
-        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-      </button>
+      {/* Navigation arrows removed */}
 
       {/* Content — CSS animation instead of framer-motion */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 sm:px-6 text-center">
@@ -81,12 +63,11 @@ export function HeroSection() {
             <span className="text-white/70 text-sm sm:text-base font-medium tracking-wider uppercase">
               Vive Travel
             </span>
-            <MapPin className="w-4 h-4 text-white/70" />
           </div>
 
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.28)" }}>
             Descubre el{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-ocean-light to-mint-light">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-ocean-light">
               Atlántico
             </span>
           </h1>
@@ -99,11 +80,11 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "500ms", animationFillMode: "both" }}>
             <Button
               size="lg"
-              onClick={() => navigate("plans")}
+              onClick={() => navigate("plans", "pasadias")}
               className="bg-ocean hover:bg-ocean-dark text-white px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg rounded-xl shadow-lg shadow-ocean/30 transition-all duration-200 hover:scale-105 min-h-[44px]"
             >
               <MapPin className="w-5 h-5 mr-2" />
-              Ver Planes
+              Experiencias y viajes
             </Button>
             <Button
               size="lg"
@@ -140,12 +121,7 @@ export function HeroSection() {
         ))}
       </div>
 
-      {/* Caption */}
-      <div className="absolute bottom-14 sm:bottom-16 left-1/2 -translate-x-1/2 z-20">
-        <p className="text-white/60 text-xs sm:text-sm tracking-wide">
-          {heroImages[selectedIndex]?.caption}
-        </p>
-      </div>
+      {/* Caption removed */}
     </section>
   );
 }

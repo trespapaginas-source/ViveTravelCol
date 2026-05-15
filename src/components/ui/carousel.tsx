@@ -95,7 +95,7 @@ function Carousel({
 
   React.useEffect(() => {
     if (!api) return
-    onSelect(api)
+    setTimeout(() => onSelect(api), 0)
     api.on("reInit", onSelect)
     api.on("select", onSelect)
 
@@ -147,8 +147,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
           orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
           className
         )}
-        {...props}
-      />
+        {...props} />
     </div>
   )
 }
@@ -166,8 +165,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
         orientation === "horizontal" ? "pl-4" : "pt-4",
         className
       )}
-      {...props}
-    />
+      {...props} />
   )
 }
 

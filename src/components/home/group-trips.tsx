@@ -33,25 +33,25 @@ export function GroupTrips() {
   return (
     <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden content-visibility-auto contain-intrinsic-size-auto">
       {/* Background */}
-      <div className="absolute inset-0 bg-ocean-dark" />
+      <div className="absolute inset-0 bg-gray-50 border-y border-gray-100" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: Content */}
           <div>
             <div className="mb-4">
-              <span className="inline-flex items-center gap-1.5 text-white/50 text-xs font-medium tracking-wider uppercase">
+              <span className="inline-flex items-center gap-1.5 text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 <Users className="w-3.5 h-3.5" />
                 Viajes Grupales
               </span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6 leading-tight">
               Viaja en grupo y{" "}
-              <span className="text-white/60">ahorra más</span>
+              <span className="text-muted-foreground">ahorra más</span>
             </h2>
 
-            <p className="text-white/50 text-base sm:text-lg mb-8 leading-relaxed max-w-lg">
+            <p className="text-muted-foreground text-base sm:text-lg mb-8 leading-relaxed max-w-lg">
               Organiza tu próxima aventura con amigos, familiares o compañeros
               de trabajo. Ofrecemos tarifas especiales para grupos, itinerarios
               personalizados y la mejor atención para que solo te preocupes por
@@ -62,7 +62,7 @@ export function GroupTrips() {
               <Button
                 size="lg"
                 onClick={() => navigate("contact")}
-                className="bg-white text-foreground hover:bg-white/90 px-6 sm:px-8 py-5 sm:py-6 text-base rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                className="bg-ocean text-white hover:bg-ocean-dark px-6 sm:px-8 py-5 sm:py-6 text-base rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
               >
                 Solicitar cotización
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -70,10 +70,10 @@ export function GroupTrips() {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => navigate("plans")}
-                className="border-white/20 text-white/80 hover:bg-white/10 backdrop-blur-sm px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent"
+                onClick={() => navigate("plans", "grupales")}
+                className="border-gray-200 text-foreground hover:bg-gray-100 backdrop-blur-sm px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent"
               >
-                Ver planes disponibles
+                Ver viajes grupales
               </Button>
             </div>
 
@@ -85,10 +85,10 @@ export function GroupTrips() {
                 { value: "24h", label: "Respuesta" },
               ].map((stat) => (
                 <div key={stat.label} className="min-w-[80px]">
-                  <p className="text-2xl sm:text-3xl font-bold text-white/80">
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground">
                     {stat.value}
                   </p>
-                  <p className="text-white/40 text-xs sm:text-sm">{stat.label}</p>
+                  <p className="text-muted-foreground text-xs sm:text-sm">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -99,15 +99,17 @@ export function GroupTrips() {
             {benefits.map((benefit) => (
               <div
                 key={benefit.title}
-                className="bg-white/[0.06] border border-white/10 rounded-2xl p-5 sm:p-6 hover:bg-white/[0.08] transition-colors duration-200"
+                className="bg-white border border-gray-100 shadow-sm rounded-2xl p-5 sm:p-6 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
               >
                 <div className="mb-3">
-                  <benefit.icon className="w-5 h-5 text-white/40" />
+                  <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center">
+                    <benefit.icon className="w-5 h-5 text-muted-foreground" />
+                  </div>
                 </div>
-                <h3 className="text-white font-semibold text-sm sm:text-base mb-1.5">
+                <h3 className="text-foreground font-semibold text-sm sm:text-base mb-1.5">
                   {benefit.title}
                 </h3>
-                <p className="text-white/40 text-xs sm:text-sm leading-relaxed">
+                <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                   {benefit.description}
                 </p>
               </div>

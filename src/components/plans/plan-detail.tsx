@@ -36,7 +36,24 @@ import { fetchPlan } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { ShareDialog } from "@/components/shared/share-dialog";
-import { useState, useCallback } from "react";
+import { ExpandableSection } from "@/components/shared/expandable-section";
+import { useState, useCallback, useEffect } from "react";
+import { format, addDays } from "date-fns";
+import { es } from "date-fns/locale";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Plus, Minus } from "lucide-react";
+
+const getNextWeekend = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const day = today.getDay();
+  if (day === 6) return today;
+  if (day === 0) return today;
+  const daysUntilSaturday = 6 - day;
+  return addDays(today, daysUntilSaturday);
+};
 import { toast } from "sonner";
 
 const categoryColors: Record<string, string> = {
@@ -49,26 +66,9 @@ const categoryColors: Record<string, string> = {
 };
 
 
-function InfoItem({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-start gap-2.5">
-      <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center shrink-0 mt-0.5">
-        <Icon className="w-3.5 h-3.5 text-muted-foreground" />
-      </div>
-      <div>
-        <p className="text-[11px] text-muted-foreground/60 uppercase tracking-wider">{label}</p>
-        <p className="text-sm font-medium text-foreground">{value}</p>
-      </div>
-    </div>
-  );
+function getShortDuration(duration: string): string {
+  const match = duration.match(/(\d+)\s*horas?/i);
+  return match ? `${match[1]} HORAS` : duration;
 }
 
 export function PlanDetail() {
@@ -86,6 +86,56 @@ export function PlanDetail() {
   );
 
   const [shareOpen, setShareOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(getNextWeekend());
+  const [guests, setGuests] = useState(1);
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [guestPopoverOpen, setGuestPopoverOpen] = useState(false);
+  const [mobileCalendarOpen, setMobileCalendarOpen] = useState(false);
+  const [summaryModalOpen, setSummaryModalOpen] = useState(false);
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
+  
+  const isBookingStyle = plan?.category === "Nacional" || plan?.category === "Internacional";
+  const isGrupal = plan?.category === "Grupal";
+
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    if (!isGrupal) return;
+    
+    const target = getNextWeekend();
+    target.setHours(7, 0, 0, 0);
+    if (target.getTime() < new Date().getTime()) {
+      target.setDate(target.getDate() + 7);
+    }
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      const difference = target.getTime() - now.getTime();
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        });
+      } else {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isGrupal]);
+  
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const totalPlanPrice = guests * (plan?.price || 0);
+
+  const handleWhatsAppRedirect = useCallback(() => {
+    if (!plan) return;
+    const message = `¡Hola! Me interesa reservar el viaje grupal: *${plan.name}*. Personas: ${guests}. ¿Me podrían dar más información?`;
+    window.open(`https://wa.me/573001234567?text=${encodeURIComponent(message)}`, "_blank");
+  }, [plan, guests]);
 
   const handleToggleFavorite = useCallback(() => {
     if (!selectedItemId) return;
@@ -107,17 +157,17 @@ export function PlanDetail() {
   if (!plan) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
-        <Mountain className="w-10 h-10 text-muted-foreground/30" />
+        <Mountain className="w-10 h-10 text-muted-foreground" />
         <p className="text-muted-foreground text-lg">
           Plan no encontrado
         </p>
         <Button
           variant="outline"
-          onClick={() => navigate("plans")}
+          onClick={() => navigate("plans", "pasadias")}
           className="gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
-          Volver a planes
+          Volver a experiencias
         </Button>
       </div>
     );
@@ -126,27 +176,63 @@ export function PlanDetail() {
   return (
     <div className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-28 lg:pb-10">
       <div className="max-w-7xl mx-auto">
-        {/* Back Button */}
+        {/* Back Button (Desktop) */}
         <Button
           variant="ghost"
-          onClick={() => navigate("plans")}
-          className="gap-2 mb-6 -ml-2 text-muted-foreground hover:text-foreground"
+          onClick={() => navigate("plans", "pasadias")}
+          className="hidden md:flex gap-2 mb-6 -ml-2 text-muted-foreground hover:text-foreground w-fit"
         >
           <ArrowLeft className="w-4 h-4" />
-          Volver a planes
+          Volver a experiencias
         </Button>
 
-        {/* Image Gallery */}
-        <PropertyGallery
-          images={plan.images}
-          title={plan.name}
-          className="mb-8"
-        />
+        {/* Image Gallery with Mobile Floating Actions */}
+        <div className="relative mb-8">
+          {/* Mobile Floating Actions */}
+          <div className="md:hidden absolute top-4 left-4 right-4 z-10 flex items-center justify-between pointer-events-none">
+            {/* Back */}
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md pointer-events-auto hover:bg-white"
+              onClick={() => navigate("plans", "pasadias")}
+            >
+              <ArrowLeft className="w-5 h-5 text-foreground" />
+            </Button>
+            
+            {/* Right actions: Share & Fav */}
+            <div className="flex items-center gap-2 pointer-events-auto">
+              <Button
+                variant="outline"
+                size="icon"
+                className={`h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md hover:bg-white transition-colors ${
+                  isFav ? "text-indigo" : "text-foreground"
+                }`}
+                onClick={handleToggleFavorite}
+              >
+                <Heart className={`w-5 h-5 transition-colors ${isFav ? "fill-current" : ""}`} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md hover:bg-white text-foreground"
+                onClick={() => setShareOpen(true)}
+              >
+                <Share2 className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+
+          <PropertyGallery
+            images={plan.images}
+            title={plan.name}
+            className="mb-0" />
+        </div>
 
         {/* Main Content + Sticky Price Card */}
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+        <div className={`flex flex-col ${!isBookingStyle ? "lg:flex-row" : ""} gap-8 lg:gap-12`}>
           {/* Left Content */}
-          <div className="flex-1 min-w-0">
+          <div className={`flex-1 min-w-0 ${isBookingStyle ? "max-w-4xl mx-auto w-full" : ""}`}>
             {/* Title Section */}
             <div>
               <div className="flex flex-wrap items-start gap-3 mb-3">
@@ -162,10 +248,10 @@ export function PlanDetail() {
 
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <MapPin className="w-3.5 h-3.5 text-muted-foreground/50" />
+                  <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
                   <span>{plan.location}</span>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="hidden md:flex items-center gap-1.5 shrink-0">
                   <Button
                     variant="outline"
                     size="icon"
@@ -187,8 +273,7 @@ export function PlanDetail() {
                     <Heart
                       className={`w-4 h-4 transition-colors ${
                         isFav ? "fill-indigo text-indigo" : ""
-                      }`}
-                    />
+                      }`} />
                   </Button>
                 </div>
               </div>
@@ -197,247 +282,491 @@ export function PlanDetail() {
             <Separator className="my-5" />
 
             {/* Info Section */}
-            <div>
-              <h2 className="text-base font-semibold text-foreground mb-4">
-                Información del plan
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <InfoItem
-                  icon={Clock}
-                  label="Duración"
-                  value={plan.duration}
-                />
-                <InfoItem
-                  icon={Users}
-                  label="Máximo de huéspedes"
-                  value={`${plan.maxGuests} personas`}
-                />
+            {isBookingStyle ? (
+              <div className="sticky top-14 sm:top-16 z-30 bg-background pt-2 pb-0 border-b border-border/50 mb-6 flex overflow-x-auto gap-6 hide-scrollbar">
+                {[
+                  { id: "general", label: "General" },
+                  { id: "incluye", label: "Incluye" },
+                  { id: "itinerario", label: "Itinerario" },
+                  { id: "condiciones", label: "Condiciones" },
+                ].map((tab) => (
+                  <a
+                    key={tab.id}
+                    href={`#${tab.id}`}
+                    className="text-[13px] sm:text-sm font-semibold text-muted-foreground hover:text-foreground whitespace-nowrap py-3 border-b-2 border-transparent hover:border-foreground transition-all"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const element = document.getElementById(tab.id);
+                      if (element) {
+                        const offset = 100;
+                        const bodyRect = document.body.getBoundingClientRect().top;
+                        const elementRect = element.getBoundingClientRect().top;
+                        const elementPosition = elementRect - bodyRect;
+                        const offsetPosition = elementPosition - offset;
+                        window.scrollTo({
+                          top: offsetPosition,
+                          behavior: "smooth"
+                        });
+                      }
+                    }}
+                  >
+                    {tab.label}
+                  </a>
+                ))}
               </div>
-            </div>
-
-            <Separator className="my-5" />
+            ) : (
+              <>
+                {/* Key Stats Row */}
+                <div className="grid grid-cols-2 md:flex md:items-center gap-y-3 gap-x-6 md:gap-8 flex-wrap py-2">
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-5 h-5 text-foreground shrink-0" strokeWidth={1.5} />
+                    <span className="text-base text-foreground font-normal hidden md:inline">{plan.duration}</span>
+                    <span className="text-sm text-foreground font-normal md:hidden">{getShortDuration(plan.duration)}</span>
+                  </div>
+                  <div className="hidden md:block w-px h-5 bg-border/40" />
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5 text-foreground shrink-0" strokeWidth={1.5} />
+                    <span className="text-base text-foreground font-normal hidden md:inline">Máx. {plan.maxGuests} personas</span>
+                    <span className="text-sm text-foreground font-normal md:hidden">{plan.maxGuests} PAX</span>
+                  </div>
+                </div>
+                <Separator className="my-5" />
+              </>
+            )}
 
             {/* Full Description */}
-            <div>
-              <h2 className="text-base font-semibold text-foreground mb-2.5">
-                Descripción
+            <div id="general" className="scroll-mt-24">
+              <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground mb-4">
+                {isBookingStyle ? "General" : "Acerca de este plan"}
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-sm">
-                {plan.fullDescription}
-              </p>
+              <ExpandableSection>
+                <p className="text-foreground leading-relaxed text-base font-normal">
+                  {plan.fullDescription}
+                </p>
+              </ExpandableSection>
             </div>
 
             <Separator className="my-5" />
 
             {/* Qué incluye */}
-            <div>
-              <h2 className="text-base font-semibold text-foreground mb-3.5">
-                Qué incluye
+            <div id="incluye" className="scroll-mt-24">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
+                {isBookingStyle ? "Incluye" : "Qué incluye"}
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {plan.includes.map((item, i) => (
-                  <div key={i} className="flex items-start gap-2 py-1">
-                    <Check className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
-                    <span className="text-sm text-muted-foreground">{item}</span>
-                  </div>
-                ))}
-              </div>
+              <ExpandableSection itemCount={plan.includes.length} maxHeight={210}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {plan.includes.map((item, i) => {
+                    const text = (item as any).text || item;
+                    return (
+                      <div key={i} className="flex items-start gap-2 py-1">
+                        <Check className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                        <span className="text-sm text-muted-foreground">{text}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ExpandableSection>
             </div>
 
-            <Separator className="my-5" />
+            {!isBookingStyle && (
+              <>
+                <Separator className="my-5" />
 
-            {/* Qué no incluye */}
-            <div>
-              <h2 className="text-base font-semibold text-foreground mb-3.5">
-                Qué no incluye
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {plan.excludes.map((item, i) => (
-                  <div key={i} className="flex items-start gap-2 py-1">
-                    <X className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 mt-0.5" />
-                    <span className="text-sm text-muted-foreground">{item}</span>
+                {/* Qué no incluye */}
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
+                    Qué no incluye
+                  </h2>
+                  <ExpandableSection itemCount={plan.excludes.length} maxHeight={210}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {plan.excludes.map((item, i) => {
+                        const text = (item as any).text || item;
+                        return (
+                          <div key={i} className="flex items-start gap-2 py-1">
+                            <X className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                            <span className="text-sm text-muted-foreground">{text}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </ExpandableSection>
+                </div>
+
+                <Separator className="my-5" />
+
+                {/* Puntos destacados */}
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-foreground" />
+                    Puntos destacados
+                  </h2>
+                  <ExpandableSection itemCount={plan.highlights.length} maxHeight={210}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {plan.highlights.map((item, i) => {
+                        const text = (item as any).text || item;
+                        return (
+                          <div key={i} className="flex items-start gap-2 py-1">
+                            <Sparkles className="w-3.5 h-3.5 text-foreground shrink-0 mt-0.5" />
+                            <span className="text-sm text-foreground font-medium">
+                              {text}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </ExpandableSection>
+                </div>
+
+                <Separator className="my-5" />
+
+                {/* Schedule & Meeting */}
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
+                    Horario y punto de encuentro
+                  </h2>
+                  <ExpandableSection itemCount={2}>
+                    <div className="space-y-3">
+                      <InfoItem
+                        icon={Calendar}
+                        label="Horario"
+                        value={plan.schedule} />
+                      <InfoItem
+                        icon={Navigation}
+                        label="Punto de encuentro"
+                        value={plan.meeting} />
+                    </div>
+                  </ExpandableSection>
+                </div>
+              </>
+            )}
+
+            {isBookingStyle && (
+              <>
+                <Separator className="my-5" />
+                
+                {/* Itinerario */}
+                <div id="itinerario" className="scroll-mt-24">
+                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">
+                    Itinerario
+                  </h2>
+                  <div className="space-y-6">
+                    {(plan as any).itinerary ? (
+                      ((plan as any).itinerary as any[]).map((day: any, i: number) => (
+                        <div key={i} className="pl-4 border-l-2 border-ocean/20">
+                          <h3 className="font-bold text-base text-foreground">Día {i + 1}: {day.title || ""}</h3>
+                          <p className="text-muted-foreground text-sm mt-1">{day.description || day.activities?.join(", ")}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="pl-4 border-l-2 border-ocean/20">
+                        <p className="text-foreground text-sm font-medium">Itinerario detallado bajo solicitud</p>
+                        <p className="text-muted-foreground text-sm mt-1">
+                          El itinerario específico para este viaje está disponible y se entregará al momento de la reserva o previa solicitud con nuestros asesores.
+                        </p>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            <Separator className="my-5" />
+                <Separator className="my-5" />
 
-            {/* Puntos destacados */}
-            <div>
-              <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-foreground/30" />
-                Puntos destacados
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {plan.highlights.map((item, i) => (
-                  <div key={i} className="flex items-start gap-2 py-1">
-                    <Sparkles className="w-3.5 h-3.5 text-foreground/25 shrink-0 mt-0.5" />
-                    <span className="text-sm text-foreground font-medium">
-                      {item}
+                {/* Condiciones */}
+                <div id="condiciones" className="scroll-mt-24">
+                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">
+                    Condiciones Generales
+                  </h2>
+                  <div className="space-y-3 pl-4 border-l-2 border-border/50">
+                    <p className="text-sm text-muted-foreground">
+                      • Tarifas sujetas a cambios y disponibilidad sin previo aviso.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      • Los precios y cupos se confirman únicamente al realizar el pago del anticipo correspondiente.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      • Aplican penalidades por cancelación según políticas de los operadores turísticos y aerolíneas.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      • Se requiere documentación de identidad vigente y válida para cada destino.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Reservar por WhatsApp CTA (Booking Style) */}
+                <div className="mt-12 mb-4 max-w-sm mx-auto">
+                  <Button 
+                    className="relative inline-flex items-center justify-center gap-2 h-14 px-8 rounded-full bg-white border border-[#1DA851]/20 shadow-[0_4px_20px_0_rgba(29,168,81,0.15)] transition-all duration-300 hover:shadow-[0_8px_25px_rgba(29,168,81,0.25)] hover:-translate-y-1 group overflow-hidden w-full" 
+                    onClick={() => navigate("contact", plan.id)}
+                  >
+                    <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#1DA851]/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-[#1DA851] relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    <span className="relative z-10 font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-ocean-dark to-[#1DA851]">
+                      Reservar por WhatsApp
                     </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <Separator className="my-5" />
-
-            {/* Schedule & Meeting */}
-            <div>
-              <h2 className="text-base font-semibold text-foreground mb-3.5">
-                Horario y punto de encuentro
-              </h2>
-              <div className="space-y-3">
-                <InfoItem
-                  icon={Calendar}
-                  label="Horario"
-                  value={plan.schedule}
-                />
-                <InfoItem
-                  icon={Navigation}
-                  label="Punto de encuentro"
-                  value={plan.meeting}
-                />
-              </div>
-            </div>
+                  </Button>
+                </div>
+              </>
+            )}
 
             {/* Mobile Price Card Spacer */}
             <div className="h-4 lg:hidden" />
           </div>
 
-          {/* Right Sticky Price Card */}
-          <aside className="w-full lg:w-[380px] shrink-0">
-            <div className="lg:sticky lg:top-24">
-              <Card className="border-border/50 shadow-xl py-0 gap-0">
-                <CardContent className="p-6 space-y-5">
-                  {/* Price */}
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl sm:text-3xl font-bold text-foreground">
-                        {plan.priceRange.split(" - ")[0]}
-                      </span>
-                      {plan.priceRange.includes(" - ") && (
-                        <>
-                          <span className="text-muted-foreground/40">-</span>
-                          <span className="text-lg text-muted-foreground">
-                            {plan.priceRange.split(" - ")[1]}
-                          </span>
-                        </>
+          
+          {/* Right Sticky Reservation Flow */}
+          {!isBookingStyle && (
+            <aside className="w-full lg:w-[380px] shrink-0">
+              <div className="lg:sticky lg:top-24">
+                <Card className="border-border/50 shadow-xl py-0 gap-0">
+                  <CardContent className="p-6 space-y-5">
+                    <div>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl sm:text-3xl font-bold text-foreground">
+                          {formatPrice(plan.price)}
+                        </span>
+                        <span className="text-sm text-muted-foreground">/ persona</span>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-3">
+                      {isGrupal ? (
+                        <div className="rounded-xl border border-[#1DA851]/20 bg-[#1DA851]/5 p-4 flex flex-col items-center justify-center mb-1">
+                           <span className="text-[11px] font-bold text-[#1DA851] uppercase tracking-wider mb-3">La aventura comienza en:</span>
+                           <div className="flex gap-4 text-center">
+                             <div className="flex flex-col items-center justify-center w-10"><span className="text-xl font-bold text-foreground leading-none">{timeLeft.days}</span><span className="text-[10px] text-muted-foreground uppercase mt-1">Días</span></div>
+                             <span className="text-xl font-bold text-foreground/30 -mt-1">:</span>
+                             <div className="flex flex-col items-center justify-center w-10"><span className="text-xl font-bold text-foreground leading-none">{timeLeft.hours}</span><span className="text-[10px] text-muted-foreground uppercase mt-1">Hrs</span></div>
+                             <span className="text-xl font-bold text-foreground/30 -mt-1">:</span>
+                             <div className="flex flex-col items-center justify-center w-10"><span className="text-xl font-bold text-foreground leading-none">{timeLeft.minutes}</span><span className="text-[10px] text-muted-foreground uppercase mt-1">Min</span></div>
+                             <span className="text-xl font-bold text-foreground/30 -mt-1">:</span>
+                             <div className="flex flex-col items-center justify-center w-10"><span className="text-xl font-bold text-foreground leading-none">{timeLeft.seconds}</span><span className="text-[10px] text-muted-foreground uppercase mt-1">Seg</span></div>
+                           </div>
+                        </div>
+                      ) : (
+                        <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                          <PopoverTrigger asChild>
+                            <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30">
+                              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fecha del plan</label>
+                              <p className="text-sm font-medium text-foreground mt-0.5">
+                                {selectedDate ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es }) : "Seleccionar fecha"}
+                              </p>
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <CalendarUI
+                              mode="single"
+                              selected={selectedDate}
+                              onSelect={(d) => { if(d) { setSelectedDate(d); setDatePopoverOpen(false); } }}
+                              disabled={{ before: today }}
+                              locale={es}
+                              defaultMonth={selectedDate || today} />
+                          </PopoverContent>
+                        </Popover>
                       )}
+
+                      <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
+                        <PopoverTrigger asChild>
+                          <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30">
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Personas</label>
+                            <p className="text-sm font-medium text-foreground mt-0.5">
+                              {guests} persona{guests > 1 ? "s" : ""} (máx. {plan.maxGuests})
+                            </p>
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-64 p-4" align="start">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-foreground">Personas</p>
+                              <p className="text-xs text-muted-foreground">Máximo {plan.maxGuests}</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => Math.max(1, g - 1))} disabled={guests <= 1}><Minus className="w-4 h-4" /></Button>
+                              <span className="w-6 text-center text-sm font-semibold">{guests}</span>
+                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => Math.min(plan.maxGuests, g + 1))} disabled={guests >= plan.maxGuests}><Plus className="w-4 h-4" /></Button>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </div>
-                    <p className="text-xs text-muted-foreground/60 mt-1">
-                      Precio por persona · Impuestos incluidos
-                    </p>
-                  </div>
 
-                  <Separator />
-
-                  {/* Quick Info */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 text-muted-foreground/70">
-                        <Clock className="w-3.5 h-3.5" />
-                        Duración
-                      </span>
-                      <span className="font-medium text-foreground">
-                        {plan.duration}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 text-muted-foreground/70">
-                        <Users className="w-3.5 h-3.5" />
-                        Grupo máximo
-                      </span>
-                      <span className="font-medium text-foreground">
-                        {plan.maxGuests} personas
-                      </span>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* CTA Buttons */}
-                  <div className="space-y-3">
-                    <Button
-                      className="w-full bg-ocean hover:bg-ocean-dark text-white font-semibold h-12 text-base rounded-xl"
-                      onClick={() => navigate("contact", plan.id)}
-                    >
-                      Reservar ahora
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full border-border text-foreground hover:bg-muted font-medium h-11 rounded-xl gap-2"
-                      asChild
-                    >
-                      <a
-                        href={`https://wa.me/573001234567?text=Hola, me interesa el ${encodeURIComponent(plan.name)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                        WhatsApp
-                      </a>
-                    </Button>
-                  </div>
-
-                  {/* Trust Badge */}
-                  <div className="text-center pt-1">
-                    <p className="text-xs text-muted-foreground/50 flex items-center justify-center gap-1">
-                      <Phone className="w-3 h-3" />
-                      Reserva segura · Confirmación inmediata
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </aside>
+                    {isGrupal ? (
+                      <div className="mt-4">
+                        <Button 
+                          className="relative flex items-center justify-center gap-2 h-14 px-4 rounded-xl bg-white border border-[#1DA851]/20 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 group overflow-hidden w-full" 
+                          onClick={handleWhatsAppRedirect}
+                        >
+                          <div className="absolute inset-0 bg-[#1DA851]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#1DA851] relative z-10 animate-[pulse_2s_ease-in-out_infinite]"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                          <span className="relative z-10 font-bold text-[15px] bg-clip-text text-transparent bg-gradient-to-r from-ocean-dark to-[#1DA851]">
+                            Reservar por WhatsApp
+                          </span>
+                        </Button>
+                        <p className="text-center text-[12px] text-muted-foreground mt-3 leading-tight">Serás redirigido a WhatsApp para finalizar tu reserva</p>
+                      </div>
+                    ) : (
+                      <Button className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-xl h-12 text-base font-semibold" onClick={() => setSummaryModalOpen(true)}>
+                        Reservar
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </aside>
+          )}
         </div>
       </div>
 
       {/* Mobile Sticky CTA Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-4 py-3 safe-area-bottom">
-        <div className="flex items-center justify-between gap-3 max-w-7xl mx-auto">
-          <div>
-            <p className="text-xs text-muted-foreground">Desde</p>
-            <p className="text-lg font-bold text-foreground">{formatPrice(plan.price)}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full h-10 border-leaf/30 text-leaf hover:bg-leaf/5 gap-1.5"
-              asChild
-            >
-              <a
-                href={`https://wa.me/573001234567?text=${encodeURIComponent(
-                  `Hola, me interesa el ${plan.name}`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
+      {!isBookingStyle && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-5 py-3 safe-area-bottom">
+          <div className="flex items-center justify-between gap-3">
+            <div onClick={() => !isGrupal && setSummaryModalOpen(true)} className={!isGrupal ? "cursor-pointer" : ""}>
+              <p className="text-lg font-bold text-foreground underline decoration-foreground/30 underline-offset-4 mb-0.5">
+                {formatPrice(totalPlanPrice)}
+              </p>
+              <p className="text-[13px] text-muted-foreground underline decoration-muted-foreground/30 underline-offset-4">
+                 {isGrupal ? "Viaje grupal" : (selectedDate ? format(selectedDate, "d MMM", { locale: es }) : "")} · {guests} pax
+              </p>
+            </div>
+            {isGrupal ? (
+              <Button
+                size="sm"
+                className="bg-white border border-[#1DA851]/30 hover:bg-gray-50 text-[#1DA851] rounded-lg h-11 px-6 text-sm font-bold shadow-sm flex items-center gap-1.5"
+                onClick={handleWhatsAppRedirect}
               >
-                <MessageCircle className="w-4 h-4" />
-                <span className="hidden xs:inline">WhatsApp</span>
-              </a>
-            </Button>
-            <Button
-              size="sm"
-              className="bg-ocean hover:bg-ocean-dark text-white rounded-full h-10 px-5"
-              onClick={() => navigate("contact", plan.id)}
-            >
-              Reservar
-            </Button>
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                WhatsApp
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                className="bg-ocean hover:bg-ocean-dark text-white rounded-lg h-11 px-8 text-base font-semibold"
+                onClick={() => setSummaryModalOpen(true)}
+              >
+                Reservar
+              </Button>
+            )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* Share Dialog */}
       <ShareDialog
         open={shareOpen}
         onOpenChange={setShareOpen}
         title={plan.name}
-        text={`Mira este plan: ${plan.name} en ${plan.location}`}
-      />
+        text={`Mira este plan: ${plan.name} en ${plan.location}`} />
+
+      {/* Summary Modal (Desktop & Mobile) */}
+      <Dialog open={summaryModalOpen} onOpenChange={(open) => { setSummaryModalOpen(open); if(!open) setShowWhatsApp(false); }}>
+        <DialogContent className="w-full max-w-full sm:max-w-md h-auto p-0 gap-0 flex flex-col bg-background z-[100] bottom-0 sm:top-[50%] sm:bottom-auto sm:-translate-y-[50%] top-auto translate-y-0 border-t sm:border border-border/50 rounded-t-2xl sm:rounded-2xl lg:rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full sm:data-[state=closed]:slide-out-to-top-0 data-[state=open]:slide-in-from-bottom-full sm:data-[state=open]:slide-in-from-top-[48%]">
+          <DialogHeader className="px-5 py-4 border-b border-border/50 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between rounded-t-2xl">
+            <DialogTitle className="text-xl font-bold">Resumen de tu plan</DialogTitle>
+          </DialogHeader>
+          <div className="p-6 space-y-6 flex-1 bg-background pb-10 sm:pb-6 rounded-b-2xl">
+             
+             <div>
+               <h3 className="font-bold text-lg text-foreground">{plan.name}</h3>
+               <p className="text-sm text-muted-foreground mt-1">{plan.location}</p>
+             </div>
+
+             <Separator />
+
+             <div className="flex justify-between items-center">
+               <div>
+                 <h4 className="font-semibold text-foreground text-sm">Fecha</h4>
+                 <p className="text-sm text-muted-foreground">
+                   {selectedDate ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es }) : "Selecciona una fecha"}
+                 </p>
+               </div>
+               <div className="flex gap-2">
+                 <Button variant="secondary" size="sm" className="hidden lg:flex rounded-full px-4 h-8 bg-muted text-foreground" onClick={() => {
+                   setSummaryModalOpen(false);
+                   setTimeout(() => setDatePopoverOpen(true), 150);
+                 }}>Cambiar</Button>
+                 <Button variant="secondary" size="sm" className="lg:hidden rounded-full px-4 h-8 bg-muted text-foreground" onClick={() => {
+                   setSummaryModalOpen(false);
+                   setTimeout(() => setMobileCalendarOpen(true), 150);
+                 }}>Cambiar</Button>
+               </div>
+             </div>
+
+             <div className="flex justify-between items-center text-base">
+               <span className="font-normal">{formatPrice(plan.price)} x {guests} persona{guests > 1 ? "s" : ""}</span>
+               <span className="font-medium">{formatPrice(totalPlanPrice)}</span>
+             </div>
+             
+             <Separator />
+
+             <div className="flex justify-between items-center font-bold text-lg">
+               <span>Total</span>
+               <span>{formatPrice(totalPlanPrice)}</span>
+             </div>
+             
+             {!showWhatsApp ? (
+               <Button className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-xl h-12 text-base font-semibold mt-6" onClick={() => setShowWhatsApp(true)}>
+                 Confirmar
+               </Button>
+             ) : (
+               <div className="flex justify-center mt-6">
+                 <Button className="relative inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-white border border-[#1DA851]/20 shadow-[0_4px_14px_0_rgba(29,168,81,0.12)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(29,168,81,0.2)] hover:-translate-y-0.5 group overflow-hidden w-full" onClick={() => {
+                   setSummaryModalOpen(false);
+                   navigate("contact", plan.id);
+                 }}>
+                   <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#1DA851]/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
+                   <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#1DA851] relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                   <span className="relative z-10 font-bold text-base bg-clip-text text-transparent bg-gradient-to-r from-ocean-dark to-[#1DA851]">
+                     Reservar por WhatsApp
+                   </span>
+                 </Button>
+               </div>
+             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Mobile Calendar Modal */}
+      <Dialog open={mobileCalendarOpen} onOpenChange={setMobileCalendarOpen}>
+        <DialogContent className="w-full max-w-full h-[100dvh] p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] top-0 translate-y-0 border-0 lg:hidden">
+          <DialogHeader className="px-5 py-4 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
+            <DialogTitle className="text-xl font-bold">Selecciona una fecha</DialogTitle>
+            <Button variant="ghost" size="icon" onClick={() => setMobileCalendarOpen(false)}><X className="w-5 h-5"/></Button>
+          </DialogHeader>
+          <div className="overflow-y-auto p-4 flex-1 pb-32 flex flex-col items-center">
+             <CalendarUI
+                mode="single"
+                selected={selectedDate}
+                onSelect={(d) => { if(d) setSelectedDate(d); }}
+                disabled={{ before: today }}
+                locale={es}
+                defaultMonth={selectedDate || today}
+                className="mx-auto" />
+          </div>
+          <div className="fixed bottom-0 left-0 right-0 p-4 px-6 border-t border-border/50 bg-background z-20 flex justify-end items-center">
+             <Button className="h-11 px-8 font-semibold rounded-xl bg-ocean text-white hover:bg-ocean-dark" onClick={() => {
+               setMobileCalendarOpen(false);
+               setTimeout(() => setSummaryModalOpen(true), 150);
+             }}>
+               Continuar
+             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function InfoItem({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
+  return (
+    <div className="flex gap-3 bg-muted/30 rounded-xl p-3 border border-border/40">
+      <div className="bg-background rounded-lg p-2 shadow-sm border border-border/20 shrink-0">
+        <Icon className="w-5 h-5 text-ocean" />
+      </div>
+      <div className="flex flex-col justify-center">
+        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+        <span className="text-sm font-medium text-foreground">{value}</span>
+      </div>
     </div>
   );
 }

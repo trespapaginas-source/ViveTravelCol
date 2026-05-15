@@ -15,7 +15,6 @@ import {
   Facebook,
   Send,
   Loader2,
-  Waves,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,6 +88,9 @@ const contactInfo = [
   },
 ];
 
+const inputClass =
+  "h-11 sm:h-12 rounded-xl border-[#E5E7EB] text-[#1F2937] focus-visible:border-ocean/60 focus-visible:ring-ocean/15";
+
 export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -115,127 +117,111 @@ export function ContactSection() {
   }
 
   return (
-    <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-muted/30 rounded-full -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-muted/20 rounded-full translate-x-1/3 translate-y-1/3" />
-        <div className="absolute bottom-0 left-0 right-0 opacity-[0.03]">
-          <Waves className="w-full h-32 text-foreground" />
-        </div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-12 sm:mb-16">
-          <span className="inline-flex items-center gap-1.5 text-muted-foreground/50 text-xs font-medium tracking-wider uppercase mb-4">
+    <section className="relative bg-white py-10 sm:py-12 lg:py-14 overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8 sm:mb-10">
+          <span className="inline-flex items-center gap-1.5 text-[#6B7280] text-xs font-medium tracking-wider uppercase mb-3">
             <MessageCircle className="w-3.5 h-3.5" />
-            Contáctanos
+            CONTÁCTANOS
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            ¿Listo para tu{" "}
-            <span className="text-foreground/40">próxima aventura</span>?
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#111827] mb-3">
+            ¿Listo para tu próxima aventura?
           </h2>
-          <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
+          <p className="text-[#374151] text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
             Estamos aquí para ayudarte a planear el viaje perfecto. Escríbenos y
             te responderemos lo antes posible.
           </p>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-          {/* Left: Contact Form */}
-          <Card className="lg:col-span-3 border-border/50 shadow-sm">
-            <CardContent className="p-6 sm:p-8">
-              <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
-                <Send className="w-4 h-4 text-muted-foreground/40" />
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)] gap-6 lg:gap-8 items-start">
+          <Card className="border-[#E5E7EB] bg-white shadow-[0_12px_36px_rgba(17,24,39,0.06)] rounded-[22px]">
+            <CardContent className="p-5 sm:p-7 lg:p-8">
+              <h3 className="text-xl font-bold text-[#111827] mb-5 flex items-center gap-2">
+                <Send className="w-5 h-5 text-ocean" />
                 Envíanos un mensaje
               </h3>
 
               <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-5"
-                >
-                  {/* Name & Email */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nombre completo</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-[#111827]">
+                            Nombre completo
+                          </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Tu nombre"
-                              {...field}
-                            />
+                              className={inputClass}
+                              {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
-                      )}
-                    />
+                      )} />
 
                     <FormField
                       control={form.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Correo electrónico</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-[#111827]">
+                            Correo electrónico
+                          </FormLabel>
                           <FormControl>
                             <Input
                               type="email"
                               placeholder="tu@email.com"
-                              {...field}
-                            />
+                              className={inputClass}
+                              {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
-                      )}
-                    />
+                      )} />
                   </div>
 
-                  {/* Phone & Subject */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Teléfono</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-[#111827]">
+                            Teléfono
+                          </FormLabel>
                           <FormControl>
                             <Input
                               type="tel"
                               placeholder="+57 300 123 4567"
-                              {...field}
-                            />
+                              className={inputClass}
+                              {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
-                      )}
-                    />
+                      )} />
 
                     <FormField
                       control={form.control}
                       name="subject"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Asunto</FormLabel>
+                          <FormLabel className="text-sm font-semibold text-[#111827]">
+                            Asunto
+                          </FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger className="w-full">
+                              <SelectTrigger className="w-full h-11 sm:h-12 rounded-xl border-[#E5E7EB] text-[#1F2937] focus:border-ocean/60 focus:ring-ocean/15">
                                 <SelectValue placeholder="Selecciona un asunto" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               {subjectOptions.map((option) => (
-                                <SelectItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
+                                <SelectItem key={option.value} value={option.value}>
                                   {option.label}
                                 </SelectItem>
                               ))}
@@ -243,69 +229,68 @@ export function ContactSection() {
                           </Select>
                           <FormMessage />
                         </FormItem>
-                      )}
-                    />
+                      )} />
                   </div>
 
-                  {/* Message */}
                   <FormField
                     control={form.control}
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Mensaje</FormLabel>
+                        <FormLabel className="text-sm font-semibold text-[#111827]">
+                          Mensaje
+                        </FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Cuéntanos sobre el viaje que tienes en mente..."
-                            className="min-h-[120px] resize-y"
-                            {...field}
-                          />
+                            className="min-h-[120px] sm:min-h-[132px] resize-y rounded-xl border-[#E5E7EB] text-[#1F2937] focus-visible:border-ocean/60 focus-visible:ring-ocean/15"
+                            {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
-                    )}
-                  />
+                    )} />
 
-                  {/* Preferred Contact Method */}
                   <FormField
                     control={form.control}
                     name="contactMethod"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Método de contacto preferido</FormLabel>
+                        <FormLabel className="text-sm font-semibold text-[#111827]">
+                          Método de contacto preferido
+                        </FormLabel>
                         <FormControl>
                           <RadioGroup
                             onValueChange={field.onChange}
                             defaultValue={field.value}
-                            className="flex flex-wrap gap-4"
+                            className="flex flex-wrap gap-2.5"
                           >
-                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer has-[data-state=checked]:bg-muted has-[data-state=checked]:border-foreground/20">
+                            <div className="flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E5E7EB] cursor-pointer has-[data-state=checked]:bg-ocean/10 has-[data-state=checked]:border-ocean/40">
                               <RadioGroupItem value="whatsapp" id="whatsapp" />
                               <label
                                 htmlFor="whatsapp"
-                                className="text-sm font-medium cursor-pointer flex items-center gap-1.5"
+                                className="text-sm font-semibold text-[#1F2937] cursor-pointer flex items-center gap-1.5"
                               >
-                                <MessageCircle className="w-4 h-4 text-muted-foreground/50" />
+                                <MessageCircle className="w-4 h-4 text-ocean" />
                                 WhatsApp
                               </label>
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer has-[data-state=checked]:bg-muted has-[data-state=checked]:border-foreground/20">
+                            <div className="flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E5E7EB] cursor-pointer has-[data-state=checked]:bg-ocean/10 has-[data-state=checked]:border-ocean/40">
                               <RadioGroupItem value="email" id="email" />
                               <label
                                 htmlFor="email"
-                                className="text-sm font-medium cursor-pointer flex items-center gap-1.5"
+                                className="text-sm font-semibold text-[#1F2937] cursor-pointer flex items-center gap-1.5"
                               >
-                                <Mail className="w-4 h-4 text-muted-foreground/50" />
+                                <Mail className="w-4 h-4 text-ocean" />
                                 Email
                               </label>
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer has-[data-state=checked]:bg-muted has-[data-state=checked]:border-foreground/20">
+                            <div className="flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#E5E7EB] cursor-pointer has-[data-state=checked]:bg-ocean/10 has-[data-state=checked]:border-ocean/40">
                               <RadioGroupItem value="phone" id="phone" />
                               <label
                                 htmlFor="phone"
-                                className="text-sm font-medium cursor-pointer flex items-center gap-1.5"
+                                className="text-sm font-semibold text-[#1F2937] cursor-pointer flex items-center gap-1.5"
                               >
-                                <Phone className="w-4 h-4 text-muted-foreground/50" />
+                                <Phone className="w-4 h-4 text-ocean" />
                                 Teléfono
                               </label>
                             </div>
@@ -313,14 +298,12 @@ export function ContactSection() {
                         </FormControl>
                         <FormMessage />
                       </FormItem>
-                    )}
-                  />
+                    )} />
 
-                  {/* Submit Button */}
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto bg-ocean hover:bg-ocean-dark text-white rounded-full px-8 py-3 text-base font-medium transition-all duration-300"
+                    className="h-11 w-full sm:w-auto bg-ocean hover:bg-ocean-dark text-white rounded-full px-7 text-sm font-semibold"
                   >
                     {isSubmitting ? (
                       <>
@@ -339,60 +322,58 @@ export function ContactSection() {
             </CardContent>
           </Card>
 
-          {/* Right: Contact Info */}
-          <div className="lg:col-span-2 space-y-4">
-            {/* Direct Contact Cards */}
-            {contactInfo.map((item) => (
-              <Card
-                key={item.label}
-                className="border-border/50 hover:border-border transition-all duration-300 group"
-              >
-                <CardContent className="p-4">
-                  {item.href ? (
-                    <a
-                      href={item.href}
-                      target={item.href.startsWith("http") ? "_blank" : undefined}
-                      rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className="flex items-start gap-3"
-                    >
-                      <div className="w-9 h-9 rounded-lg bg-muted/60 flex items-center justify-center shrink-0 group-hover:bg-muted transition-colors">
-                        <item.icon className="w-4 h-4 text-muted-foreground/60" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs text-muted-foreground/60 font-medium">
-                          {item.label}
-                        </p>
-                        <p className="text-foreground font-medium text-sm whitespace-pre-line">
-                          {item.value}
-                        </p>
-                      </div>
-                    </a>
-                  ) : (
-                    <div className="flex items-start gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-muted/60 flex items-center justify-center shrink-0">
-                        <item.icon className="w-4 h-4 text-muted-foreground/60" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs text-muted-foreground/60 font-medium">
-                          {item.label}
-                        </p>
-                        <p className="text-foreground font-medium text-sm whitespace-pre-line">
-                          {item.value}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+          <Card className="border-[#E5E7EB] bg-white shadow-[0_12px_36px_rgba(17,24,39,0.05)] rounded-[22px]">
+            <CardContent className="p-5 sm:p-6 lg:p-7">
+              <h3 className="text-xl font-bold text-[#111827] mb-5">
+                Contacto directo
+              </h3>
 
-            {/* Social Media */}
-            <Card className="border-border/50">
-              <CardContent className="p-4">
-                <p className="text-xs text-muted-foreground/60 font-medium mb-3">
-                  Síguenos en redes sociales
+              <div className="divide-y divide-[#E5E7EB]">
+                {contactInfo.map((item) => (
+                  <div key={item.label} className="py-4 first:pt-0">
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        target={item.href.startsWith("http") ? "_blank" : undefined}
+                        rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                        className="flex items-start gap-3"
+                      >
+                        <div className="w-9 h-9 rounded-xl bg-ocean/8 flex items-center justify-center shrink-0">
+                          <item.icon className="w-5 h-5 text-ocean" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs text-[#6B7280] font-medium">
+                            {item.label}
+                          </p>
+                          <p className="text-[#111827] font-semibold text-sm whitespace-pre-line">
+                            {item.value}
+                          </p>
+                        </div>
+                      </a>
+                    ) : (
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-ocean/8 flex items-center justify-center shrink-0">
+                          <item.icon className="w-5 h-5 text-ocean" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs text-[#6B7280] font-medium">
+                            {item.label}
+                          </p>
+                          <p className="text-[#111827] font-semibold text-sm whitespace-pre-line">
+                            {item.value}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-5">
+                <p className="text-sm font-semibold text-[#111827] mb-3">
+                  Síguenos
                 </p>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-4">
                   {[
                     { icon: Instagram, href: "#", label: "Instagram" },
                     { icon: Facebook, href: "#", label: "Facebook" },
@@ -401,33 +382,27 @@ export function ContactSection() {
                     <a
                       key={social.label}
                       href={social.href}
-                      className="w-10 h-10 rounded-xl bg-muted/60 border border-border/50 flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:bg-muted transition-all duration-300"
+                      className="text-[#6B7280] hover:text-ocean"
                       aria-label={social.label}
                       target={social.href.startsWith("http") ? "_blank" : undefined}
                       rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
                     >
-                      <social.icon className="w-4 h-4" />
+                      <social.icon className="w-5 h-5" />
                     </a>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* WhatsApp CTA */}
-            <Card className="bg-muted/40 border-border/50">
-              <CardContent className="p-5 text-center">
-                <div className="w-10 h-10 rounded-xl bg-muted/80 flex items-center justify-center mx-auto mb-3">
-                  <MessageCircle className="w-5 h-5 text-muted-foreground/50" />
-                </div>
-                <h4 className="font-semibold text-foreground mb-1.5 text-sm">
+              <div className="mt-6 rounded-2xl border border-ocean/15 bg-ocean/[0.04] p-4">
+                <h4 className="font-semibold text-[#111827] mb-1 text-sm">
                   ¿Prefieres chatear?
                 </h4>
-                <p className="text-xs text-muted-foreground/60 mb-4">
+                <p className="text-xs text-[#6B7280] mb-4">
                   Escríbenos por WhatsApp y recibe atención inmediata.
                 </p>
                 <Button
                   asChild
-                  className="bg-ocean hover:bg-ocean-dark text-white rounded-full px-6 text-sm"
+                  className="h-10 bg-ocean hover:bg-ocean-dark text-white rounded-full px-5 text-sm font-semibold"
                 >
                   <a
                     href="https://wa.me/573001234567"
@@ -435,12 +410,12 @@ export function ContactSection() {
                     rel="noopener noreferrer"
                   >
                     <MessageCircle className="w-4 h-4 mr-2" />
-                    Chatear ahora
+                    Chatear por WhatsApp
                   </a>
                 </Button>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>

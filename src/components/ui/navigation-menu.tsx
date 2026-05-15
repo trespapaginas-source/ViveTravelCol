@@ -40,8 +40,7 @@ function NavigationMenuList({
         "group flex flex-1 list-none items-center justify-center gap-1",
         className
       )}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -53,8 +52,7 @@ function NavigationMenuItem({
     <NavigationMenuPrimitive.Item
       data-slot="navigation-menu-item"
       className={cn("relative", className)}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -76,8 +74,7 @@ function NavigationMenuTrigger({
       {children}{" "}
       <ChevronDownIcon
         className="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
-        aria-hidden="true"
-      />
+        aria-hidden="true" />
     </NavigationMenuPrimitive.Trigger>
   )
 }
@@ -94,8 +91,7 @@ function NavigationMenuContent({
         "group-data-[viewport=false]/navigation-menu:bg-popover group-data-[viewport=false]/navigation-menu:text-popover-foreground group-data-[viewport=false]/navigation-menu:data-[state=open]:animate-in group-data-[viewport=false]/navigation-menu:data-[state=closed]:animate-out group-data-[viewport=false]/navigation-menu:data-[state=closed]:zoom-out-95 group-data-[viewport=false]/navigation-menu:data-[state=open]:zoom-in-95 group-data-[viewport=false]/navigation-menu:data-[state=open]:fade-in-0 group-data-[viewport=false]/navigation-menu:data-[state=closed]:fade-out-0 group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-md group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:shadow group-data-[viewport=false]/navigation-menu:duration-200 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none",
         className
       )}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -115,8 +111,7 @@ function NavigationMenuViewport({
           "origin-top-center bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border shadow md:w-[var(--radix-navigation-menu-viewport-width)]",
           className
         )}
-        {...props}
-      />
+        {...props} />
     </div>
   )
 }
@@ -132,8 +127,7 @@ function NavigationMenuLink({
         "data-[active=true]:focus:bg-accent data-[active=true]:hover:bg-accent data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-ring/50 [&_svg:not([class*='text-'])]:text-muted-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
-      {...props}
-    />
+      {...props} />
   )
 }
 

@@ -14,8 +14,7 @@ function CollapsibleTrigger({
   return (
     <CollapsiblePrimitive.CollapsibleTrigger
       data-slot="collapsible-trigger"
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -25,8 +24,7 @@ function CollapsibleContent({
   return (
     <CollapsiblePrimitive.CollapsibleContent
       data-slot="collapsible-content"
-      {...props}
-    />
+      {...props} />
   )
 }
 

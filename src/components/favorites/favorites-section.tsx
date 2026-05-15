@@ -19,6 +19,7 @@ import {
   Clock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatShortDuration, formatShortLocation } from "@/lib/utils";
 import { useState, useCallback } from "react";
 import { toggleFavorite } from "@/lib/favorites";
 import { toast } from "sonner";
@@ -88,8 +89,7 @@ function FavoriteItem({
       <FavoriteCabinCard
         cabin={cabin}
         onRemove={handleRemove}
-        onSelect={() => navigate("cabin-detail", cabin.id)}
-      />
+        onSelect={() => navigate("cabin-detail", cabin.id)} />
     );
   }
 
@@ -98,8 +98,7 @@ function FavoriteItem({
       <FavoritePlanCard
         plan={plan}
         onRemove={handleRemove}
-        onSelect={() => navigate("plan-detail", plan.id)}
-      />
+        onSelect={() => navigate("plan-detail", plan.id)} />
     );
   }
 
@@ -127,16 +126,15 @@ function FavoriteCabinCard({
         className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-300 py-0 gap-0"
         onClick={onSelect}
       >
-        <div className="relative">
-          <ImageCarousel
-            images={cabin.images}
-            aspectRatio="video"
-            showExpand={false}
-            className="[&_.border-0]:border-0"
-          />
+        <div className="relative aspect-[3/2] overflow-hidden">
+          <img             src={cabin.images[0]}
+            alt={cabin.name}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+           onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           <button
             onClick={onRemove}
-            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
+            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] min-h-[32px]"
             aria-label="Eliminar de favoritos"
           >
             <Heart className="w-3.5 h-3.5 fill-indigo text-indigo" />
@@ -151,48 +149,43 @@ function FavoriteCabinCard({
 
         <CardContent className="p-3.5 sm:p-4 space-y-2">
           <div>
-            <h3 className="font-semibold text-[15px] text-foreground group-hover:text-ocean transition-colors line-clamp-1 leading-snug">
+            <h3 className="font-bold text-[17px] text-foreground group-hover:text-ocean transition-colors line-clamp-1 leading-snug">
               {cabin.name}
             </h3>
             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-              <MapPin className="w-3 h-3 shrink-0 text-muted-foreground/60" />
+              <MapPin className="w-3 h-3 shrink-0 text-muted-foreground" />
               <span className="line-clamp-1">{cabin.location}</span>
             </div>
           </div>
 
-          <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
+          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
             {cabin.shortDescription}
           </p>
 
-          <div className="flex items-center gap-0 text-xs text-muted-foreground/70 pt-1">
+          <div className="flex items-center gap-0 text-xs text-muted-foreground pt-1">
             <div className="flex items-center gap-1">
               <Users className="w-3 h-3" />
               <span>{cabin.capacity}</span>
             </div>
-            <span className="mx-1.5 text-muted-foreground/30">·</span>
+            <span className="mx-1.5 text-muted-foreground">·</span>
             <div className="flex items-center gap-1">
               <BedDouble className="w-3 h-3" />
               <span>{cabin.bedrooms} hab.</span>
             </div>
-            <span className="mx-1.5 text-muted-foreground/30">·</span>
+            <span className="mx-1.5 text-muted-foreground">·</span>
             <div className="flex items-center gap-1">
               <Bath className="w-3 h-3" />
               <span>{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-1.5 border-t border-border/30">
-            <span className="text-sm font-semibold text-foreground">
-              {formatPrice(cabin.pricePerNight)}<span className="text-xs font-normal text-muted-foreground">/noche</span>
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-ocean hover:text-ocean-dark hover:bg-ocean/5 gap-1 text-xs font-medium px-2 h-7"
-            >
-              Ver más
-              <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
-            </Button>
+          <div className="flex items-center justify-end pt-2 border-t border-border/30 mt-2">
+            <div className="text-right">
+              <p className="text-foreground font-bold text-[15px] sm:text-[17px] leading-tight">
+                <span className="text-[11px] sm:text-[13px] font-normal text-muted-foreground mr-1">Desde</span>
+                {formatPrice(cabin.pricePerNight)}
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -221,16 +214,15 @@ function FavoritePlanCard({
         className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-300 py-0 gap-0"
         onClick={onSelect}
       >
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <img
-            src={plan.images[0]}
+        <div className="relative aspect-[3/2] overflow-hidden">
+          <img             src={plan.images[0]}
             alt={plan.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          />
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+           onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           <button
             onClick={onRemove}
-            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200"
+            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] min-h-[32px]"
             aria-label="Eliminar de favoritos"
           >
             <Heart className="w-3.5 h-3.5 fill-indigo text-indigo" />
@@ -241,50 +233,42 @@ function FavoritePlanCard({
               Plan
             </span>
           </div>
-          {/* Price overlay */}
-          <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1 shadow-sm">
-            <span className="text-foreground font-semibold text-sm">
-              {formatPrice(plan.price)}
-            </span>
-          </div>
+
         </div>
 
         <CardContent className="p-3.5 sm:p-4 space-y-2">
           <div>
-            <h3 className="font-semibold text-[15px] text-foreground group-hover:text-ocean transition-colors line-clamp-1 leading-snug">
+            <h3 className="font-bold text-[17px] text-foreground group-hover:text-ocean transition-colors line-clamp-1 leading-snug">
               {plan.name}
             </h3>
             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-              <MapPin className="w-3 h-3 shrink-0 text-muted-foreground/60" />
-              <span className="line-clamp-1">{plan.location}</span>
+              <MapPin className="w-3 h-3 shrink-0 text-muted-foreground" />
+              <span className="line-clamp-1">{formatShortLocation(plan.location)}</span>
             </div>
           </div>
 
-          <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
+          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
             {plan.shortDescription}
           </p>
 
-          <div className="flex items-center gap-0 text-xs text-muted-foreground/70 pt-1">
+          <div className="flex items-center gap-0 text-xs text-muted-foreground pt-1">
             <div className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              <span>{plan.duration}</span>
+              <span>{formatShortDuration(plan.duration)}</span>
             </div>
-            <span className="mx-1.5 text-muted-foreground/30">·</span>
+            <span className="mx-1.5 text-muted-foreground">·</span>
             <div className="flex items-center gap-1">
               <Users className="w-3 h-3" />
               <span>Máx. {plan.maxGuests}</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-end pt-1.5 border-t border-border/30">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-ocean hover:text-ocean-dark hover:bg-ocean/5 gap-1 text-xs font-medium px-2 h-7"
-            >
-              Ver más
-              <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
-            </Button>
+          <div className="flex items-center justify-end pt-2 border-t border-border/30 mt-2">
+            <div className="text-right">
+              <p className="text-foreground font-bold text-[15px] sm:text-[17px] leading-tight">
+                {formatPrice(plan.price)}
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -312,8 +296,7 @@ export function FavoritesSection() {
         >
           <SectionHeader
             title="Tu Colección"
-            subtitle="Tus planes y cabañas favoritos guardados para comparar y encontrar tu escapada ideal."
-          />
+            subtitle="Tus planes y cabañas favoritos guardados para comparar y encontrar tu escapada ideal." />
         </motion.div>
 
         {favIds.length === 0 ? (
@@ -324,20 +307,20 @@ export function FavoritesSection() {
             className="text-center py-16"
           >
             <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center mx-auto mb-4">
-              <Compass className="w-7 h-7 text-muted-foreground/40" />
+              <Compass className="w-7 h-7 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-1.5">
+            <h3 className="text-xl md:text-2xl font-bold text-foreground mb-1.5">
               Tu colección está vacía
             </h3>
             <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-              Explora nuestros planes y cabañas y guarda los que más te gusten tocando el ícono de corazón.
+              Explora nuestras experiencias, viajes y cabañas y guarda lo que más te guste tocando el ícono de corazón.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Button
-                onClick={() => navigate("plans")}
+                onClick={() => navigate("plans", "pasadias")}
                 className="bg-ocean hover:bg-ocean-dark text-white rounded-full px-8 gap-2"
               >
-                Explorar planes
+                Explorar experiencias
                 <ArrowRight className="w-4 h-4" />
               </Button>
               <Button
@@ -356,8 +339,7 @@ export function FavoritesSection() {
                 <FavoriteItem
                   key={id}
                   itemId={id}
-                  onRemove={handleRemove}
-                />
+                  onRemove={handleRemove} />
               ))}
             </AnimatePresence>
           </div>

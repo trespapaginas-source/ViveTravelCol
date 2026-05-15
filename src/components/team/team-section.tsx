@@ -12,6 +12,7 @@ const teamMembers = [
     description:
       "Creador de la página web y CRM de la agencia. Aportador de ideas clave que ayudaron a estructurar la agencia de la manera correcta. Su visión digital transformó la forma en que Vive Travel conecta con sus viajeros.",
     initials: "AT",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
     icon: Code2,
     accent: "ocean" as const,
     accentBg: "bg-ocean",
@@ -25,12 +26,13 @@ const teamMembers = [
     description:
       "El rostro e imagen de la agencia. Como influencer y accionista mayoritario, Luis es la conexión directa entre Vive Travel y la comunidad de viajeros. Su carisma y alcance inspiran a miles a descubrir el Atlántico.",
     initials: "LM",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
     icon: Star,
-    accent: "mint" as const,
-    accentBg: "bg-mint",
-    accentLight: "bg-mint/10",
-    accentText: "text-mint",
-    accentBorder: "border-mint/20",
+    accent: "ocean" as const,
+    accentBg: "bg-ocean",
+    accentLight: "bg-ocean/10",
+    accentText: "text-ocean",
+    accentBorder: "border-ocean/20",
     featured: true,
   },
   {
@@ -39,12 +41,13 @@ const teamMembers = [
     description:
       "El motor operativo y comercial de la agencia. Jean se encarga de que cada experiencia sea impecable, desde la logística hasta la atención al viajero. Su dedicación garantiza la calidad en cada viaje.",
     initials: "JF",
+    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop",
     icon: TrendingUp,
-    accent: "leaf" as const,
-    accentBg: "bg-leaf",
-    accentLight: "bg-leaf/10",
-    accentText: "text-leaf",
-    accentBorder: "border-leaf/20",
+    accent: "ocean" as const,
+    accentBg: "bg-ocean",
+    accentLight: "bg-ocean/10",
+    accentText: "text-ocean",
+    accentBorder: "border-ocean/20",
   },
 ];
 
@@ -71,8 +74,7 @@ export function TeamSection() {
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <SectionHeader
             title="Nuestro Equipo"
-            subtitle="Tres amigos, una pasión: conectar al mundo con la magia del Atlántico colombiano"
-          />
+            subtitle="Tres amigos, una pasión: conectar al mundo con la magia del Atlántico colombiano" />
         </div>
 
         {/* Story intro — CSS animation with delay */}
@@ -103,7 +105,7 @@ export function TeamSection() {
             >
               <div
                 className={`relative bg-card rounded-2xl border border-border/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-ocean/5 hover:-translate-y-1 ${
-                  member.featured ? "ring-2 ring-mint/30" : ""
+                  member.featured ? "ring-2 ring-ocean/25" : ""
                 }`}
               >
                 {/* Top accent bar */}
@@ -112,7 +114,7 @@ export function TeamSection() {
                 {/* Featured badge */}
                 {member.featured && (
                   <div className="absolute top-5 right-4">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-mint/10 text-mint text-[10px] font-bold uppercase tracking-wider">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-ocean/10 text-ocean text-[10px] font-bold uppercase tracking-wider">
                       <Star className="w-3 h-3 fill-current" />
                       Rostro de la agencia
                     </span>
@@ -124,18 +126,24 @@ export function TeamSection() {
                   <div className="relative mx-auto mb-6 w-28 h-28 sm:w-32 sm:h-32">
                     {/* Decorative ring */}
                     <div
-                      className={`absolute inset-0 rounded-full ${member.accentLight} scale-110 group-hover:scale-115 transition-transform duration-300`}
-                    />
+                      className={`absolute inset-0 rounded-full ${member.accentLight} scale-110 group-hover:scale-115 transition-transform duration-300`} />
                     <div
-                      className={`absolute inset-0 rounded-full border-2 ${member.accentBorder} scale-105`}
-                    />
+                      className={`absolute inset-0 rounded-full border-2 ${member.accentBorder} scale-105`} />
                     {/* Avatar circle */}
                     <div
-                      className={`relative w-full h-full rounded-full ${member.accentBg} flex items-center justify-center shadow-lg`}
+                      className={`relative w-full h-full rounded-full ${member.accentBg} flex items-center justify-center shadow-lg overflow-hidden`}
                     >
-                      <span className="text-white font-bold text-2xl sm:text-3xl tracking-tight">
-                        {member.initials}
-                      </span>
+                      {member.image ? (
+                        <img 
+                          src={member.image} 
+                          alt={member.name} 
+                          className="w-full h-full object-cover"
+                         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+                      ) : (
+                        <span className="text-white font-bold text-2xl sm:text-3xl tracking-tight">
+                          {member.initials}
+                        </span>
+                      )}
                     </div>
                     {/* Floating icon — CSS animation with stagger delay */}
                     <div
@@ -178,22 +186,22 @@ export function TeamSection() {
           className="relative animate-in fade-in slide-in-from-bottom-6 duration-500"
           style={{ animationDelay: "200ms", animationFillMode: "both" }}
         >
-          <div className="relative rounded-3xl overflow-hidden bg-ocean-dark">
+          <div className="relative rounded-3xl overflow-hidden bg-gray-50 border border-gray-100">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+              <div className="absolute top-0 left-0 w-64 h-64 bg-ocean rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
               <div className="absolute bottom-0 right-0 w-80 h-80 bg-mint rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
             </div>
 
             <div className="relative z-10 py-12 sm:py-16 px-6 sm:px-10">
               <div className="text-center mb-10">
                 <h3
-                  className="text-2xl sm:text-3xl font-bold text-white mb-2 animate-in fade-in slide-in-from-bottom-2 duration-500"
+                  className="text-2xl sm:text-3xl font-bold text-foreground mb-2 animate-in fade-in slide-in-from-bottom-2 duration-500"
                   style={{ animationDelay: "300ms", animationFillMode: "both" }}
                 >
                   Cifras que hablan por nosotros
                 </h3>
-                <p className="text-white/50 text-sm sm:text-base max-w-lg mx-auto">
+                <p className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
                   Nos hemos encargado de entregar experiencias significativas a cada viajero
                 </p>
               </div>
@@ -205,13 +213,13 @@ export function TeamSection() {
                     className="text-center animate-in fade-in slide-in-from-bottom-2 duration-500"
                     style={{ animationDelay: `${350 + i * 100}ms`, animationFillMode: "both" }}
                   >
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-3">
-                      <stat.icon className="w-5 h-5 text-mint-light" />
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-ocean/10 mb-3">
+                      <stat.icon className="w-5 h-5 text-ocean" />
                     </div>
-                    <p className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                    <p className="text-3xl sm:text-4xl font-bold text-foreground mb-1">
                       {stat.value}
                     </p>
-                    <p className="text-white/40 text-xs sm:text-sm uppercase tracking-wider font-medium">
+                    <p className="text-muted-foreground text-xs sm:text-sm uppercase tracking-wider font-medium">
                       {stat.label}
                     </p>
                   </div>
@@ -232,10 +240,10 @@ export function TeamSection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button
               size="lg"
-              onClick={() => navigate("plans")}
+              onClick={() => navigate("plans", "pasadias")}
               className="bg-ocean hover:bg-ocean-dark text-white px-8 py-5 text-base rounded-xl shadow-lg shadow-ocean/20 transition-all duration-200 hover:scale-105 gap-2"
             >
-              Ver nuestros planes
+              Ver experiencias y viajes
               <ArrowRight className="w-4 h-4" />
             </Button>
             <Button

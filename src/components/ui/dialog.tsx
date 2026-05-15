@@ -41,8 +41,7 @@ function DialogOverlay({
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
         className
       )}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -85,8 +84,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="dialog-header"
       className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -98,8 +96,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
         "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
         className
       )}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -111,8 +108,7 @@ function DialogTitle({
     <DialogPrimitive.Title
       data-slot="dialog-title"
       className={cn("text-lg leading-none font-semibold", className)}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -124,8 +120,7 @@ function DialogDescription({
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn("text-muted-foreground text-sm", className)}
-      {...props}
-    />
+      {...props} />
   )
 }
 

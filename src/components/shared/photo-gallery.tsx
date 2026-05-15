@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X, Grid3X3 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SafeImage } from "@/components/ui/safe-image";
 
 interface PhotoGalleryProps {
   images: string[];
@@ -34,12 +35,10 @@ export function PhotoGallery({ images, className }: PhotoGalleryProps) {
   if (images.length === 1) {
     return (
       <div className={cn("relative group rounded-2xl overflow-hidden", className)}>
-        <img
-          src={images[0]}
+        <SafeImage src={images[0]}
           alt="Imagen 1"
           className="w-full aspect-[16/10] object-cover cursor-pointer hover:brightness-95 transition-all"
-          onClick={() => openLightbox(0)}
-        />
+          onClick={() => openLightbox(0)} />
       </div>
     );
   }
@@ -49,13 +48,11 @@ export function PhotoGallery({ images, className }: PhotoGalleryProps) {
     return (
       <div className={cn("relative grid grid-cols-2 gap-2 rounded-2xl overflow-hidden", className)}>
         {images.map((img, i) => (
-          <img
-            key={i}
+          <SafeImage             key={i}
             src={img}
             alt={`Imagen ${i + 1}`}
             className="w-full aspect-[16/10] object-cover cursor-pointer hover:brightness-95 transition-all"
-            onClick={() => openLightbox(i)}
-          />
+            onClick={() => openLightbox(i)} />
         ))}
         <ShowAllButton onClick={() => openLightbox(0)} total={images.length} />
         <Lightbox
@@ -65,8 +62,7 @@ export function PhotoGallery({ images, className }: PhotoGalleryProps) {
           open={lightboxOpen}
           onOpenChange={setLightboxOpen}
           onPrev={goToPrev}
-          onNext={goToNext}
-        />
+          onNext={goToNext} />
       </div>
     );
   }
@@ -77,30 +73,26 @@ export function PhotoGallery({ images, className }: PhotoGalleryProps) {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-2 rounded-2xl overflow-hidden">
         {/* Main large image */}
         <div className="md:col-span-2 md:row-span-2">
-          <img
-            src={images[0]}
+          <SafeImage             src={images[0]}
             alt="Imagen 1"
             className="w-full aspect-[4/3] md:aspect-auto md:h-full object-cover cursor-pointer hover:brightness-95 transition-all"
-            onClick={() => openLightbox(0)}
-          />
+            onClick={() => openLightbox(0)} />
         </div>
 
         {/* Smaller images */}
         {images.slice(1, 5).map((img, i) => (
           <div key={i} className="relative">
-            <img
-              src={img}
+            <SafeImage               src={img}
               alt={`Imagen ${i + 2}`}
               className="w-full aspect-[4/3] object-cover cursor-pointer hover:brightness-95 transition-all"
-              onClick={() => openLightbox(i + 1)}
-            />
+              onClick={() => openLightbox(i + 1)} />
             {/* Show overlay on last visible image if there are more */}
             {i === 3 && images.length > 5 && (
               <div
                 className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer hover:bg-black/50 transition-all"
                 onClick={() => openLightbox(i + 1)}
               >
-                <span className="text-white text-lg font-semibold">
+                <span className="text-white text-xl md:text-2xl font-bold">
                   +{images.length - 5}
                 </span>
               </div>
@@ -118,8 +110,7 @@ export function PhotoGallery({ images, className }: PhotoGalleryProps) {
         open={lightboxOpen}
         onOpenChange={setLightboxOpen}
         onPrev={goToPrev}
-        onNext={goToNext}
-      />
+        onNext={goToNext} />
     </div>
   );
 }
@@ -165,10 +156,10 @@ function Lightbox({ images, selectedIndex, onSelect, open, onOpenChange, onPrev,
 
         <div className="relative flex flex-col items-center justify-center min-h-[70vh] py-8">
           {/* Main image */}
-          <img
-            src={images[selectedIndex]}
+          <SafeImage             src={images[selectedIndex]}
             alt={`Imagen ${selectedIndex + 1}`}
             className="max-h-[65vh] max-w-full object-contain px-12"
+            wrapperClassName="h-auto w-auto max-h-[65vh]"
           />
 
           {/* Navigation arrows */}
@@ -211,11 +202,10 @@ function Lightbox({ images, selectedIndex, onSelect, open, onOpenChange, onPrev,
                         : "border-transparent opacity-40 hover:opacity-70"
                     )}
                   >
-                    <img
-                      src={img}
+                    <img                       src={img}
                       alt={`Miniatura ${i + 1}`}
                       className="w-full h-full object-cover"
-                    />
+                     onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
                   </button>
                 ))}
               </div>

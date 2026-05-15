@@ -16,6 +16,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   ArrowLeft,
   MapPin,
   Users,
@@ -64,6 +70,7 @@ import { es } from "date-fns/locale/es";
 import { toast } from "sonner";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { ShareDialog } from "@/components/shared/share-dialog";
+import { ExpandableSection } from "@/components/shared/expandable-section";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -148,6 +155,60 @@ function getHighlightIcon(highlight: string) {
   return Sparkles;
 }
 
+function getLocationData(locationStr: string) {
+  const lower = locationStr.toLowerCase();
+  
+  if (lower.includes("santa verónica") || lower.includes("santa veronica")) {
+    return {
+      text: "Santa Verónica, Atlántico, Colombia",
+      query: "Santa Verónica, Atlántico, Colombia",
+      description: "Barrio costero tranquilo con hermosas playas, ideal para practicar deportes acuáticos como el kitesurf y disfrutar de la gastronomía local frente al mar."
+    };
+  }
+  if (lower.includes("juan de acosta")) {
+    return {
+      text: "Juan de Acosta, Atlántico, Colombia",
+      query: "Juan de Acosta, Atlántico, Colombia",
+      description: "Zona tranquila y acogedora cerca del mar, perfecta para desconectar de la ciudad y conectar con la naturaleza y la brisa del Caribe."
+    };
+  }
+  if (lower.includes("tubará") || lower.includes("tubara")) {
+    return {
+      text: "Tubará, Atlántico, Colombia",
+      query: "Tubará, Atlántico, Colombia",
+      description: "Lugar privilegiado rodeado de naturaleza y playas semi-privadas. Disfruta de un ambiente relajante con espectaculares atardeceres."
+    };
+  }
+  if (lower.includes("cartagena")) {
+    return {
+      text: "Cartagena, Bolívar, Colombia",
+      query: "Cartagena, Bolívar, Colombia",
+      description: "A pocos minutos del centro histórico, disfruta de la magia caribeña, playas vibrantes y una exquisita oferta cultural y gastronómica."
+    };
+  }
+  if (lower.includes("barú") || lower.includes("baru")) {
+    return {
+      text: "Isla Barú, Bolívar, Colombia",
+      query: "Playa Blanca, Barú, Bolívar, Colombia",
+      description: "Un paraíso tropical de arenas blancas y aguas cristalinas. Ideal para una escapada romántica o vacaciones en familia lejos del ruido."
+    };
+  }
+  if (lower.includes("puerto colombia")) {
+    return {
+      text: "Puerto Colombia, Atlántico, Colombia",
+      query: "Puerto Colombia, Atlántico, Colombia",
+      description: "Municipio histórico con su emblemático muelle, hermosas playas y un ambiente bohemio que te invita a relajarte frente al mar Caribe."
+    };
+  }
+  
+  // Fallback
+  return {
+    text: `${locationStr}, Colombia`,
+    query: `${locationStr}, Colombia`,
+    description: "Zona tranquila y bien ubicada, ideal para disfrutar de tus vacaciones con acceso fácil a puntos de interés y atracciones locales."
+  };
+}
+
 export function CabinDetail() {
   const { selectedItemId, navigate } = useNavigation();
 
@@ -164,6 +225,37 @@ export function CabinDetail() {
   );
 
   const [shareOpen, setShareOpen] = useState(false);
+  const [roomsModalOpen, setRoomsModalOpen] = useState(false);
+
+  // Mobile reservation flow states
+  const [mobileBottomSheetOpen, setMobileBottomSheetOpen] = useState(false);
+  const [mobileCalendarModalOpen, setMobileCalendarModalOpen] = useState(false);
+  const [mobileDateRange, setMobileDateRange] = useState<DateRange | undefined>(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const nextSaturday = new Date(today);
+    nextSaturday.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7 || 7));
+    const nextSunday = new Date(nextSaturday);
+    nextSunday.setDate(nextSaturday.getDate() + 1);
+    return { from: nextSaturday, to: nextSunday };
+  });
+
+  const mobileNightCount = mobileDateRange?.from && mobileDateRange?.to
+    ? differenceInDays(mobileDateRange.to, mobileDateRange.from)
+    : 0;
+  const mobileSubtotal = mobileNightCount * (cabin?.pricePerNight || 0);
+  const mobileTotal = mobileSubtotal; // Simplified according to request
+
+  let mobileDateSummaryText = "Selecciona fechas";
+  if (mobileDateRange?.from && mobileDateRange?.to) {
+    const from = mobileDateRange.from;
+    const to = mobileDateRange.to;
+    if (from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear()) {
+      mobileDateSummaryText = `Por ${mobileNightCount} noches · ${from.getDate()} – ${format(to, "d 'de' MMMM", { locale: es })}`;
+    } else {
+      mobileDateSummaryText = `Por ${mobileNightCount} noches · ${format(from, "d 'de' MMM", { locale: es })} – ${format(to, "d 'de' MMM", { locale: es })}`;
+    }
+  }
 
   const handleToggleFavorite = useCallback(() => {
     if (!selectedItemId) return;
@@ -202,14 +294,52 @@ export function CabinDetail() {
     );
   }
 
+  const locationData = getLocationData(cabin.location || "Santa Verónica, Atlántico");
+
+  const displayRooms = (() => {
+    if (cabin?.bedroomDetails && cabin.bedroomDetails.length > 0) {
+      return cabin.bedroomDetails
+        .filter((b) => b.active !== false)
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
+    }
+
+    if (!cabin) return [];
+
+    const rooms: any[] = [];
+    const numRooms = Math.max(1, cabin.bedrooms || 1);
+    const capacity = cabin.capacity || 2;
+    
+    for (let i = 0; i < numRooms; i++) {
+      const roomCapacity = Math.floor(capacity / numRooms) + (i < (capacity % numRooms) ? 1 : 0);
+      
+      let beds = "1 cama doble";
+      if (roomCapacity === 1) beds = "1 cama individual";
+      else if (roomCapacity === 2) beds = "1 cama doble";
+      else if (roomCapacity === 3) beds = "1 cama doble, 1 cama individual";
+      else if (roomCapacity === 4) beds = "1 cama doble, 1 litera";
+      else if (roomCapacity >= 5) beds = `1 cama doble, ${roomCapacity - 2} camas individuales`;
+
+      const imgIndex = (i + 1) % (cabin.images?.length || 1);
+      const image = cabin.images?.[imgIndex] || cabin.images?.[0] || "";
+
+      rooms.push({
+        id: `room-${i}`,
+        title: `Habitación ${i + 1}`,
+        beds,
+        image,
+      });
+    }
+    return rooms;
+  })();
+
   return (
     <div className="pb-28 lg:pb-16">
-      {/* Back Button */}
+      {/* Back Button (Desktop) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 pt-20 sm:pt-24">
         <Button
           variant="ghost"
           onClick={() => navigate("cabins")}
-          className="gap-2 text-muted-foreground hover:text-ocean -ml-2"
+          className="hidden md:flex gap-2 text-muted-foreground hover:text-ocean -ml-2"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver a cabañas
@@ -218,10 +348,47 @@ export function CabinDetail() {
 
       {/* Image Gallery */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <PropertyGallery
-          images={cabin.images}
-          title={cabin.name}
-        />
+        <div className="relative">
+          {/* Mobile Floating Actions */}
+          <div className="md:hidden absolute top-4 left-4 right-4 z-10 flex items-center justify-between pointer-events-none">
+            {/* Back */}
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md pointer-events-auto hover:bg-white"
+              onClick={() => navigate("cabins")}
+            >
+              <ArrowLeft className="w-5 h-5 text-foreground" />
+            </Button>
+            
+            {/* Right actions: Share & Fav */}
+            <div className="flex items-center gap-2 pointer-events-auto">
+              <Button
+                variant="outline"
+                size="icon"
+                className={`h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md hover:bg-white transition-colors ${
+                  isFav ? "text-indigo" : "text-foreground"
+                }`}
+                onClick={handleToggleFavorite}
+              >
+                <Heart className={`w-5 h-5 transition-colors ${isFav ? "fill-current" : ""}`} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md hover:bg-white text-foreground"
+                onClick={() => setShareOpen(true)}
+              >
+                <Share2 className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+
+          <PropertyGallery
+            images={cabin.images}
+            title={cabin.name}
+            variant="cabin" />
+        </div>
       </div>
 
       {/* Main Content */}
@@ -237,11 +404,11 @@ export function CabinDetail() {
                     {cabin.name}
                   </h1>
                   <div className="flex items-center gap-1.5 text-muted-foreground mt-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />
+                    <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                     <span className="text-sm">{cabin.location}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="hidden md:flex items-center gap-1.5 shrink-0">
                   <Button
                     variant="outline"
                     size="icon"
@@ -263,8 +430,7 @@ export function CabinDetail() {
                     <Heart
                       className={`w-4 h-4 transition-colors ${
                         isFav ? "fill-indigo text-indigo" : ""
-                      }`}
-                    />
+                      }`} />
                   </Button>
                 </div>
               </div>
@@ -273,26 +439,29 @@ export function CabinDetail() {
             <Separator className="my-5" />
 
             {/* Key Stats Row */}
-            <div className="flex items-center gap-5 flex-wrap">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center">
-                  <Users className="w-3.5 h-3.5 text-muted-foreground" />
-                </div>
-                <span className="text-sm text-foreground">{cabin.capacity} huéspedes</span>
+            <div className="grid grid-cols-2 md:flex md:items-center gap-y-3 gap-x-6 md:gap-8 flex-wrap py-2">
+              <div className="flex items-center gap-3">
+                <Users className="w-5 h-5 text-foreground shrink-0" strokeWidth={1.5} />
+                <span className="text-base text-foreground font-normal hidden md:inline">{cabin.capacity} huéspedes</span>
+                <span className="text-sm text-foreground font-normal md:hidden">{cabin.capacity} PAX</span>
               </div>
-              <div className="w-px h-6 bg-border/60" />
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center">
-                  <BedDouble className="w-3.5 h-3.5 text-muted-foreground" />
-                </div>
-                <span className="text-sm text-foreground">{cabin.bedrooms} habitación{cabin.bedrooms > 1 ? "es" : ""}</span>
+              <div className="hidden md:block w-px h-5 bg-border/40" />
+              <div className="flex items-center gap-3">
+                <BedDouble className="w-5 h-5 text-foreground shrink-0" strokeWidth={1.5} />
+                <span className="text-base text-foreground font-normal hidden md:inline">{cabin.bedrooms} habitación{cabin.bedrooms > 1 ? "es" : ""}</span>
+                <span className="text-sm text-foreground font-normal md:hidden">{cabin.bedrooms} HAB.</span>
               </div>
-              <div className="w-px h-6 bg-border/60" />
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center">
-                  <Bath className="w-3.5 h-3.5 text-muted-foreground" />
-                </div>
-                <span className="text-sm text-foreground">{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
+              <div className="hidden md:block w-px h-5 bg-border/40" />
+              <div className="flex items-center gap-3">
+                <Bath className="w-5 h-5 text-foreground shrink-0" strokeWidth={1.5} />
+                <span className="text-base text-foreground font-normal hidden md:inline">{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
+                <span className="text-sm text-foreground font-normal md:hidden">{cabin.bathrooms} BAÑOS</span>
+              </div>
+              <div className="hidden md:block w-px h-5 bg-border/40" />
+              <div className="flex items-center gap-3">
+                <Waves className="w-5 h-5 text-foreground shrink-0" strokeWidth={1.5} />
+                <span className="text-base text-foreground font-normal hidden md:inline">Piscina</span>
+                <span className="text-sm text-foreground font-normal md:hidden">Piscina</span>
               </div>
             </div>
 
@@ -300,115 +469,226 @@ export function CabinDetail() {
 
             {/* Full Description */}
             <div>
-              <h2 className="text-base font-semibold text-foreground mb-2.5">
+              <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground mb-4">
                 Acerca de esta cabaña
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-sm">
-                {cabin.fullDescription}
-              </p>
+              <ExpandableSection>
+                <p className="text-foreground leading-relaxed text-base font-normal">
+                  {cabin.fullDescription}
+                </p>
+              </ExpandableSection>
             </div>
 
-            <Separator className="my-5" />
+            <Separator className="my-6" />
+
+            {/* ¿Dónde vas a dormir? */}
+            {displayRooms.length > 0 && (
+              <>
+                <div>
+                  <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground mb-4">
+                    ¿Dónde vas a dormir?
+                  </h2>
+                  <div className="flex overflow-x-auto gap-4 pb-4 snap-x scrollbar-hide">
+                    {displayRooms.map((bedroom: any) => (
+                      <div 
+                        key={bedroom.id} 
+                        className="w-[160px] flex-none snap-start group cursor-pointer"
+                        onClick={() => setRoomsModalOpen(true)}
+                      >
+                        <div className="w-full h-[110px] rounded-xl overflow-hidden mb-2 relative">
+                          <img 
+                            src={bedroom.image} 
+                            alt={bedroom.title} 
+                            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                           onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+                        </div>
+                        <h3 className="font-medium text-sm text-foreground">{bedroom.title}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5">{bedroom.beds}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <Separator className="my-6" />
+              </>
+            )}
 
             {/* Highlights */}
             <div>
-              <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-ocean/60" />
                 Puntos destacados
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {cabin.highlights.map((highlight, i) => {
-                  const HIcon = getHighlightIcon(highlight);
-                  return (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2.5 py-2 px-3 rounded-lg hover:bg-muted/40 transition-colors duration-150"
-                    >
-                      <HIcon className="w-4 h-4 text-ocean/50 shrink-0" />
-                      <span className="text-sm text-foreground">
-                        {highlight}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+              <ExpandableSection itemCount={cabin.highlights.length} maxHeight={290}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {cabin.highlights.map((highlight, i) => {
+                    const text = (highlight as any).text || highlight;
+                    const HIcon = getHighlightIcon(text);
+                    return (
+                      <div
+                        key={i}
+                        className="flex items-center gap-2.5 py-2 px-3 rounded-lg hover:bg-muted/40 transition-colors duration-150"
+                      >
+                        <HIcon className="w-4 h-4 text-ocean/50 shrink-0" />
+                        <span className="text-sm text-foreground">
+                          {text}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ExpandableSection>
             </div>
 
             <Separator className="my-5" />
 
             {/* Amenities */}
             <div>
-              <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
                 <Home className="w-4 h-4 text-ocean/60" />
                 Comodidades
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                {cabin.amenities.map((amenity, i) => {
-                  const AIcon = getAmenityIcon(amenity);
-                  return (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2.5 py-1.5 px-1"
-                    >
-                      <AIcon className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />
-                      <span className="text-sm text-foreground">{amenity}</span>
-                    </div>
-                  );
-                })}
-              </div>
+              <ExpandableSection itemCount={cabin.amenities.length} maxHeight={200}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                  {cabin.amenities.map((amenity, i) => {
+                    const text = (amenity as any).text || amenity;
+                    const AIcon = getAmenityIcon(text);
+                    return (
+                      <div
+                        key={i}
+                        className="flex items-center gap-2.5 py-1.5 px-1"
+                      >
+                        <AIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                        <span className="text-sm text-foreground">{text}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ExpandableSection>
             </div>
 
             <Separator className="my-5" />
 
             {/* Rules */}
             <div>
-              <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-ocean/60" />
                 Reglas de la cabaña
               </h2>
-              <div className="space-y-2">
-                {cabin.rules.map((rule, i) => {
-                  const RIcon = getRuleIcon(rule);
-                  return (
-                    <div
-                      key={i}
-                      className="flex items-start gap-2.5 py-1.5"
-                    >
-                      <RIcon className="w-3.5 h-3.5 text-muted-foreground/40 shrink-0 mt-0.5" />
-                      <span className="text-sm text-foreground">{rule}</span>
-                    </div>
-                  );
-                })}
+              <ExpandableSection itemCount={cabin.rules.length} maxHeight={230}>
+                <div className="space-y-2">
+                  {cabin.rules.map((rule, i) => {
+                    const text = (rule as any).text || rule;
+                    const RIcon = getRuleIcon(text);
+                    return (
+                      <div
+                        key={i}
+                        className="flex items-start gap-2.5 py-1.5"
+                      >
+                        <RIcon className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                        <span className="text-sm text-foreground">{text}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ExpandableSection>
+            </div>
+
+            <Separator className="my-5" />
+
+            {/* Location Map */}
+            <div>
+              <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground mb-4">
+                A dónde irás
+              </h2>
+              <p className="text-sm text-foreground mb-4">
+                {locationData.text}
+              </p>
+              <div className="w-full h-[250px] sm:h-[300px] rounded-2xl overflow-hidden mb-4 relative bg-muted border border-border/50">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(locationData.query)}&t=&z=14&ie=UTF8&iwloc=&output=embed`} />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground text-base mb-1.5">
+                  Aspectos destacados del vecindario
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {locationData.description}
+                </p>
               </div>
             </div>
 
             <Separator className="my-5" />
 
-            {/* Cancellation Policy */}
-            <div>
-              <h2 className="text-base font-semibold text-foreground mb-3.5 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-leaf/60" />
-                Política de cancelación
+            {/* Mobile Airbnb-style Reservation Flow (Visible only on mobile/tablet) */}
+            <div className="lg:hidden">
+              <h2 className="text-2xl font-semibold text-foreground mb-1">
+                {mobileNightCount} noches en {locationData.text.split(',')[0]}
               </h2>
-              <div className="p-4 rounded-xl bg-muted/40 border border-border/50">
-                <div className="flex items-start gap-3">
-                  <ShieldCheck className="w-4 h-4 text-leaf/60 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {cabin.cancellationPolicy}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Cancela dentro del plazo indicado y recibirás un reembolso completo.
-                    </p>
-                  </div>
-                </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                {mobileDateRange?.from && mobileDateRange?.to
+                  ? `${format(mobileDateRange.from, "d 'de' MMM", { locale: es })} - ${format(mobileDateRange.to, "d 'de' MMM", { locale: es })}`
+                  : "Selecciona tus fechas"}
+              </p>
+              
+              <div className="bg-muted/30 rounded-2xl p-2 -mx-2 sm:mx-0 sm:border sm:border-border/50 flex justify-center mobile-airbnb-calendar">
+                <style dangerouslySetInnerHTML={{__html: `
+                  .mobile-airbnb-calendar button[data-range-start="true"],
+                  .mobile-airbnb-calendar button[data-range-end="true"] {
+                    background-color: #008B8B !important;
+                    color: white !important;
+                    border-radius: 50% !important;
+                  }
+                  .mobile-airbnb-calendar button[data-range-middle="true"] {
+                    background-color: transparent !important;
+                    color: #1F2937 !important;
+                    border-radius: 0 !important;
+                  }
+                  .mobile-airbnb-calendar td:has(button[data-range-start="true"]) {
+                    background: linear-gradient(to right, transparent 50%, #e8f5f5 50%) !important;
+                  }
+                  .mobile-airbnb-calendar td:has(button[data-range-end="true"]) {
+                    background: linear-gradient(to left, transparent 50%, #e8f5f5 50%) !important;
+                  }
+                  .mobile-airbnb-calendar td:has(button[data-range-start="true"][data-range-end="true"]) {
+                    background: transparent !important;
+                  }
+                  .mobile-airbnb-calendar td:has(button[data-range-middle="true"]) {
+                    background-color: #e8f5f5 !important;
+                  }
+                  .mobile-airbnb-calendar button:disabled {
+                    color: #D1D5DB !important;
+                    opacity: 0.5;
+                  }
+                  .mobile-airbnb-calendar button:not(:disabled):not([data-range-start="true"]):not([data-range-end="true"]):not([data-range-middle="true"]) {
+                    color: #1F2937 !important;
+                  }
+                `}} />
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={mobileDateRange?.from}
+                  selected={mobileDateRange}
+                  onSelect={setMobileDateRange}
+                  numberOfMonths={1}
+                  disabled={(date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    return date < today;
+                  }}
+                  className="mx-auto w-full max-w-[320px]" />
+              </div>
+              <div className="flex justify-start mt-2">
+                <Button variant="link" onClick={() => setMobileDateRange(undefined)} className="text-foreground underline px-0">Borrar fechas</Button>
               </div>
             </div>
 
-            {/* Mobile Price Card - shows at bottom on mobile */}
-            <div className="lg:hidden mt-8">
-              <PriceCard cabin={cabin} />
-            </div>
+
+
           </div>
 
           {/* Right Column - Sticky Price Card (Desktop) */}
@@ -421,38 +701,23 @@ export function CabinDetail() {
       </div>
 
       {/* Mobile Sticky CTA Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-4 py-3 safe-area-bottom">
-        <div className="flex items-center justify-between gap-3 max-w-7xl mx-auto">
-          <div>
-            <p className="text-xs text-muted-foreground">Desde</p>
-            <p className="text-lg font-bold text-foreground">{formatPrice(cabin.pricePerNight)}<span className="text-xs font-normal text-muted-foreground">/noche</span></p>
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-5 py-3">
+        <div className="flex items-center justify-between gap-3">
+          <div onClick={() => setMobileBottomSheetOpen(true)} className="cursor-pointer">
+            <p className="text-lg font-bold text-foreground underline decoration-foreground/30 underline-offset-4 mb-0.5">
+              {formatPrice(mobileTotal)}
+            </p>
+            <p className="text-[13px] text-muted-foreground underline decoration-muted-foreground/30 underline-offset-4">
+               {mobileDateSummaryText}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full h-10 border-leaf/30 text-leaf hover:bg-leaf/5 gap-1.5"
-              asChild
-            >
-              <a
-                href={`https://wa.me/573001234567?text=${encodeURIComponent(
-                  `Hola, me interesa la ${cabin.name} en ${cabin.location}.`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span className="hidden xs:inline">WhatsApp</span>
-              </a>
-            </Button>
-            <Button
-              size="sm"
-              className="bg-ocean hover:bg-ocean-dark text-white rounded-full h-10 px-5"
-              onClick={() => navigate("contact")}
-            >
-              Reservar
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            className="bg-ocean hover:bg-ocean-dark text-white rounded-lg h-11 px-8 text-base font-semibold"
+            onClick={() => setMobileBottomSheetOpen(true)}
+          >
+            Reservar
+          </Button>
         </div>
       </div>
 
@@ -461,8 +726,117 @@ export function CabinDetail() {
         open={shareOpen}
         onOpenChange={setShareOpen}
         title={cabin.name}
-        text={`Mira esta cabaña: ${cabin.name} en ${cabin.location}`}
-      />
+        text={`Mira esta cabaña: ${cabin.name} en ${cabin.location}`} />
+
+      {/* Rooms Modal */}
+      <Dialog open={roomsModalOpen} onOpenChange={setRoomsModalOpen}>
+        <DialogContent className="w-full max-w-full h-[100dvh] sm:h-[85vh] sm:max-w-2xl sm:rounded-2xl p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] top-0 translate-y-0 sm:top-[50%] sm:-translate-y-[50%] sm:border border-0">
+          <DialogHeader className="px-5 py-4 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
+            <DialogTitle className="text-xl font-bold">¿Dónde vas a dormir?</DialogTitle>
+          </DialogHeader>
+          <div className="overflow-y-auto p-5 sm:p-6 space-y-8 flex-1 pb-10">
+            {displayRooms.map((room: any) => (
+              <div key={room.id} className="space-y-3">
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">{room.title}</h3>
+                  <p className="text-sm text-muted-foreground mt-0.5">{room.beds}</p>
+                </div>
+                <div className="aspect-[4/3] sm:aspect-video rounded-xl overflow-hidden relative border border-border/30 shadow-sm">
+                  <img                     src={room.image}
+                    alt={room.title}
+                    className="object-cover w-full h-full"
+                   onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Mobile Bottom Sheet (Price Details) */}
+      <Dialog open={mobileBottomSheetOpen} onOpenChange={setMobileBottomSheetOpen}>
+        <DialogContent className="w-full max-w-full h-auto p-0 gap-0 flex flex-col bg-background z-[100] bottom-0 top-auto translate-y-0 border-t border-border/50 rounded-t-2xl rounded-b-none lg:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full">
+          <DialogHeader className="px-5 py-4 border-b border-border/50 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between rounded-t-2xl">
+            <DialogTitle className="text-xl font-bold">Detalles del precio</DialogTitle>
+          </DialogHeader>
+          <div className="p-6 space-y-6 flex-1 bg-background pb-10">
+             <div className="flex justify-between items-center text-base">
+               <span className="font-normal">{formatPrice(cabin.pricePerNight)} x {mobileNightCount} noches</span>
+               <span className="font-medium">{formatPrice(mobileTotal)}</span>
+             </div>
+             
+             <Separator />
+             
+             <div className="flex justify-between items-center">
+               <div>
+                 <h4 className="font-semibold text-foreground text-sm">Fechas</h4>
+                 <p className="text-sm text-muted-foreground">
+                   {mobileDateRange?.from && mobileDateRange?.to
+                  ? `${format(mobileDateRange.from, "d -", { locale: es })} ${format(mobileDateRange.to, "d 'de' MMM", { locale: es })}`
+                  : "Selecciona fechas"}
+                 </p>
+               </div>
+               <Button variant="secondary" size="sm" className="rounded-full px-4 h-8 bg-muted text-foreground" onClick={() => {
+                 setMobileBottomSheetOpen(false);
+                 setTimeout(() => setMobileCalendarModalOpen(true), 150);
+               }}>Cambia</Button>
+             </div>
+             
+             <Separator />
+
+             <div className="flex justify-between items-center font-bold text-lg">
+               <span>Total estimado</span>
+               <span>{formatPrice(mobileTotal)}</span>
+             </div>
+             
+             <div className="flex justify-center mt-6">
+               <Button className="relative inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-white border border-[#1DA851]/20 shadow-[0_4px_14px_0_rgba(29,168,81,0.12)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(29,168,81,0.2)] hover:-translate-y-0.5 group overflow-hidden" onClick={() => {
+                 setMobileBottomSheetOpen(false);
+                 navigate("contact");
+               }}>
+                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#1DA851]/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
+                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#1DA851] relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                 <span className="relative z-10 font-bold text-base bg-clip-text text-transparent bg-gradient-to-r from-ocean-dark to-[#1DA851]">
+                   Reservar por WhatsApp
+                 </span>
+               </Button>
+             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Mobile Calendar Modal */}
+      <Dialog open={mobileCalendarModalOpen} onOpenChange={setMobileCalendarModalOpen}>
+        <DialogContent className="w-full max-w-full h-[100dvh] p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] top-0 translate-y-0 border-0 lg:hidden">
+          <DialogHeader className="px-5 py-4 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
+            <DialogTitle className="text-xl font-bold">Selecciona tus fechas</DialogTitle>
+          </DialogHeader>
+          <div className="overflow-y-auto p-4 flex-1 pb-32 flex flex-col items-center mobile-airbnb-calendar">
+             <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={mobileDateRange?.from}
+                selected={mobileDateRange}
+                onSelect={setMobileDateRange}
+                numberOfMonths={12}
+                disabled={(date) => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  return date < today;
+                }}
+                className="mx-auto w-full max-w-[320px]" />
+          </div>
+          <div className="fixed bottom-0 left-0 right-0 p-4 px-6 border-t border-border/50 bg-background z-20 flex justify-between items-center">
+             <Button variant="link" className="px-0 underline text-foreground" onClick={() => setMobileDateRange(undefined)}>Borrar fechas</Button>
+             <Button className="h-11 px-8 font-semibold rounded-xl bg-ocean text-white hover:bg-ocean-dark" onClick={() => {
+               setMobileCalendarModalOpen(false);
+               setTimeout(() => setMobileBottomSheetOpen(true), 150);
+             }}>
+               Guardar
+             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -473,6 +847,7 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
   const [guests, setGuests] = useState(1);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [guestPopoverOpen, setGuestPopoverOpen] = useState(false);
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -556,8 +931,7 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
                 disabled={{ before: today }}
                 numberOfMonths={1}
                 locale={es}
-                defaultMonth={today}
-              />
+                defaultMonth={today} />
             </PopoverContent>
           </Popover>
 
@@ -619,12 +993,27 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
         </div>
 
         {/* Reserve Button */}
-        <Button
-          className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-xl h-12 text-base font-semibold"
-          onClick={() => navigate("contact")}
-        >
-          Reservar ahora
-        </Button>
+        {!showWhatsApp ? (
+          <Button
+            className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-xl h-12 text-base font-semibold"
+            onClick={() => setShowWhatsApp(true)}
+          >
+            Reservar
+          </Button>
+        ) : (
+          <div className="flex justify-center w-full">
+            <Button
+              className="relative inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-white border border-[#1DA851]/20 shadow-[0_4px_14px_0_rgba(29,168,81,0.12)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(29,168,81,0.2)] hover:-translate-y-0.5 group overflow-hidden"
+              onClick={() => navigate("contact")}
+            >
+              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#1DA851]/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#1DA851] relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+              <span className="relative z-10 font-bold text-base bg-clip-text text-transparent bg-gradient-to-r from-ocean-dark to-[#1DA851]">
+                Reservar por WhatsApp
+              </span>
+            </Button>
+          </div>
+        )}
 
         {/* WhatsApp Button */}
         <Button

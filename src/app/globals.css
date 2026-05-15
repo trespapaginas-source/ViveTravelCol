@@ -43,46 +43,46 @@
   --radius-xl: calc(var(--radius) + 4px);
   /* Primary brand: #008B8B Dark Teal */
   --color-ocean: #008B8B;
-  --color-ocean-light: #33A6A6;
+  --color-ocean-light: #03A6A6;
   --color-ocean-dark: #005C5C;
-  /* Mint accent: #67BFA3 */
-  --color-mint: #67BFA3;
-  --color-mint-light: #A3DCC9;
-  /* Sky accent: #67A2BF */
-  --color-sky: #67A2BF;
-  --color-sky-light: #A3C5D9;
-  /* Indigo accent: #6786BF */
-  --color-indigo: #6786BF;
-  --color-indigo-light: #A3B3D9;
-  /* Leaf accent: #67BF85 */
-  --color-leaf: #67BF85;
-  --color-leaf-light: #A3D9B3;
-  /* Legacy aliases — map old names to new palette */
-  --color-sand: #67BFA3;
-  --color-sand-light: #A3DCC9;
-  --color-sunset: #67A2BF;
-  --color-sunset-light: #A3C5D9;
-  --color-coral: #6786BF;
-  --color-palm: #67BF85;
-  --color-palm-light: #A3D9B3;
+  /* Neutral — replaces mint */
+  --color-mint: #9CA3AF;
+  --color-mint-light: #D1D5DB;
+  /* Neutral — replaces sky */
+  --color-sky: #9CA3AF;
+  --color-sky-light: #D1D5DB;
+  /* Ocean alias — replaces indigo (favorites use teal) */
+  --color-indigo: #008B8B;
+  --color-indigo-light: #E0F4F4;
+  /* Neutral — replaces leaf */
+  --color-leaf: #6B7280;
+  --color-leaf-light: #E5E7EB;
+  /* Legacy aliases */
+  --color-sand: #9CA3AF;
+  --color-sand-light: #D1D5DB;
+  --color-sunset: #F27405;
+  --color-sunset-light: #F2A365;
+  --color-coral: #008B8B;
+  --color-palm: #6B7280;
+  --color-palm-light: #E5E7EB;
 }
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.99 0.005 195);
-  --foreground: oklch(0.18 0.02 195);
+  --background: #FFFFFF;
+  --foreground: #1F2937;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.02 195);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.02 195);
-  --primary: oklch(0.577 0.098 194.8);
-  --primary-foreground: oklch(0.99 0.005 195);
-  --secondary: oklch(0.95 0.02 195);
-  --secondary-foreground: oklch(0.25 0.03 195);
-  --muted: oklch(0.96 0.015 195);
-  --muted-foreground: oklch(0.5 0.02 195);
-  --accent: oklch(0.742 0.095 170.8);
-  --accent-foreground: oklch(0.18 0.02 195);
+  --primary: #008B8B;
+  --primary-foreground: #ffffff;
+  --secondary: #03A6A6;
+  --secondary-foreground: #ffffff;
+  --muted: #F2F2F2;
+  --muted-foreground: #6B7280;
+  --accent: #F3F4F6;
+  --accent-foreground: #111827;
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.92 0.015 195);
   --input: oklch(0.92 0.015 195);
@@ -104,19 +104,19 @@
 
 .dark {
   --background: oklch(0.13 0.015 195);
-  --foreground: oklch(0.95 0.01 195);
+  --foreground: #1F2937;
   --card: oklch(0.18 0.02 195);
   --card-foreground: oklch(0.95 0.01 195);
   --popover: oklch(0.18 0.02 195);
   --popover-foreground: oklch(0.95 0.01 195);
-  --primary: oklch(0.663 0.1 195);
-  --primary-foreground: oklch(0.13 0.015 195);
-  --secondary: oklch(0.25 0.02 195);
-  --secondary-foreground: oklch(0.95 0.01 195);
+  --primary: #008B8B;
+  --primary-foreground: #ffffff;
+  --secondary: #03A6A6;
+  --secondary-foreground: #ffffff;
   --muted: oklch(0.25 0.02 195);
-  --muted-foreground: oklch(0.7 0.02 195);
-  --accent: oklch(0.742 0.095 170.8);
-  --accent-foreground: oklch(0.95 0.01 195);
+  --muted-foreground: #6B7280;
+  --accent: #374151;
+  --accent-foreground: #F9FAFB;
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
@@ -137,6 +137,43 @@
 }
 
 @layer base {
+  body {
+    color: #374151; /* Texto normal */
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1 {
+    color: #111827;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  
+  h2, h3 {
+    color: #1F2937;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  
+  h4, h5, h6 {
+    color: #1F2937;
+    font-weight: 600;
+  }
+  
+  p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #374151;
+  }
+  
+  @media (max-width: 768px) {
+    p {
+      font-size: 15px;
+      line-height: 1.55;
+    }
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
@@ -181,4 +218,11 @@ html {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }

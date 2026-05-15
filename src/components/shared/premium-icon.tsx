@@ -267,8 +267,7 @@ export function IconFeature({
             "w-5 h-5",
             themeConfig.text,
             "transition-transform duration-300 group-hover:scale-110"
-          )}
-        />
+          )} />
       </div>
       <div className="min-w-0">
         <p className="font-semibold text-sm text-foreground">{title}</p>
@@ -460,9 +459,8 @@ export function RatingStars({
               iconSize,
               filled || half
                 ? "text-mint fill-mint drop-shadow-[0_0_4px_rgba(103,191,163,0.3)]"
-                : "text-muted-foreground/25"
-            )}
-          />
+                : "text-muted-foreground"
+            )} />
         );
       })}
       {showValue && (

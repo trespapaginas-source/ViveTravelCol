@@ -7,16 +7,16 @@ export const defaultSiteContent: SiteContentData = {
     titleHighlight: "desde la costa",
     subtitle:
       "Planes turísticos para todo el país, con la costa Caribe como casa. Playa, mar, sol y los mejores destinos nacionales.",
-    ctaPlans: "Ver planes",
+    ctaPlans: "Experiencias y viajes",
     ctaCabins: "Ver alojamientos",
   },
 
   featuredPlans: {
-    title: "Planes destacados",
+    title: "Experiencias destacadas",
     subtitle: "Experiencias que conectan Colombia, desde la costa hasta el interior",
     priceLabel: "Desde",
     viewMore: "Ver más",
-    viewAll: "Ver todos los planes",
+    viewAll: "Ver todas las experiencias",
   },
 
   carousel: {
@@ -43,7 +43,7 @@ export const defaultSiteContent: SiteContentData = {
     description:
       "Organiza tu viaje con amigos, familia o compañeros de trabajo. Tarifas especiales para grupos, itinerarios a tu medida y atención dedicada.",
     ctaQuote: "Solicitar cotización",
-    ctaPlans: "Ver planes",
+    ctaPlans: "Ver experiencias",
     benefits: [
       {
         title: "Descuentos grupales",
@@ -93,7 +93,7 @@ export const defaultSiteContent: SiteContentData = {
     ctaDescription:
       "Cuéntanos qué experiencia buscas, cuántos días tienes y tu presupuesto. Nosotros nos encargamos del resto.",
     ctaContact: "Contáctanos",
-    ctaPlans: "Ver planes",
+    ctaPlans: "Ver experiencias",
   },
 
   contact: {
@@ -286,22 +286,21 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
     brandSub: "Colombia",
     navItems: [
       { key: "home", label: "Inicio" },
-      { key: "plans", label: "Planes" },
+      { key: "plans", label: "Experiencias y viajes" },
       { key: "cabins", label: "Alojamientos" },
       { key: "contact", label: "Contacto" },
       { key: "policies", label: "Políticas" },
     ],
     ctaButton: "Reservar",
     ctaButtonMobile: "Reservar ahora",
-    adminLabel: "Administración",
   },
 
   plansList: {
-    title: "Nuestros planes",
+    title: "Experiencias y viajes",
     subtitle:
       "Experiencias en la costa Caribe y destinos de toda Colombia. Playa, naturaleza, aventura y cultura.",
-    emptyState: "No hay planes disponibles en esta categoría",
-    viewAll: "Ver todos los planes",
+    emptyState: "No hay experiencias disponibles en esta categoría",
+    viewAll: "Ver todas las experiencias",
   },
 
   cabinsList: {

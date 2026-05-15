@@ -19,6 +19,18 @@ export interface TourPlan {
   difficulty: "Fácil" | "Moderado" | "Avanzado";
   schedule: string;
   meeting: string;
+  published?: boolean;
+  order?: number;
+  fecha_salida?: string;
+}
+
+export interface BedroomInfo {
+  id: string;
+  title: string;
+  beds: string;
+  image: string;
+  order: number;
+  active: boolean;
 }
 
 export interface Cabin {
@@ -43,6 +55,9 @@ export interface Cabin {
   checkIn: string;
   checkOut: string;
   cancellationPolicy: string;
+  bedroomDetails?: BedroomInfo[];
+  published?: boolean;
+  order?: number;
 }
 
 export interface Testimonial {
@@ -339,6 +354,236 @@ export const tourPlans: TourPlan[] = [
     schedule: "9:00 AM - 1:00 PM",
     meeting: "Museo Bolivariano, Barranquilla",
   },
+  {
+    id: "plan-7",
+    name: "Magia del Eje Cafetero",
+    slug: "magia-eje-cafetero",
+    shortDescription: "Descubre la cultura cafetera, paisajes verdes y pueblos con encanto en un viaje inolvidable de 4 días.",
+    fullDescription: "Un viaje de 4 días y 3 noches por el corazón de Colombia. Recorre el Valle de Cocora con sus imponentes palmas de cera, visita fincas cafeteras tradicionales donde aprenderás todo el proceso del café desde la semilla hasta la taza, y relájate en las aguas termales de Santa Rosa de Cabal. Incluye alojamiento en hacienda típica, alimentación completa y guías expertos de la región.",
+    images: [
+      "https://images.unsplash.com/photo-1622308644420-b30fbdf94f1c?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1518182170546-076616fdcbdd?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1542385151-efd9000785a0?w=800&h=600&fit=crop",
+    ],
+    price: 1250000,
+    priceRange: "$1.250.000 - $1.500.000 COP",
+    duration: "4 días, 3 noches",
+    location: "Eje Cafetero, Colombia",
+    category: "Nacional",
+    includes: ["Vuelos ida y vuelta", "Alojamiento 3 noches", "Desayunos y cenas", "Tour cafetero", "Entrada a termales"],
+    excludes: ["Almuerzos", "Propinas", "Gastos personales"],
+    highlights: ["Valle de Cocora", "Tour del Café", "Termales de Santa Rosa"],
+    rating: 4.9,
+    reviewCount: 156,
+    maxGuests: 15,
+    difficulty: "Fácil",
+    schedule: "Salidas todos los jueves",
+    meeting: "Aeropuerto El Dorado",
+  },
+  {
+    id: "plan-8",
+    name: "Aventura en Parque Tayrona",
+    slug: "aventura-parque-tayrona",
+    shortDescription: "Conecta con la selva y el mar en el espectacular Parque Nacional Natural Tayrona por 3 noches.",
+    fullDescription: "Explora uno de los parques naturales más hermosos del mundo durante 4 días y 3 noches. Camina por senderos ecológicos rodeados de selva tropical hasta llegar a playas paradisíacas como Cabo San Juan y Arrecifes. Duerme en eco-habs con vista al mar y disfruta de la gastronomía local. Una experiencia perfecta para desconectar y llenarse de la energía de la Sierra Nevada.",
+    images: [
+      "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1620002093390-8d5926ec3fb4?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1588616527056-b99b343dae81?w=800&h=600&fit=crop",
+    ],
+    price: 980000,
+    priceRange: "$980.000 - $1.200.000 COP",
+    duration: "4 días, 3 noches",
+    location: "Santa Marta, Colombia",
+    category: "Nacional",
+    includes: ["Transporte terrestre", "Alojamiento en eco-habs", "Desayunos", "Entrada al Parque", "Seguro médico"],
+    excludes: ["Almuerzos y cenas", "Gastos personales"],
+    highlights: ["Cabo San Juan", "Senderismo guiado", "Playas vírgenes"],
+    rating: 4.8,
+    reviewCount: 210,
+    maxGuests: 12,
+    difficulty: "Moderado",
+    schedule: "Salidas viernes y sábados",
+    meeting: "Terminal de Transportes",
+  },
+  {
+    id: "plan-9",
+    name: "Paraíso en Punta Cana",
+    slug: "paraiso-punta-cana",
+    shortDescription: "Disfruta del Caribe al máximo con un plan todo incluido en las playas de Punta Cana.",
+    fullDescription: "Relájate en las playas de arena blanca y aguas cristalinas de República Dominicana con este viaje de 5 días y 4 noches. Alójate en un resort 5 estrellas con sistema todo incluido (comidas y bebidas ilimitadas). Disfruta de shows nocturnos, deportes acuáticos no motorizados y acceso a piscinas exclusivas. El plan perfecto para descansar sin preocupaciones.",
+    images: [
+      "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1582294406180-2c40b82bc0e3?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1590419690008-905895e8fe0d?w=800&h=600&fit=crop",
+    ],
+    price: 3500000,
+    priceRange: "$3.500.000 - $4.200.000 COP",
+    duration: "5 días, 4 noches",
+    location: "Punta Cana, Rep. Dominicana",
+    category: "Internacional",
+    includes: ["Vuelos directos", "Alojamiento Todo Incluido", "Traslados aeropuerto-hotel", "Seguro de viaje"],
+    excludes: ["Tours opcionales", "Gastos personales"],
+    highlights: ["Resort 5 estrellas", "Bebidas ilimitadas", "Playa privada"],
+    rating: 4.9,
+    reviewCount: 342,
+    maxGuests: 30,
+    difficulty: "Fácil",
+    schedule: "Salidas diarias",
+    meeting: "Aeropuerto Internacional",
+  },
+  {
+    id: "plan-10",
+    name: "Escape a San Andrés Islas",
+    slug: "escape-san-andres",
+    shortDescription: "Sumérgete en el mar de los 7 colores con este plan completo a la isla de San Andrés.",
+    fullDescription: "Descubre la belleza del Caribe colombiano en este viaje internacionalmente reconocido de 4 días y 3 noches. Disfruta de las playas de arena blanca, recorre la isla en un carrito de golf, visita el Acuario y Johnny Cay. Incluye alojamiento en hotel frente al mar, alimentación y tours emblemáticos para vivir la isla al máximo.",
+    images: [
+      "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1580228373356-820875298a00?w=800&h=600&fit=crop",
+    ],
+    price: 1800000,
+    priceRange: "$1.800.000 - $2.100.000 COP",
+    duration: "4 días, 3 noches",
+    location: "San Andrés Islas",
+    category: "Internacional",
+    includes: ["Vuelos", "Alojamiento con desayunos y cenas", "Tour al Acuario", "Vuelta a la isla"],
+    excludes: ["Tarjeta de turismo", "Almuerzos"],
+    highlights: ["Mar de 7 colores", "Johnny Cay", "Hoyo Soplador"],
+    rating: 4.7,
+    reviewCount: 421,
+    maxGuests: 25,
+    difficulty: "Fácil",
+    schedule: "Salidas diarias",
+    meeting: "Aeropuerto",
+  },
+  {
+    id: "plan-11",
+    name: "Aventura en Cancún",
+    slug: "aventura-cancun",
+    shortDescription: "Descubre la vibrante vida nocturna, zonas arqueológicas y playas espectaculares de Cancún.",
+    fullDescription: "Un espectacular viaje de 6 días y 5 noches al corazón del Caribe mexicano. Hospédate en un excelente resort en la zona hotelera con sistema todo incluido. Opcionalmente podrás visitar Chichén Itzá, cenotes cristalinos o parques temáticos como Xcaret. Un destino vibrante que lo tiene todo: relax, fiesta y cultura milenaria.",
+    images: [
+      "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1552074284-5e88ef1aef18?w=800&h=600&fit=crop",
+    ],
+    price: 4200000,
+    priceRange: "$4.200.000 - $5.500.000 COP",
+    duration: "6 días, 5 noches",
+    location: "Cancún, México",
+    category: "Internacional",
+    includes: ["Vuelos directos", "Hotel Todo Incluido", "Traslados", "Asistencia médica"],
+    excludes: ["Tours arqueológicos", "Propinas"],
+    highlights: ["Zona Hotelera", "Playas increíbles", "Vida nocturna"],
+    rating: 4.9,
+    reviewCount: 512,
+    maxGuests: 40,
+    difficulty: "Fácil",
+    schedule: "Salidas diarias",
+    meeting: "Aeropuerto Internacional",
+  },
+  {
+    id: "plan-12",
+    name: "Tour Grupal de las Islas",
+    slug: "tour-islas-cartagena-tintipan",
+    shortDescription: "Un viaje en grupo recorriendo las islas de Cartagena y Tintipán en un ambiente festivo.",
+    fullDescription: "Únete a este increíble viaje grupal de un día completo explorando los archipiélagos más hermosos. Navegaremos en lancha rápida desde Cartagena hacia las Islas del Rosario y Tintipán. Habrá música, refrigerios, paradas estratégicas para hacer snorkel y un almuerzo isleño espectacular. Ideal para celebrar con amigos o conocer gente nueva.",
+    images: [
+      "https://images.unsplash.com/photo-1550953181-e28a50f75f92?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1580228373356-820875298a00?w=800&h=600&fit=crop",
+    ],
+    price: 320000,
+    priceRange: "$320.000 - $380.000 COP",
+    duration: "Día completo (10 horas)",
+    location: "Cartagena / Tintipán",
+    category: "Grupal",
+    fecha_salida: "25 Mayo",
+    includes: ["Transporte en lancha", "Almuerzo isleño", "Snorkel", "Guía animador"],
+    excludes: ["Impuesto portuario", "Bebidas alcohólicas"],
+    highlights: ["Islas del Rosario", "Tintipán", "Snorkel y fiesta"],
+    rating: 4.8,
+    reviewCount: 189,
+    maxGuests: 40,
+    difficulty: "Fácil",
+    schedule: "7:00 AM - 5:00 PM",
+    meeting: "Muelle de los Pegasos, Cartagena",
+  },
+  {
+    id: "plan-13",
+    name: "Expedición Grupal Sierra Limón",
+    slug: "expedicion-sierra-limon",
+    shortDescription: "Aventura grupal de un día descubriendo cascadas y senderos ocultos en Sierra Limón.",
+    fullDescription: "Forma parte de esta expedición de un día pensada para grupos. Caminaremos por senderos ecológicos hasta llegar a las impresionantes cascadas de Sierra Limón. Un plan perfecto para team building o grupos de amigos que buscan aventura y naturaleza. Terminaremos con un almuerzo tradicional preparado por la comunidad local.",
+    images: [
+      "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop",
+    ],
+    price: 180000,
+    priceRange: "$180.000 - $220.000 COP",
+    duration: "Día completo (8 horas)",
+    location: "Sierra Limón",
+    category: "Grupal",
+    fecha_salida: "18 Jun",
+    includes: ["Transporte en bus", "Guía local", "Almuerzo tradicional", "Seguro de viaje"],
+    excludes: ["Gastos personales"],
+    highlights: ["Cascadas escondidas", "Senderismo", "Almuerzo comunitario"],
+    rating: 4.6,
+    reviewCount: 88,
+    maxGuests: 35,
+    difficulty: "Moderado",
+    schedule: "6:00 AM - 4:00 PM",
+    meeting: "Plaza Central",
+  },
+  {
+    id: "plan-14",
+    name: "Salto en Paracaidismo",
+    slug: "tour-paracaidismo",
+    shortDescription: "Siente la adrenalina extrema en una experiencia de paracaidismo tandem.",
+    fullDescription: "Para los amantes de la adrenalina pura. Una experiencia corta pero inolvidable donde realizarás un salto en paracaídas tipo tandem junto a un instructor certificado. Disfruta de una caída libre a más de 200 km/h y luego planea suavemente admirando un paisaje inigualable desde el aire.",
+    images: [
+      "https://images.unsplash.com/photo-1520114757270-b1836a0fb494?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1521685360661-04ba71a06288?w=800&h=600&fit=crop",
+    ],
+    price: 650000,
+    priceRange: "$650.000 - $800.000 COP",
+    duration: "Tour corto (3 horas)",
+    location: "Aeródromo local",
+    category: "Tours",
+    includes: ["Vuelo escénico", "Salto tandem", "Instructor certificado", "Seguro"],
+    excludes: ["Fotos y video (opcional)", "Transporte al aeródromo"],
+    highlights: ["Caída libre de 1 minuto", "Vuelo de 5 minutos en paracaídas"],
+    rating: 4.9,
+    reviewCount: 205,
+    maxGuests: 2,
+    difficulty: "Fácil",
+    schedule: "Varios horarios disponibles",
+    meeting: "Aeródromo",
+  },
+  {
+    id: "plan-15",
+    name: "Tour de Buceo en San Andrés",
+    slug: "tour-buceo-san-andres",
+    shortDescription: "Explora los increíbles arrecifes de coral en esta inmersión para principiantes.",
+    fullDescription: "Descubre el maravilloso mundo submarino del mar de los siete colores en un tour corto de buceo. Diseñado especialmente para principiantes (no necesitas certificación). Incluye una clase teórica, práctica en aguas poco profundas y una inmersión guiada en el arrecife de coral, donde podrás ver peces tropicales, mantarrayas y vida marina colorida.",
+    images: [
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1582967177931-50e82c5f1cd3?w=800&h=600&fit=crop",
+    ],
+    price: 250000,
+    priceRange: "$250.000 - $300.000 COP",
+    duration: "Tour corto (4 horas)",
+    location: "San Andrés Islas",
+    category: "Tours",
+    includes: ["Clase teórica y práctica", "Equipo completo de buceo", "1 inmersión guiada", "Instructor PADI"],
+    excludes: ["Fotos submarinas", "Transporte al centro de buceo"],
+    highlights: ["Arrecifes de coral", "Buceo seguro para novatos"],
+    rating: 4.8,
+    reviewCount: 310,
+    maxGuests: 6,
+    difficulty: "Moderado",
+    schedule: "8:00 AM o 2:00 PM",
+    meeting: "Centro de Buceo",
+  }
 ];
 
 // ─── Cabins ────────────────────────────────────────────────────────────────────
@@ -396,6 +641,24 @@ export const cabins: Cabin[] = [
     checkIn: "3:00 PM",
     checkOut: "11:00 AM",
     cancellationPolicy: "Cancelación gratuita hasta 7 días antes del check-in",
+    bedroomDetails: [
+      {
+        id: "bedroom-1",
+        title: "Habitación Principal",
+        beds: "1 cama King",
+        image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&h=600&fit=crop",
+        order: 1,
+        active: true,
+      },
+      {
+        id: "bedroom-2",
+        title: "Habitación Secundaria",
+        beds: "2 camas individuales",
+        image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
+        order: 2,
+        active: true,
+      }
+    ],
   },
   {
     id: "cabin-2",

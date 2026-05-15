@@ -9,7 +9,6 @@ interface Destination {
   title: string;
   subtitle: string;
   image: string;
-  view: string;
 }
 
 const destinations: Destination[] = [
@@ -19,7 +18,6 @@ const destinations: Destination[] = [
     subtitle: "Aguas cristalinas y arena blanca en el Caribe",
     image:
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&h=600&fit=crop&q=80",
-    view: "plans",
   },
   {
     id: "dest-pasadias",
@@ -27,7 +25,6 @@ const destinations: Destination[] = [
     subtitle: "Escapadas perfectas para un día inolvidable",
     image:
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1400&h=600&fit=crop&q=80",
-    view: "plans",
   },
   {
     id: "dest-rosario",
@@ -35,7 +32,6 @@ const destinations: Destination[] = [
     subtitle: "Paraíso tropical con arrecifes de coral",
     image:
       "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=1400&h=600&fit=crop&q=80",
-    view: "plans",
   },
   {
     id: "dest-bahia",
@@ -43,11 +39,10 @@ const destinations: Destination[] = [
     subtitle: "Descubre la magia de la bahía al atardecer",
     image:
       "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1400&h=600&fit=crop&q=80",
-    view: "plans",
   },
 ];
 
-const cardVariants = {
+const cardVariants: any = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
     opacity: 1,
@@ -67,7 +62,7 @@ function DestinationCard({
 }: {
   destination: Destination;
   index: number;
-  onNavigate: (view: string) => void;
+  onNavigate: () => void;
 }) {
   return (
     <motion.div
@@ -77,17 +72,16 @@ function DestinationCard({
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       className="group relative w-full overflow-hidden cursor-pointer"
-      onClick={() => onNavigate(destination.view)}
+      onClick={onNavigate}
     >
       {/* Image */}
       <div className="relative h-[200px] sm:h-[240px] md:h-[280px] lg:h-[320px]">
-        <img
-          src={destination.image}
+        <img           src={destination.image}
           alt={destination.title}
           loading="lazy"
           decoding="async"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/10 group-hover:from-black/70 group-hover:via-black/30 transition-all duration-500" />
@@ -124,8 +118,8 @@ export function DestinationsGallery() {
         {/* Section Header */}
         <div className="text-center mb-10 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-            Explora por{" "}
-            <span className="text-ocean">Destino</span>
+            Explora destinos{" "}
+            <span className="text-ocean">nacionales</span>
           </h2>
           <p className="mt-3 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
             Descubre los mejores tours y experiencias en los destinos más emblemáticos del Caribe colombiano
@@ -139,8 +133,7 @@ export function DestinationsGallery() {
               key={dest.id}
               destination={dest}
               index={i}
-              onNavigate={(view) => navigate(view as "plans")}
-            />
+              onNavigate={() => navigate("plans", "nacionales")} />
           ))}
         </div>
       </div>

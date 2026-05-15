@@ -31,11 +31,19 @@ interface CheckboxFilterOption {
   count: number;
 }
 
+interface CheckboxFilterGroup {
+  label: string;
+  value: string;
+  count: number;
+  options: CheckboxFilterOption[];
+}
+
 interface CheckboxFilterSection {
   id: string;
   title: string;
   type: "checkbox";
   options: CheckboxFilterOption[];
+  groups?: CheckboxFilterGroup[];
   initialShowCount?: number;
 }
 
@@ -67,6 +75,41 @@ function formatCOP(value: number): string {
   }).format(value);
 }
 
+const LOCATION_PARENTS: Record<string, string> = {
+  "Sabanilla": "Barranquilla",
+  "Puerto Colombia": "Barranquilla",
+  "Santa Verónica": "Barranquilla",
+  "Manglar de Mallorquín": "Barranquilla",
+  "Manglar de Mallorquín - Puerto Colombia": "Barranquilla",
+  "Barú": "Cartagena",
+  "Islas del Rosario": "Cartagena",
+  "Islas de San Bernardo": "Cartagena",
+  "Playa Manzanillo": "Cartagena",
+  "Tierra Bomba": "Cartagena",
+  "Parque Tayrona": "Santa Marta",
+  "Sierra Limón": "Santa Marta",
+  "Minca": "Santa Marta",
+};
+
+export function getCityForLocation(loc: string): string {
+  if (LOCATION_PARENTS[loc]) return LOCATION_PARENTS[loc];
+  const lower = loc.toLowerCase();
+  if (lower.includes("barranquilla")) return "Barranquilla";
+  if (lower.includes("cartagena")) return "Cartagena";
+  if (lower.includes("santa marta")) return "Santa Marta";
+  if (lower.includes("san gil")) return "San Gil";
+  if (lower.includes("luruaco")) return "Luruaco";
+  if (lower.includes("punta cana")) return "Punta Cana";
+  if (lower.includes("san andrés")) return "San Andrés";
+  return loc;
+}
+
+export function cleanLocationName(loc: string): string {
+  if (loc === "Manglar de Mallorquín - Puerto Colombia") return "Manglar de Mallorquín";
+  if (loc === "Islas del Rosario - Cartagena") return "Islas del Rosario";
+  return loc;
+}
+
 // ─── Filter Configuration Builders ─────────────────────────────────────────────
 
 export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
@@ -78,11 +121,36 @@ export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
     categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
   });
 
-  // Location counts
-  const locationCounts: Record<string, number> = {};
+  // Location counts mapped by city
+  const locationGroups: Record<string, { count: number, subzones: Record<string, number> }> = {};
   plans.forEach((p) => {
-    locationCounts[p.location] = (locationCounts[p.location] || 0) + 1;
+    const city = getCityForLocation(p.location);
+    if (!locationGroups[city]) {
+      locationGroups[city] = { count: 0, subzones: {} };
+    }
+    locationGroups[city].count += 1;
+    if (p.location !== city) {
+      locationGroups[city].subzones[p.location] = (locationGroups[city].subzones[p.location] || 0) + 1;
+    }
   });
+
+  const locationFilterGroups = Object.entries(locationGroups)
+    .sort(([, a], [, b]) => b.count - a.count)
+    .map(([city, data]) => {
+      const subzoneOptions = Object.entries(data.subzones)
+        .sort(([, a], [, b]) => b - a)
+        .map(([loc, count]) => ({
+          label: cleanLocationName(loc),
+          value: loc,
+          count
+        }));
+      return {
+        label: city,
+        value: city,
+        count: data.count,
+        options: subzoneOptions
+      };
+    });
 
   // Duration counts
   const durationCounts: Record<string, number> = {};
@@ -111,9 +179,8 @@ export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
       id: "location",
       title: "Ubicación",
       type: "checkbox",
-      options: Object.entries(locationCounts)
-        .sort(([, a], [, b]) => b - a)
-        .map(([label, count]) => ({ label, value: label, count })),
+      options: [],
+      groups: locationFilterGroups,
     },
     {
       id: "price",
@@ -138,11 +205,36 @@ export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
 export function buildCabinFilters(cabins: Cabin[]): FilterSection[] {
   if (cabins.length === 0) return [];
 
-  // Location counts
-  const locationCounts: Record<string, number> = {};
+  // Location counts mapped by city
+  const locationGroups: Record<string, { count: number, subzones: Record<string, number> }> = {};
   cabins.forEach((c) => {
-    locationCounts[c.location] = (locationCounts[c.location] || 0) + 1;
+    const city = getCityForLocation(c.location);
+    if (!locationGroups[city]) {
+      locationGroups[city] = { count: 0, subzones: {} };
+    }
+    locationGroups[city].count += 1;
+    if (c.location !== city) {
+      locationGroups[city].subzones[c.location] = (locationGroups[city].subzones[c.location] || 0) + 1;
+    }
   });
+
+  const locationFilterGroups = Object.entries(locationGroups)
+    .sort(([, a], [, b]) => b.count - a.count)
+    .map(([city, data]) => {
+      const subzoneOptions = Object.entries(data.subzones)
+        .sort(([, a], [, b]) => b - a)
+        .map(([loc, count]) => ({
+          label: cleanLocationName(loc),
+          value: loc,
+          count
+        }));
+      return {
+        label: city,
+        value: city,
+        count: data.count,
+        options: subzoneOptions
+      };
+    });
 
   // Capacity counts
   const capacityCounts: Record<string, number> = {};
@@ -185,9 +277,8 @@ export function buildCabinFilters(cabins: Cabin[]): FilterSection[] {
       id: "location",
       title: "Ubicación",
       type: "checkbox",
-      options: Object.entries(locationCounts)
-        .sort(([, a], [, b]) => b - a)
-        .map(([label, count]) => ({ label, value: label, count })),
+      options: [],
+      groups: locationFilterGroups,
     },
     {
       id: "price",
@@ -244,7 +335,12 @@ export function filterPlans(plans: TourPlan[], filters: FilterState): TourPlan[]
 
     // Location
     const locations = filters.checkboxes["location"] || [];
-    if (locations.length > 0 && !locations.includes(plan.location)) return false;
+    if (locations.length > 0) {
+      const planCity = getCityForLocation(plan.location);
+      if (!locations.includes(plan.location) && !locations.includes(planCity)) {
+        return false;
+      }
+    }
 
     // Price
     const priceRange = filters.ranges["price"];
@@ -262,7 +358,12 @@ export function filterCabins(cabins: Cabin[], filters: FilterState): Cabin[] {
   return cabins.filter((cabin) => {
     // Location
     const locations = filters.checkboxes["location"] || [];
-    if (locations.length > 0 && !locations.includes(cabin.location)) return false;
+    if (locations.length > 0) {
+      const cabinCity = getCityForLocation(cabin.location);
+      if (!locations.includes(cabin.location) && !locations.includes(cabinCity)) {
+        return false;
+      }
+    }
 
     // Price
     const priceRange = filters.ranges["price"];
@@ -354,36 +455,74 @@ function FilterCheckboxSection({
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
-        <span className="text-sm font-medium text-foreground/90">{section.title}</span>
+        <span className="text-sm font-medium text-foreground">{section.title}</span>
         <ChevronDown
-          className={`w-4 h-4 text-muted-foreground/50 transition-transform duration-200 ${
+          className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
             isOpen ? "" : "-rotate-90"
-          }`}
-        />
+          }`} />
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-1 pb-3">
-        {displayedOptions.map((option) => (
-          <label
-            key={option.value}
-            className="flex items-center gap-2.5 py-1 px-1 rounded-md hover:bg-muted/50 cursor-pointer group/item transition-colors"
-          >
-            <Checkbox
-              checked={selectedValues.includes(option.value)}
-              onCheckedChange={() => onToggle(section.id, option.value)}
-              className="data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white"
-            />
-            <span className="text-[13px] text-foreground/80 group-hover/item:text-foreground transition-colors flex-1 leading-tight">
-              {option.label}
-            </span>
-            <span className="text-[11px] text-muted-foreground/50 tabular-nums">
-              {option.count}
-            </span>
-          </label>
-        ))}
-        {hasMore && (
+        {section.groups && section.groups.length > 0 ? (
+          section.groups.map(group => (
+            <div key={group.value} className="mb-2">
+              <label className="flex items-center gap-2.5 py-1 px-1 rounded-md hover:bg-muted/50 cursor-pointer group/item transition-colors">
+                <Checkbox
+                  checked={selectedValues.includes(group.value)}
+                  onCheckedChange={() => onToggle(section.id, group.value)}
+                  className="data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white" />
+                <span className="text-[13px] font-semibold text-foreground group-hover/item:text-foreground transition-colors flex-1 leading-tight">
+                  {group.label}
+                </span>
+                <span className="text-[11px] text-muted-foreground tabular-nums">
+                  {group.count}
+                </span>
+              </label>
+              {group.options.length > 0 && (
+                <div className="pl-6 space-y-0.5 mt-0.5 border-l-2 border-muted ml-2.5">
+                  {group.options.map((option) => (
+                    <label
+                      key={option.value}
+                      className="flex items-center gap-2.5 py-1 px-1 pl-2.5 rounded-md hover:bg-muted/50 cursor-pointer group/item transition-colors"
+                    >
+                      <Checkbox
+                        checked={selectedValues.includes(option.value)}
+                        onCheckedChange={() => onToggle(section.id, option.value)}
+                        className="data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white" />
+                      <span className="text-[13px] text-muted-foreground group-hover/item:text-foreground transition-colors flex-1 leading-tight">
+                        {option.label}
+                      </span>
+                      <span className="text-[11px] text-muted-foreground/60 tabular-nums">
+                        {option.count}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          displayedOptions.map((option) => (
+            <label
+              key={option.value}
+              className="flex items-center gap-2.5 py-1 px-1 rounded-md hover:bg-muted/50 cursor-pointer group/item transition-colors"
+            >
+              <Checkbox
+                checked={selectedValues.includes(option.value)}
+                onCheckedChange={() => onToggle(section.id, option.value)}
+                className="data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white" />
+              <span className="text-[13px] text-foreground group-hover/item:text-foreground transition-colors flex-1 leading-tight">
+                {option.label}
+              </span>
+              <span className="text-[11px] text-muted-foreground tabular-nums">
+                {option.count}
+              </span>
+            </label>
+          ))
+        )}
+        {hasMore && !section.groups && (
           <button
             onClick={() => setShowAll(!showAll)}
-            className="text-[12px] text-foreground/50 hover:text-foreground/70 transition-colors ml-7 mt-1"
+            className="text-[12px] text-foreground hover:text-foreground transition-colors ml-7 mt-1"
           >
             {showAll ? "Mostrar menos" : `Mostrar más (${section.options.length - showCount})`}
           </button>
@@ -409,12 +548,11 @@ function FilterRangeSection({
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
-        <span className="text-sm font-medium text-foreground/90">{section.title}</span>
+        <span className="text-sm font-medium text-foreground">{section.title}</span>
         <ChevronDown
-          className={`w-4 h-4 text-muted-foreground/50 transition-transform duration-200 ${
+          className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
             isOpen ? "" : "-rotate-90"
-          }`}
-        />
+          }`} />
       </CollapsibleTrigger>
       <CollapsibleContent className="pb-4 pt-2 px-1">
         <div className="space-y-3">
@@ -424,13 +562,12 @@ function FilterRangeSection({
             max={section.max}
             step={section.step}
             onValueChange={(v) => onChange(section.id, v as [number, number])}
-            className="w-full"
-          />
+            className="w-full" />
           <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground/70 tabular-nums">
+            <span className="text-xs text-muted-foreground tabular-nums">
               {section.formatLabel(value[0])}
             </span>
-            <span className="text-xs text-muted-foreground/70 tabular-nums">
+            <span className="text-xs text-muted-foreground tabular-nums">
               {section.formatLabel(value[1])}
             </span>
           </div>
@@ -462,7 +599,7 @@ function FilterPanelContent({
       {/* Header */}
       <div className="flex items-center justify-between pb-2">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-foreground/60" />
+          <SlidersHorizontal className="w-4 h-4 text-foreground" />
           <span className="text-sm font-semibold text-foreground">Filtros</span>
           {activeCount > 0 && (
             <Badge
@@ -476,7 +613,7 @@ function FilterPanelContent({
         {activeCount > 0 && (
           <button
             onClick={onClearAll}
-            className="flex items-center gap-1 text-[12px] text-muted-foreground/60 hover:text-foreground/80 transition-colors"
+            className="flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground transition-colors"
           >
             <RotateCcw className="w-3 h-3" />
             Limpiar
@@ -493,14 +630,30 @@ function FilterPanelContent({
             if (section.type === "checkbox") {
               const selected = filters.checkboxes[section.id] || [];
               return selected.map((value) => {
-                const option = section.options.find((o) => o.value === value);
+                let optionLabel = value;
+                const flatOption = section.options?.find((o) => o.value === value);
+                if (flatOption) {
+                  optionLabel = flatOption.label;
+                } else if (section.groups) {
+                  for (const g of section.groups) {
+                    if (g.value === value) {
+                      optionLabel = g.label;
+                      break;
+                    }
+                    const sub = g.options.find((o) => o.value === value);
+                    if (sub) {
+                      optionLabel = sub.label;
+                      break;
+                    }
+                  }
+                }
                 return (
                   <button
                     key={`${section.id}-${value}`}
                     onClick={() => onToggleCheckbox(section.id, value)}
-                    className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-muted/80 text-foreground/70 hover:bg-muted transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-muted/80 text-foreground hover:bg-muted transition-colors"
                   >
-                    {option?.label || value}
+                    {optionLabel}
                     <X className="w-2.5 h-2.5" />
                   </button>
                 );
@@ -517,7 +670,7 @@ function FilterPanelContent({
                 <button
                   key={section.id}
                   onClick={() => onChangeRange(section.id, [section.min, section.max])}
-                  className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-muted/80 text-foreground/70 hover:bg-muted transition-colors"
+                  className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-muted/80 text-foreground hover:bg-muted transition-colors"
                 >
                   {section.formatLabel(range[0])} – {section.formatLabel(range[1])}
                   <X className="w-2.5 h-2.5" />
@@ -536,14 +689,12 @@ function FilterPanelContent({
             <FilterCheckboxSection
               section={section}
               selectedValues={filters.checkboxes[section.id] || []}
-              onToggle={onToggleCheckbox}
-            />
+              onToggle={onToggleCheckbox} />
           ) : (
             <FilterRangeSection
               section={section}
               value={filters.ranges[section.id] || [section.min, section.max]}
-              onChange={onChangeRange}
-            />
+              onChange={onChangeRange} />
           )}
           {index < sections.length - 1 && <Separator className="my-1" />}
         </div>
@@ -624,8 +775,7 @@ export function FilterMobileSheet(props: {
               onToggleCheckbox={onToggleCheckbox}
               onChangeRange={onChangeRange}
               onClearAll={onClearAll}
-              activeCount={activeCount}
-            />
+              activeCount={activeCount} />
           </div>
           <SheetFooter className="absolute bottom-0 left-0 right-0 bg-background border-t p-3">
             <Button
@@ -657,7 +807,13 @@ export function useFilterState(sections: FilterSection[]) {
   // Sync filter state when sections change (e.g. data loads)
   // Using React-recommended pattern: adjust state during render when props change
   // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
-  const sectionsKey = sections.map((s) => s.id).join(",");
+  const sectionsKey = sections
+    .map((s) =>
+      s.type === "checkbox"
+        ? `${s.id}:${s.options.map((o) => o.value).join("|")}`
+        : `${s.id}:${s.min}-${s.max}`
+    )
+    .join(",");
   const [prevKey, setPrevKey] = useState(sectionsKey);
   if (prevKey !== sectionsKey) {
     setPrevKey(sectionsKey);

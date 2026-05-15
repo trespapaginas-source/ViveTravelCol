@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Play, X, MapPin, Palmtree, Compass } from "lucide-react";
+import { Play, X, MapPin, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/lib/store";
 
@@ -30,12 +30,6 @@ export function VideoShowcase() {
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: Text Content */}
           <div className="text-center lg:text-left">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-ocean/10 text-ocean text-xs font-semibold tracking-wide uppercase mb-6">
-              <Palmtree className="w-3.5 h-3.5" />
-              Descubre el Atlántico
-            </div>
-
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-5">
               Vive la experiencia{" "}
               <span className="text-ocean">caribeña</span>{" "}
@@ -70,11 +64,11 @@ export function VideoShowcase() {
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
               <Button
                 size="lg"
-                onClick={() => navigate("plans")}
+                onClick={() => navigate("plans", "pasadias")}
                 className="bg-ocean hover:bg-ocean-dark text-white px-6 py-5 text-base rounded-xl shadow-lg shadow-ocean/20 transition-all duration-200 hover:scale-105 gap-2"
               >
                 <Compass className="w-5 h-5" />
-                Explorar planes
+                Explorar experiencias
               </Button>
               <Button
                 size="lg"
@@ -93,14 +87,13 @@ export function VideoShowcase() {
             {/* Video thumbnail with play button */}
             <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-ocean/10 group cursor-pointer" onClick={handlePlay}>
               {/* Thumbnail */}
-              <img
-                src="/video-thumbnail.png"
+              <img                 src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1600&h=900&fit=crop&q=80"
                 alt="Vive Travel - Descubre el Atlántico"
                 loading="lazy"
                 decoding="async"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="w-full aspect-video object-cover transition-transform duration-300 group-hover:scale-105"
-              />
+               onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
 
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -115,38 +108,17 @@ export function VideoShowcase() {
               {/* Bottom info bar */}
               <div className="absolute bottom-0 left-0 right-0 px-5 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <img
-                    src="/logo.png"
+                  <img                     src="/logo.png"
                     alt="Vive Travel"
                     width={56}
                     height={28}
                     className="h-7 w-auto brightness-0 invert"
-                  />
-                </div>
-                <div className="text-white/50 text-xs flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                  2:30
+                   onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
                 </div>
               </div>
 
               {/* Decorative border glow */}
               <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10" />
-            </div>
-
-            {/* Floating badge - top right */}
-            <div className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 bg-white rounded-lg sm:rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 shadow-lg border border-border/50">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-leaf animate-pulse" />
-                <span className="text-[10px] sm:text-xs font-semibold text-foreground">Disponible ahora</span>
-              </div>
-            </div>
-
-            {/* Floating badge - bottom left */}
-            <div className="absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4 bg-ocean-dark rounded-lg sm:rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 shadow-lg">
-              <div className="flex items-center gap-1.5">
-                <Compass className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white/80" />
-                <span className="text-[10px] sm:text-xs font-semibold text-white">+15 destinos</span>
-              </div>
             </div>
           </div>
         </div>
@@ -178,8 +150,7 @@ export function VideoShowcase() {
                 title="Vive Travel - Descubre el Atlántico"
                 className="absolute inset-0 w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+                allowFullScreen />
             </div>
           </div>
         </div>

@@ -131,8 +131,7 @@ function Calendar({
               data-slot="calendar"
               ref={rootRef}
               className={cn(className)}
-              {...props}
-            />
+              {...props} />
           )
         },
         Chevron: ({ className, orientation, ...props }) => {
@@ -146,8 +145,7 @@ function Calendar({
             return (
               <ChevronRightIcon
                 className={cn("size-4", className)}
-                {...props}
-              />
+                {...props} />
             )
           }
 
@@ -167,8 +165,7 @@ function Calendar({
         },
         ...components,
       }}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -205,8 +202,7 @@ function CalendarDayButton({
         defaultClassNames.day,
         className
       )}
-      {...props}
-    />
+      {...props} />
   )
 }
 

@@ -70,7 +70,7 @@ export function ListToolbar({
   return (
     <div className="flex items-center justify-between gap-3 flex-wrap">
       {/* Left: Result count */}
-      <span className="text-xs text-muted-foreground/60">
+      <span className="text-xs text-muted-foreground">
         {resultCount} {resultLabel}
       </span>
 
@@ -110,7 +110,7 @@ export function ListToolbar({
           <ToggleGroupItem value="2" aria-label="Vista de 2 columnas">
             <LayoutGrid className="w-4 h-4" />
           </ToggleGroupItem>
-          <ToggleGroupItem value="3" aria-label="Vista de 3 columnas">
+          <ToggleGroupItem value="3" aria-label="Vista de 3 columnas" className="hidden sm:inline-flex">
             <Grid3X3 className="w-4 h-4" />
           </ToggleGroupItem>
         </ToggleGroup>

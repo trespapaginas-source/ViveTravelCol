@@ -6,26 +6,27 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 export function Footer() {
-  const { navigate } = useNavigation();
+  const { navigate, currentView } = useNavigation();
+
+  if (currentView === "plan-detail" || currentView === "cabin-detail") return null;
 
   return (
-    <footer className="bg-ocean-dark text-white mt-auto">
+    <footer className="bg-[#111827] text-white mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer */}
-        <div className="py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Brand */}
-          <div className="space-y-4">
-            <img
-              src="/logo.png"
+          <div className="space-y-3">
+            <img               src="/logos/vive-travel-white.png"
               alt="Vive Travel"
-              className="h-12 w-auto brightness-0 invert"
-            />
+              className="h-10 w-auto"
+             onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
             <p className="text-sm text-white/40 leading-relaxed">
               Tu agencia de viajes en el Atlántico, Colombia. Te conectamos con
               las mejores experiencias turísticas y alojamientos del Caribe
               colombiano.
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-4">
               {[
                 { icon: Instagram, href: "#", label: "Instagram" },
                 { icon: Facebook, href: "#", label: "Facebook" },
@@ -34,26 +35,26 @@ export function Footer() {
                 <a
                   key={social.label}
                   href={social.href}
-                  className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all duration-200 min-w-[44px] min-h-[44px]"
+                  className="flex items-center justify-center text-white/50 hover:text-white hover:scale-110 transition-all duration-200"
                   aria-label={social.label}
                   target={social.href.startsWith("http") ? "_blank" : undefined}
                   rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
                 >
-                  <social.icon className="w-4 h-4" />
+                  <social.icon className="w-5 h-5" />
                 </a>
               ))}
             </div>
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
               Explorar
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-1.5">
               {[
                 { label: "Inicio", view: "home" as const },
-                { label: "Planes Turísticos", view: "plans" as const },
+                { label: "Experiencias y viajes", view: "plans" as const },
                 { label: "Cabañas", view: "cabins" as const },
                 { label: "Nuestro Equipo", view: "team" as const },
                 { label: "Contacto", view: "contact" as const },
@@ -61,8 +62,8 @@ export function Footer() {
               ].map((item) => (
                 <li key={item.view}>
                   <button
-                    onClick={() => navigate(item.view)}
-                    className="text-sm text-white/40 hover:text-white/80 transition-colors min-h-[44px] flex items-center"
+                    onClick={() => navigate(item.view, item.view === "plans" ? "pasadias" : null)}
+                    className="text-sm text-white/40 hover:text-white/80 transition-colors py-1 flex items-center"
                   >
                     {item.label}
                   </button>
@@ -72,11 +73,11 @@ export function Footer() {
           </div>
 
           {/* Contact */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
               Contacto
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2">
               <li className="flex items-center gap-2 text-sm text-white/40">
                 <Phone className="w-3.5 h-3.5 text-white/30 shrink-0" />
                 <span>+57 300 123 4567</span>
@@ -93,7 +94,7 @@ export function Footer() {
           </div>
 
           {/* WhatsApp CTA */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
               ¿Necesitas ayuda?
             </h3>
@@ -102,7 +103,7 @@ export function Footer() {
             </p>
             <Button
               asChild
-              className="w-full bg-white/10 hover:bg-white/20 text-white border-0 rounded-full min-h-[44px]"
+              className="w-full bg-white/10 hover:bg-white/20 text-white border-0 rounded-full h-10"
             >
               <a
                 href="https://wa.me/573001234567"

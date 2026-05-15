@@ -221,8 +221,7 @@ function PriceSlider({
         max={max}
         step={5000}
         onValueChange={(val) => onChange(val as [number, number])}
-        className="w-full"
-      />
+        className="w-full" />
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{formatPrice(range[0])}</span>
         <span>{formatPrice(range[1])}</span>
@@ -299,8 +298,7 @@ function PlanFilterContent({
         <CheckboxList
           options={filterData.categories}
           selected={filters.categories}
-          onToggle={toggleCategory}
-        />
+          onToggle={toggleCategory} />
       </FilterSection>
 
       {/* Location */}
@@ -308,8 +306,7 @@ function PlanFilterContent({
         <CheckboxList
           options={filterData.locations}
           selected={filters.locations}
-          onToggle={toggleLocation}
-        />
+          onToggle={toggleLocation} />
       </FilterSection>
 
       {/* Price */}
@@ -318,8 +315,7 @@ function PlanFilterContent({
           range={filters.priceRange}
           min={filterData.minPrice}
           max={filterData.maxPrice}
-          onChange={(priceRange) => onChange({ ...filters, priceRange })}
-        />
+          onChange={(priceRange) => onChange({ ...filters, priceRange })} />
       </FilterSection>
 
       {/* Difficulty */}
@@ -327,8 +323,7 @@ function PlanFilterContent({
         <CheckboxList
           options={filterData.difficulties}
           selected={filters.difficulties}
-          onToggle={toggleDifficulty}
-        />
+          onToggle={toggleDifficulty} />
       </FilterSection>
 
       {/* Duration */}
@@ -336,8 +331,7 @@ function PlanFilterContent({
         <CheckboxList
           options={filterData.durations}
           selected={filters.durations}
-          onToggle={toggleDuration}
-        />
+          onToggle={toggleDuration} />
       </FilterSection>
     </div>
   );
@@ -403,8 +397,7 @@ function CabinFilterContent({
         <CheckboxList
           options={filterData.locations}
           selected={filters.locations}
-          onToggle={toggleLocation}
-        />
+          onToggle={toggleLocation} />
       </FilterSection>
 
       {/* Price */}
@@ -413,8 +406,7 @@ function CabinFilterContent({
           range={filters.priceRange}
           min={filterData.minPrice}
           max={filterData.maxPrice}
-          onChange={(priceRange) => onChange({ ...filters, priceRange })}
-        />
+          onChange={(priceRange) => onChange({ ...filters, priceRange })} />
       </FilterSection>
 
       {/* Capacity */}
@@ -423,8 +415,7 @@ function CabinFilterContent({
           options={filterData.capacities.map(String)}
           selected={filters.capacities}
           onToggle={toggleCapacity}
-          formatLabel={(val) => `${val} huésped${parseInt(val) > 1 ? "es" : ""}`}
-        />
+          formatLabel={(val) => `${val} huésped${parseInt(val) > 1 ? "es" : ""}`} />
       </FilterSection>
 
       {/* Bedrooms */}
@@ -433,8 +424,7 @@ function CabinFilterContent({
           options={filterData.bedrooms.map(String)}
           selected={filters.bedrooms}
           onToggle={toggleBedrooms}
-          formatLabel={(val) => `${val} hab.`}
-        />
+          formatLabel={(val) => `${val} hab.`} />
       </FilterSection>
     </div>
   );

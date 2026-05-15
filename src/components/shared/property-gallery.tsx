@@ -10,6 +10,7 @@ interface PropertyGalleryProps {
   images: string[];
   title?: string;
   className?: string;
+  variant?: "default" | "cabin";
 }
 
 // ─── Desktop Gallery: Booking.com style ────────────────────────────────────────
@@ -97,6 +98,92 @@ function DesktopGallery({
   );
 }
 
+// ─── Desktop Gallery: Cabin style (Booking.com Exact) ──────────────────────
+function CabinDesktopGallery({
+  images,
+  onImageClick,
+}: {
+  images: string[];
+  onImageClick: (index: number) => void;
+}) {
+  const count = images.length;
+  const extraCount = count > 3 ? count - 3 : 0;
+
+  if (count === 1) {
+    return (
+      <div
+        className="relative h-[420px] lg:h-[480px] w-full rounded-[16px] overflow-hidden cursor-pointer group"
+        onClick={() => onImageClick(0)}
+      >
+        <GalleryImage src={images[0]} alt="Imagen 1" priority />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+      </div>
+    );
+  }
+
+  if (count === 2) {
+    return (
+      <div 
+        className="grid gap-[8px] h-[420px] lg:h-[480px] w-full rounded-[16px] overflow-hidden"
+        style={{ gridTemplateColumns: "2fr 1.35fr" }}
+      >
+        {/* Left: Main large image */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(0)}
+        >
+          <GalleryImage src={images[0]} alt="Imagen 1" priority />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
+        {/* Right image */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(1)}
+        >
+          <GalleryImage src={images[1]} alt="Imagen 2" priority />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className="grid gap-[8px] h-[420px] lg:h-[480px] w-full rounded-[16px] overflow-hidden"
+      style={{ gridTemplateColumns: "2fr 1.35fr", gridTemplateRows: "1fr 1fr" }}
+    >
+      {/* Left: Main large image spanning 2 rows */}
+      <div
+        className="relative cursor-pointer group overflow-hidden"
+        style={{ gridRow: "1 / span 2" }}
+        onClick={() => onImageClick(0)}
+      >
+        <GalleryImage src={images[0]} alt="Imagen 1" priority />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+      </div>
+
+      {/* Right Top */}
+      <div
+        className="relative cursor-pointer group overflow-hidden"
+        onClick={() => onImageClick(1)}
+      >
+        <GalleryImage src={images[1]} alt="Imagen 2" priority />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+      </div>
+
+      {/* Right Bottom */}
+      <div
+        className="relative cursor-pointer group overflow-hidden"
+        onClick={() => onImageClick(2)}
+      >
+        <GalleryImage src={images[2]} alt="Imagen 3" priority={false} />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        {extraCount > 0 && <MorePhotosOverlay count={extraCount} />}
+      </div>
+    </div>
+  );
+}
+
 // ─── Mobile Gallery: 2x2 grid, 4:3 aspect ─────────────────────────────────────
 
 function MobileGallery({
@@ -130,8 +217,7 @@ function MobileGallery({
         Array.from({ length: 4 - displayImages.length }).map((_, i) => (
           <div
             key={`empty-${i}`}
-            className="bg-muted/30 aspect-[4/3]"
-          />
+            className="bg-muted/30 aspect-[4/3]" />
         ))}
     </div>
   );
@@ -149,14 +235,13 @@ function GalleryImage({
   priority?: boolean;
 }) {
   return (
-    <img
-      src={src}
+    <img       src={src}
       alt={alt}
       loading={priority ? "eager" : "lazy"}
       decoding="async"
       sizes="(max-width: 640px) 48vw, (max-width: 1024px) 60vw, 720px"
       className="w-full h-full object-cover transition-transform duration-300"
-    />
+     onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
   );
 }
 
@@ -259,8 +344,7 @@ function Lightbox({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="max-w-full max-h-full object-contain rounded-lg"
-          />
+            className="max-w-full max-h-full object-contain rounded-lg" />
         </AnimatePresence>
 
         {/* Navigation Arrows */}
@@ -303,12 +387,11 @@ function Lightbox({
                     : "border-transparent opacity-40 hover:opacity-70"
                 )}
               >
-                <img
-                  src={img}
+                <img                   src={img}
                   alt={`Miniatura ${i + 1}`}
                   className="w-full h-full object-cover"
                   loading="lazy"
-                />
+                 onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
               </button>
             ))}
           </div>
@@ -320,7 +403,7 @@ function Lightbox({
 
 // ─── Main Export ───────────────────────────────────────────────────────────────
 
-export function PropertyGallery({ images, title, className }: PropertyGalleryProps) {
+export function PropertyGallery({ images, title, className, variant = "default" }: PropertyGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
@@ -337,7 +420,11 @@ export function PropertyGallery({ images, title, className }: PropertyGalleryPro
     <div className={cn("relative", className)}>
       {/* Desktop Gallery */}
       <div className="hidden sm:block">
-        <DesktopGallery images={images} onImageClick={handleImageClick} />
+        {variant === "cabin" ? (
+          <CabinDesktopGallery images={images} onImageClick={handleImageClick} />
+        ) : (
+          <DesktopGallery images={images} onImageClick={handleImageClick} />
+        )}
       </div>
 
       {/* Mobile Gallery */}
@@ -352,8 +439,7 @@ export function PropertyGallery({ images, title, className }: PropertyGalleryPro
           images={images}
           initialIndex={lightboxIndex}
           onClose={handleCloseLightbox}
-          title={title}
-        />
+          title={title} />
       )}
     </div>
   );

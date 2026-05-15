@@ -119,7 +119,6 @@ export interface NavbarContent {
   navItems: Array<{ key: string; label: string }>;
   ctaButton: string;
   ctaButtonMobile: string;
-  adminLabel: string;
 }
 
 export interface PlansListContent {

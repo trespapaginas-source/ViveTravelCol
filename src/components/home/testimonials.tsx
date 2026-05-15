@@ -28,8 +28,7 @@ export function Testimonials() {
       <div className="max-w-4xl mx-auto">
         <SectionHeader
           title="Lo que dicen nuestros viajeros"
-          subtitle="Historias reales de quienes ya vivieron la experiencia Vive Travel"
-        />
+          subtitle="Historias reales de quienes ya vivieron la experiencia Vive Travel" />
 
         <div className="relative">
           <div className="bg-card rounded-3xl shadow-sm border border-border/50 p-8 sm:p-12 relative overflow-hidden">
@@ -47,7 +46,7 @@ export function Testimonials() {
                 <h4 className="font-semibold text-foreground text-base">
                   {t.name}
                 </h4>
-                <p className="text-sm text-muted-foreground/60">{t.location}</p>
+                <p className="text-sm text-muted-foreground">{t.location}</p>
               </div>
             </div>
 
@@ -57,7 +56,7 @@ export function Testimonials() {
             </blockquote>
 
             {/* Trip name */}
-            <p className="text-muted-foreground/50 text-sm font-medium">{t.tripName}</p>
+            <p className="text-muted-foreground text-sm font-medium">{t.tripName}</p>
           </div>
 
           {/* Navigation */}
@@ -80,8 +79,7 @@ export function Testimonials() {
                       ? "w-8 h-2.5 bg-ocean"
                       : "w-2.5 h-2.5 bg-muted-foreground/25 hover:bg-muted-foreground/40"
                   }`}
-                  aria-label={`Ir a testimonio ${i + 1}`}
-                />
+                  aria-label={`Ir a testimonio ${i + 1}`} />
               ))}
             </div>
 

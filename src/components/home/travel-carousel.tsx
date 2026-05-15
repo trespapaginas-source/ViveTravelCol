@@ -22,8 +22,7 @@ export function TravelCarousel() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
           title="Viajes Realizados"
-          subtitle="Nuestros viajeros ya lo vivieron"
-        />
+          subtitle="Nuestros viajeros ya lo vivieron" />
 
         <div className="relative">
           {/* Carousel */}
@@ -35,13 +34,12 @@ export function TravelCarousel() {
                   className="flex-[0_0_70%] sm:flex-[0_0_45%] lg:flex-[0_0_30%] min-w-0"
                 >
                   <div className="group relative overflow-hidden rounded-2xl aspect-square cursor-pointer">
-                    <img
-                      src={trip.url}
+                    <img                       src={trip.url}
                       alt={trip.caption}
                       loading="lazy"
                       decoding="async"
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
+                     onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
 
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

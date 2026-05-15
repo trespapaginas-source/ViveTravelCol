@@ -68,8 +68,7 @@ export function ListPagination({
         <PaginationItem>
           <PaginationPrevious
             className={currentPage <= 1 ? "pointer-events-none opacity-40" : "cursor-pointer"}
-            onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-          />
+            onClick={() => currentPage > 1 && onPageChange(currentPage - 1)} />
         </PaginationItem>
 
         {/* Page numbers */}
@@ -95,8 +94,7 @@ export function ListPagination({
         <PaginationItem>
           <PaginationNext
             className={currentPage >= totalPages ? "pointer-events-none opacity-40" : "cursor-pointer"}
-            onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
-          />
+            onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)} />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

@@ -39,8 +39,7 @@ function SheetOverlay({
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
         className
       )}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -86,8 +85,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sheet-header"
       className={cn("flex flex-col gap-1.5 p-4", className)}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -96,8 +94,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sheet-footer"
       className={cn("mt-auto flex flex-col gap-2 p-4", className)}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -109,8 +106,7 @@ function SheetTitle({
     <SheetPrimitive.Title
       data-slot="sheet-title"
       className={cn("text-foreground font-semibold", className)}
-      {...props}
-    />
+      {...props} />
   )
 }
 
@@ -122,8 +118,7 @@ function SheetDescription({
     <SheetPrimitive.Description
       data-slot="sheet-description"
       className={cn("text-muted-foreground text-sm", className)}
-      {...props}
-    />
+      {...props} />
   )
 }
 

@@ -76,12 +76,11 @@ export function ImageCarousel({
             {images.map((img, i) => (
               <CarouselItem key={i}>
                 <div className={cn("relative overflow-hidden rounded-2xl", aspectClasses[aspectRatio])}>
-                  <img
-                    src={img}
+                  <img                     src={img}
                     alt={`Imagen ${i + 1}`}
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
+                   onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
                   {showExpand && (
                     <Button
                       variant="ghost"
@@ -117,11 +116,10 @@ export function ImageCarousel({
                     : "border-transparent opacity-60 hover:opacity-100"
                 )}
               >
-                <img
-                  src={img}
+                <img                   src={img}
                   alt={`Miniatura ${i + 1}`}
                   className="w-full h-full object-cover"
-                />
+                 onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
               </button>
             ))}
           </div>
@@ -140,11 +138,10 @@ export function ImageCarousel({
         <DialogContent className="max-w-5xl p-0 bg-black/95 border-0 overflow-hidden">
           <DialogTitle className="sr-only">Visor de imágenes</DialogTitle>
           <div className="relative">
-            <img
-              src={images[selectedIndex]}
+            <img               src={images[selectedIndex]}
               alt={`Imagen ${selectedIndex + 1}`}
               className="w-full max-h-[80vh] object-contain"
-            />
+             onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4">
               <Button
                 variant="ghost"

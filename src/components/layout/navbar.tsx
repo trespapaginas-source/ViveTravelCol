@@ -1,15 +1,22 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useNavigation, type ViewType } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, Phone, Heart } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { EXPERIENCE_SECTIONS, type ExperienceSectionId } from "@/lib/experience-sections";
+import { ChevronDown, Menu, Phone, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { key: "home" as const, label: "Inicio" },
-  { key: "plans" as const, label: "Planes" },
   { key: "cabins" as const, label: "Cabañas" },
   { key: "team" as const, label: "Equipo" },
   { key: "contact" as const, label: "Contacto" },
@@ -29,8 +36,10 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const tickingRef = useRef(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const isHome = currentView === "home";
+  const isHome = currentView === "home" && pathname === "/";
   const showOpaque = !isHome || scrolled;
 
   // Throttled scroll handler using rAF — avoids excessive re-renders
@@ -53,13 +62,33 @@ export function Navbar() {
   const handleNav = useCallback(
     (view: Parameters<typeof navigate>[0]) => {
       navigate(view);
+      
+      if (pathname !== "/") {
+        router.push("/");
+      }
+      
       // Use requestAnimationFrame to ensure navigation renders before Sheet closes
       // This prevents the visual glitch where the old view is visible behind the closing Sheet
       requestAnimationFrame(() => {
         setMobileOpen(false);
       });
     },
-    [navigate]
+    [navigate, pathname, router]
+  );
+
+  const handleExperienceNav = useCallback(
+    (section: ExperienceSectionId) => {
+      navigate("plans", section);
+
+      if (pathname !== "/") {
+        router.push("/");
+      }
+
+      requestAnimationFrame(() => {
+        setMobileOpen(false);
+      });
+    },
+    [navigate, pathname, router]
   );
 
   return (
@@ -78,20 +107,46 @@ export function Navbar() {
             onClick={() => handleNav("home")}
             className="flex items-center group"
           >
-            <img
-              src="/logo.png"
+            <img               src={showOpaque ? "/logos/vive-travel-original.png" : "/logos/vive-travel-white.png"}
               alt="Vive Travel"
               width={120}
               height={48}
-              className={cn(
-                "h-10 sm:h-12 w-auto transition-all duration-300",
-                !showOpaque && "brightness-0 invert"
-              )}
-            />
+              className="h-10 sm:h-12 w-auto transition-all duration-300"
+             onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
           </button>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={cn(
+                    "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors duration-200 flex items-center gap-1.5",
+                    isItemActive("plans", currentView)
+                      ? showOpaque
+                        ? "bg-ocean text-white"
+                        : "bg-white/20 backdrop-blur-sm text-white"
+                      : showOpaque
+                      ? "text-muted-foreground hover:bg-muted hover:text-ocean-dark"
+                      : "text-white/70 hover:bg-white/10 hover:text-white"
+                  )}
+                >
+                  Experiencias y viajes
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="min-w-52">
+                {EXPERIENCE_SECTIONS.map((section) => (
+                  <DropdownMenuItem
+                    key={section.id}
+                    onClick={() => handleExperienceNav(section.id)}
+                    className="cursor-pointer"
+                  >
+                    {section.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             {navItems.map((item) => (
               <button
                 key={item.key}
@@ -126,7 +181,7 @@ export function Navbar() {
                     ? "bg-ocean/10 text-ocean"
                     : "bg-white/20 text-white"
                   : showOpaque
-                  ? "text-muted-foreground/50 hover:text-ocean hover:bg-ocean/5"
+                  ? "text-muted-foreground hover:text-ocean hover:bg-ocean/5"
                   : "text-white/50 hover:text-white hover:bg-white/10"
               )}
               aria-label="Mis favoritos"
@@ -169,15 +224,26 @@ export function Navbar() {
                 <SheetTitle className="sr-only">Menú de navegación</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b">
-                    <img
-                      src="/logo.png"
+                    <img                       src="/logos/vive-travel-original.png"
                       alt="Vive Travel"
                       width={90}
                       height={36}
                       className="h-9 w-auto"
-                    />
+                     onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
                   </div>
                   <nav className="flex flex-col p-4 gap-1.5 overflow-y-auto">
+                    <div className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Experiencias y viajes
+                    </div>
+                    {EXPERIENCE_SECTIONS.map((section) => (
+                      <button
+                        key={section.id}
+                        onClick={() => handleExperienceNav(section.id)}
+                        className="px-4 py-3.5 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center text-muted-foreground hover:bg-muted hover:text-ocean"
+                      >
+                        {section.label}
+                      </button>
+                    ))}
                     {navItems.map((item) => (
                       <button
                         key={item.key}

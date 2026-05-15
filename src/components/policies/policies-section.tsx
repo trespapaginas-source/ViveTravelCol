@@ -262,7 +262,7 @@ const cancellationPolicies: PolicyItem[] = [
         </ul>
         <div className="bg-muted/50 rounded-lg p-4 mt-3 border border-border">
           <p className="font-medium text-foreground text-sm flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-muted-foreground/60" />
+            <AlertTriangle className="w-4 h-4 text-muted-foreground" />
             Nota importante
           </p>
           <p className="text-sm text-muted-foreground mt-1">
@@ -424,7 +424,7 @@ function PolicyAccordion({
             <AccordionTrigger className="hover:no-underline hover:text-foreground transition-colors py-4">
               <span className="flex items-center gap-3 text-left">
                 <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center shrink-0">
-                  <Icon className="w-3.5 h-3.5 text-muted-foreground/60" />
+                  <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                 </div>
                 <span className="font-semibold text-sm">{item.title}</span>
               </span>
@@ -451,13 +451,13 @@ export function PoliciesSection() {
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
-          <span className="inline-flex items-center gap-1.5 text-muted-foreground/50 text-xs font-medium tracking-wider uppercase mb-4">
+          <span className="inline-flex items-center gap-1.5 text-muted-foreground text-xs font-medium tracking-wider uppercase mb-4">
             <ScrollText className="w-3.5 h-3.5" />
             Políticas
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Políticas de{" "}
-            <span className="text-foreground/40">Reserva y Cancelación</span>
+            <span className="text-foreground">Reserva y Cancelación</span>
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
             Es importante que conozcas nuestras políticas antes de realizar tu
@@ -470,13 +470,13 @@ export function PoliciesSection() {
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center">
-              <ShieldCheck className="w-4 h-4 text-muted-foreground/60" />
+              <ShieldCheck className="w-4 h-4 text-muted-foreground" />
             </div>
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-foreground">
                 Políticas de Reserva
               </h3>
-              <p className="text-sm text-muted-foreground/60">
+              <p className="text-sm text-muted-foreground">
                 Condiciones para realizar y gestionar tu reserva
               </p>
             </div>
@@ -493,13 +493,13 @@ export function PoliciesSection() {
         <div>
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center">
-              <FileText className="w-4 h-4 text-muted-foreground/60" />
+              <FileText className="w-4 h-4 text-muted-foreground" />
             </div>
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-foreground">
                 Políticas de Cancelación
               </h3>
-              <p className="text-sm text-muted-foreground/60">
+              <p className="text-sm text-muted-foreground">
                 Condiciones para cancelaciones, reembolsos y casos especiales
               </p>
             </div>
@@ -525,7 +525,7 @@ export function PoliciesSection() {
             </a>
             . Estamos aquí para ayudarte.
           </p>
-          <p className="text-xs text-muted-foreground/40 mt-3">
+          <p className="text-xs text-muted-foreground mt-3">
             Última actualización: Enero 2025. Las políticas están sujetas a
             cambios sin previo aviso.
           </p>
