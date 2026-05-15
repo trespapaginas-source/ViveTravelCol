@@ -48,8 +48,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-export const runtime = 'edge';
-
-export const runtime = 'edge';
+}export const runtime = 'edge';

@@ -37,8 +37,4 @@ export async function GET() {
     console.error("Error fetching site content:", error);
     return NextResponse.json(defaultSiteContent);
   }
-}
-
-export const runtime = 'edge';
-
-export const runtime = 'edge';
+}export const runtime = 'edge';
