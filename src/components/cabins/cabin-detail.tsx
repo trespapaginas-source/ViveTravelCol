@@ -733,6 +733,16 @@ export function CabinDetail() {
         <DialogContent className="w-full max-w-full h-[100dvh] sm:h-[85vh] sm:max-w-2xl sm:rounded-2xl p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] top-0 translate-y-0 sm:top-[50%] sm:-translate-y-[50%] sm:border border-0">
           <DialogHeader className="px-5 py-4 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
             <DialogTitle className="text-xl font-bold">¿Dónde vas a dormir?</DialogTitle>
+            <button
+              onClick={() => setRoomsModalOpen(false)}
+              aria-label="Cerrar"
+              className="flex items-center justify-center w-11 h-11 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground -mr-2 flex-shrink-0"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
           </DialogHeader>
           <div className="overflow-y-auto p-5 sm:p-6 space-y-8 flex-1 pb-10">
             {displayRooms.map((room: any) => (
