@@ -33,6 +33,7 @@ import { Separator } from "@/components/ui/separator";
 import { PropertyGallery } from "@/components/shared/property-gallery";
 import { useNavigation } from "@/lib/store";
 import { fetchPlan } from "@/lib/api";
+import { getPlanExperienceSection } from "@/lib/experience-sections";
 import { useQuery } from "@tanstack/react-query";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { ShareDialog } from "@/components/shared/share-dialog";
@@ -193,7 +194,7 @@ export function PlanDetail() {
         {/* Back Button (Desktop) */}
         <Button
           variant="ghost"
-          onClick={() => navigate("plans", "pasadias")}
+          onClick={() => navigate("plans", getPlanExperienceSection(plan))}
           className="hidden md:flex gap-2 mb-6 -ml-2 text-muted-foreground hover:text-foreground w-fit"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -209,7 +210,7 @@ export function PlanDetail() {
               variant="outline"
               size="icon"
               className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md pointer-events-auto hover:bg-white"
-              onClick={() => navigate("plans", "pasadias")}
+              onClick={() => navigate("plans", getPlanExperienceSection(plan))}
             >
               <ArrowLeft className="w-5 h-5 text-foreground" />
             </Button>
