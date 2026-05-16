@@ -306,10 +306,10 @@ function Lightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="fixed inset-0 z-[100] bg-black/95 flex flex-col"
+      className="fixed inset-0 z-[100] bg-black/95 flex flex-col overflow-y-auto"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-4 shrink-0">
+      <div className="sticky top-0 z-50 flex items-center justify-between px-4 sm:px-6 py-4 shrink-0 bg-black/80 backdrop-blur-md border-b border-white/10">
         <div className="min-w-0">
           {title && (
             <p className="text-white/80 text-sm font-medium truncate max-w-[50vw]">

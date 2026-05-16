@@ -312,7 +312,7 @@ export function PlanDetail() {
 
             {/* Info Section */}
             {isBookingStyle ? (
-              <div className="sticky top-14 sm:top-16 z-30 bg-background pt-2 pb-0 border-b border-border/50 mb-6 flex overflow-x-auto gap-6 hide-scrollbar">
+              <div className="sticky top-16 sm:top-20 z-30 bg-background pt-2 pb-0 border-b border-border/50 mb-6 flex overflow-x-auto gap-6 hide-scrollbar">
                 {[
                   { id: "general", label: "General" },
                   { id: "incluye", label: "Incluye" },
