@@ -14,29 +14,29 @@ interface Destination {
 const destinations: Destination[] = [
   {
     id: "dest-baru",
-    title: "Tours en Barú",
-    subtitle: "Aguas cristalinas y arena blanca en el Caribe",
+    title: "Cartagena",
+    subtitle: "Historia, cultura y encanto colonial",
     image:
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&h=600&fit=crop&q=80",
   },
   {
     id: "dest-pasadias",
-    title: "Pasadías",
-    subtitle: "Escapadas perfectas para un día inolvidable",
+    title: "Santa Marta",
+    subtitle: "Naturaleza viva donde la sierra abraza el mar",
     image:
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1400&h=600&fit=crop&q=80",
   },
   {
     id: "dest-rosario",
-    title: "Islas del Rosario",
-    subtitle: "Paraíso tropical con arrecifes de coral",
+    title: "Quindío",
+    subtitle: "La verdadera esencia y tradición cafetera",
     image:
       "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=1400&h=600&fit=crop&q=80",
   },
   {
     id: "dest-bahia",
-    title: "Tours por la Bahía",
-    subtitle: "Descubre la magia de la bahía al atardecer",
+    title: "Más de Colombia",
+    subtitle: "Descubre otras joyas y destinos inexplorados",
     image:
       "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1400&h=600&fit=crop&q=80",
   },
