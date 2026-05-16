@@ -7,7 +7,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { HeroSection } from "@/components/home/hero-section";
 import { VideoShowcase } from "@/components/home/video-showcase";
-import { InfluencerAuthority } from "@/components/home/influencer-authority";
+
 import { FeaturedPlans } from "@/components/home/featured-plans";
 import { DestinationsGallery } from "@/components/home/destinations-gallery";
 import { InternationalDestinations } from "@/components/home/international-destinations";
@@ -49,7 +49,7 @@ function HomeView() {
     <>
       <HeroSection />
       <VideoShowcase />
-      <InfluencerAuthority />
+
       <FeaturedPlans />
       <DestinationsGallery />
       <InternationalDestinations />
