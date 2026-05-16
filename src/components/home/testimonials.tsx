@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
 import { testimonials } from "@/lib/data";
 
@@ -38,16 +38,30 @@ export function Testimonials() {
             </div>
 
             {/* Avatar + Info */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-foreground font-semibold text-sm">
-                {t.avatar}
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-ocean/10 flex items-center justify-center text-ocean font-bold text-sm">
+                  {t.avatar}
+                </div>
+                <div>
+                  <h4 className="font-semibold text-foreground text-base">
+                    {t.name}
+                  </h4>
+                  <p className="text-sm text-muted-foreground">{t.location}</p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-semibold text-foreground text-base">
-                  {t.name}
-                </h4>
-                <p className="text-sm text-muted-foreground">{t.location}</p>
+              <div className="hidden sm:flex items-center gap-0.5">
+                {Array.from({ length: t.rating || 5 }).map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
+                ))}
               </div>
+            </div>
+
+            {/* Mobile stars */}
+            <div className="flex sm:hidden items-center gap-0.5 mb-4">
+              {Array.from({ length: t.rating || 5 }).map((_, i) => (
+                <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
+              ))}
             </div>
 
             {/* Quote */}
