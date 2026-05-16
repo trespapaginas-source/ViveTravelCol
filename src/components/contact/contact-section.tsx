@@ -16,6 +16,7 @@ import {
   Send,
   Loader2,
 } from "lucide-react";
+import { WHATSAPP_NUMBER, WHATSAPP_URL } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -65,8 +66,8 @@ const contactInfo = [
   {
     icon: MessageCircle,
     label: "WhatsApp",
-    value: "+57 300 123 4567",
-    href: "https://wa.me/573001234567",
+    value: `+${WHATSAPP_NUMBER.slice(0, 2)} ${WHATSAPP_NUMBER.slice(2, 5)} ${WHATSAPP_NUMBER.slice(5, 8)} ${WHATSAPP_NUMBER.slice(8)}`,
+    href: WHATSAPP_URL,
   },
   {
     icon: Mail,
@@ -377,7 +378,7 @@ export function ContactSection() {
                   {[
                     { icon: Instagram, href: "#", label: "Instagram" },
                     { icon: Facebook, href: "#", label: "Facebook" },
-                    { icon: MessageCircle, href: "https://wa.me/573001234567", label: "WhatsApp" },
+                    { icon: MessageCircle, href: WHATSAPP_URL, label: "WhatsApp" },
                   ].map((social) => (
                     <a
                       key={social.label}
@@ -405,7 +406,7 @@ export function ContactSection() {
                   className="h-10 bg-ocean hover:bg-ocean-dark text-white rounded-full px-5 text-sm font-semibold"
                 >
                   <a
-                    href="https://wa.me/573001234567"
+                    href={WHATSAPP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
