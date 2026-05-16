@@ -30,18 +30,18 @@ const PlanCard = memo(function PlanCard({
 }) {
   return (
     <Card
-      className="group h-full cursor-pointer overflow-hidden border border-zinc-100 hover:border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 py-0 gap-0 shadow-none"
+      className="group w-[85vw] max-w-[320px] sm:w-auto sm:max-w-none flex-none snap-center flex flex-col cursor-pointer overflow-hidden rounded-2xl border border-zinc-100 hover:border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 shadow-none"
       onClick={() => onNavigate(plan.id)}
     >
       {/* Image */}
-      <div className="relative overflow-hidden aspect-[4/3] sm:aspect-[3/2]">
+      <div className="relative h-[220px] w-full">
         <img
           src={plan.images[0]}
           alt={plan.name}
           loading="lazy"
           decoding="async"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           onError={(e) => {
             e.currentTarget.src =
               "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80";
@@ -56,7 +56,7 @@ const PlanCard = memo(function PlanCard({
         </div>
       </div>
 
-      <CardContent className="p-4 sm:p-5 flex flex-col h-[calc(100%-75%)] min-h-[160px]">
+      <CardContent className="p-5 flex flex-col flex-grow">
         <h3 className="font-bold text-[17px] text-foreground line-clamp-2 group-hover:text-ocean transition-colors duration-200 leading-snug">
           {plan.name}
         </h3>
@@ -104,9 +104,9 @@ export function FeaturedPlans() {
           />
           <div className="mt-8 flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="shrink-0 min-w-[85vw] sm:min-w-0 snap-center">
-                <Card className="overflow-hidden py-0 gap-0 shadow-none border border-zinc-100">
-                  <Skeleton className="aspect-[4/3] sm:aspect-[3/2] w-full" />
+              <div key={i} className="flex-none snap-center">
+                <Card className="w-[85vw] max-w-[320px] sm:w-auto sm:max-w-none flex flex-col overflow-hidden rounded-2xl shadow-none border border-zinc-100">
+                  <Skeleton className="h-[220px] w-full" />
                   <CardContent className="p-4 space-y-3">
                     <Skeleton className="h-5 w-3/4" />
                     <Skeleton className="h-3 w-1/2" />
@@ -132,7 +132,7 @@ export function FeaturedPlans() {
           subtitle="Descubre nuestras experiencias más populares en Colombia"
         />
 
-        <div className="flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 snap-x snap-mandatory scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {carouselItems.map((plan, index) => {
             const isDuplicate = index >= featuredPlans.length;
             return (
@@ -147,7 +147,7 @@ export function FeaturedPlans() {
                   delay: isDuplicate ? 0 : index * 0.1,
                 }}
                 className={cn(
-                  "shrink-0 min-w-[85vw] sm:min-w-0 snap-center h-full",
+                  "flex-none snap-center flex",
                   isDuplicate ? "block sm:hidden" : "block"
                 )}
               >
