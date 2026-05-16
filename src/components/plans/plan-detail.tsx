@@ -104,10 +104,24 @@ export function PlanDetail() {
   useEffect(() => {
     if (!isGrupal) return;
     
-    const target = getNextWeekend();
-    target.setHours(7, 0, 0, 0);
-    if (target.getTime() < new Date().getTime()) {
-      target.setDate(target.getDate() + 7);
+    let target = new Date();
+    if (plan?.fecha_salida) {
+      const parseMonthAbbr = (str: string) => {
+        const [day, monthAbbr] = str.split(" ");
+        const months = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+        const monthIndex = months.findIndex(m => m === monthAbbr);
+        const now = new Date();
+        const date = new Date(now.getFullYear(), monthIndex, parseInt(day), 7, 0, 0);
+        if (date < now) date.setFullYear(date.getFullYear() + 1);
+        return date;
+      };
+      target = parseMonthAbbr(plan.fecha_salida);
+    } else {
+      target = getNextWeekend();
+      target.setHours(7, 0, 0, 0);
+      if (target.getTime() < new Date().getTime()) {
+        target.setDate(target.getDate() + 7);
+      }
     }
 
     const interval = setInterval(() => {
@@ -534,11 +548,16 @@ export function PlanDetail() {
                 <Card className="border-border/50 shadow-xl py-0 gap-0">
                   <CardContent className="p-6 space-y-5">
                     <div>
-                      <div className="flex items-baseline gap-1">
+                      <div className="flex items-baseline gap-2">
                         <span className="text-2xl sm:text-3xl font-bold text-foreground">
                           {formatPrice(plan.price)}
                         </span>
-                        <span className="text-sm text-muted-foreground">/ persona</span>
+                        {plan.priceRange && plan.priceRange.includes("-") && (
+                          <span className="text-sm text-muted-foreground line-through">
+                            {plan.priceRange.split("-")[1].trim()}
+                          </span>
+                        )}
+                        <span className="text-sm text-muted-foreground ml-auto">/ persona</span>
                       </div>
                     </div>
 

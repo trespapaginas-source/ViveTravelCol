@@ -126,6 +126,14 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
           </div>
         )}
 
+        {/* Cupos Limitados Badge */}
+        {plan.category === "Grupal" && plan.maxGuests && (
+          <div className="absolute bottom-3 left-3 z-10 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
+            <Users className="w-2.5 h-2.5" />
+            Solo {plan.maxGuests} cupos
+          </div>
+        )}
+
         {/* Favorite Button — top right */}
         <div className="absolute top-3 right-3 z-10">
           <button
@@ -171,7 +179,12 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
 
         {/* Bottom row: Price */}
         <div className="flex items-center justify-end mt-4 pt-3 border-t border-border/30">
-          <div className="text-right">
+          <div className="text-right flex items-baseline gap-2 justify-end">
+            {plan.priceRange && plan.priceRange.includes("-") && (
+              <span className="text-xs text-muted-foreground line-through">
+                {plan.priceRange.split("-")[1].trim()}
+              </span>
+            )}
             <p className="text-foreground font-bold text-lg leading-tight">
               {formatPrice(plan.price)}
             </p>
@@ -259,6 +272,14 @@ const PlanCardVertical = memo(function PlanCardVertical({
           </div>
         )}
 
+        {/* Cupos Limitados Badge */}
+        {plan.category === "Grupal" && plan.maxGuests && (
+          <div className="absolute bottom-3 left-3 z-10 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
+            <Users className="w-2.5 h-2.5" />
+            Solo {plan.maxGuests} cupos
+          </div>
+        )}
+
         {/* Favorite Button — top right */}
         <div className="absolute top-3 right-3 z-10">
           <button
@@ -305,7 +326,12 @@ const PlanCardVertical = memo(function PlanCardVertical({
 
         {/* Bottom: Price */}
         <div className="flex items-center justify-end pt-2 mt-2 border-t border-border/30">
-          <div className="text-right">
+          <div className="text-right flex items-baseline gap-2 justify-end">
+            {plan.priceRange && plan.priceRange.includes("-") && (
+              <span className="text-[11px] sm:text-[12px] text-muted-foreground line-through">
+                {plan.priceRange.split("-")[1].trim()}
+              </span>
+            )}
             <p className="text-foreground font-bold text-[15px] sm:text-[17px] leading-tight">
               {formatPrice(plan.price)}
             </p>
